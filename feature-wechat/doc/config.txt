@@ -1,0 +1,15 @@
+# ==================================================================================
+# Wechat-测试环境
+# ==================================================================================
+hyuga.wechat.use-enterprise-we-chat-services=false
+hyuga.wechat.enterpriseId=ww29126fd6bc20c0bb
+hyuga.wechat.applicationId=1000006
+hyuga.wechat.applicationSecret=pHCWeBXl96hJDZrl60c8IFomAZlVWWV1t16tJntaBso
+
+# ==================================================================================
+# Wechat-生产环境
+# ==================================================================================
+hyuga.wechat.use-enterprise-we-chat-services=true
+hyuga.wechat.enterpriseId=ww29126fd6bc20c0bb
+hyuga.wechat.applicationId=1000007
+hyuga.wechat.applicationSecret=Zq8vsSSoCnIh3WzziSzWeQ8FDy4kqGwZ7AYMeX6gfmQ

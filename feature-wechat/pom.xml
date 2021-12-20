@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.kfang.agent</groupId>
+    <artifactId>feature-wechat</artifactId>
+    <version>2.3.1-SNAPSHOT</version>
+    <name>feature-wechat</name>
+    <description>微信组件</description>
+
+    <parent>
+        <groupId>com.kfang</groupId>
+        <artifactId>cloud-dependencies</artifactId>
+        <version>2.3.1-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>infra-web-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.hyugatool</groupId>
+            <artifactId>hyugatool-all</artifactId>
+            <version>1.0.3-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>cloud-properties-setting</artifactId>
+            <type>pom</type>
+            <optional>true</optional>
+        </dependency>
+        <!--<dependency>
+            <groupId>com.gitee.yoara.yhao</groupId>
+            <artifactId>cloud-properties-setting</artifactId>
+            <type>pom</type>
+            <optional>true</optional>
+        </dependency>-->
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 指定JDK版本和编码 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <compilerArgument>-parameters</compilerArgument>
+                    <source>11</source>
+                    <target>11</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

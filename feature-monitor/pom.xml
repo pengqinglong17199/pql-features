@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kfang.agent</groupId>
-    <artifactId>feature-saas</artifactId>
+    <artifactId>feature-monitor</artifactId>
     <version>2.3.1-SNAPSHOT</version>
-    <name>feature-saas</name>
-    <description>SAAS组件</description>
+    <name>feature-monitor</name>
+    <description>服务监控组件</description>
 
     <parent>
         <artifactId>cloud-dependencies</artifactId>
@@ -21,6 +21,10 @@
         <dependency>
             <groupId>com.kfang</groupId>
             <artifactId>infra-web-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>feature-rabbitmq</artifactId>
         </dependency>
 
         <dependency>
