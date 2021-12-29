@@ -9,6 +9,7 @@ import kfang.agent.feature.saas.sql.isolation.annotation.SkipDataIsolation;
 import kfang.agent.feature.saas.sql.print.SqlPrintInterceptor;
 import kfang.infra.common.isolation.DataIsolation;
 import kfang.infra.common.isolation.PlatformDataIsolation;
+import kfang.infra.common.spring.SpringBeanPicker;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -21,6 +22,9 @@ import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
 import org.apache.ibatis.type.StringTypeHandler;
+import org.springframework.beans.BeansException;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -38,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class})})
-public class DataIsolationInterceptor implements Interceptor {
+public class DataIsolationInterceptor implements Interceptor, ApplicationRunner {
 
     private static final String AND = "and";
     private static final String SQL = "sql";
@@ -48,6 +52,8 @@ public class DataIsolationInterceptor implements Interceptor {
     private static final String TARGET = "target";
 
     private SqlPrintInterceptor sqlPrintInterceptor;
+
+    private void init(){}
 
     /**
      * 代理缓存
@@ -295,4 +301,12 @@ public class DataIsolationInterceptor implements Interceptor {
     public void setProperties(Properties properties) {
     }
 
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        try {
+            sqlPrintInterceptor = SpringBeanPicker.getBean(SqlPrintInterceptor.class);
+        }catch (BeansException e){
+            // 非测试环境
+        }
+    }
 }
