@@ -55,15 +55,15 @@ public class SqlPrintInterceptor implements Interceptor {
 
     private final Map<String, BoundSql> sqlMappings = new ConcurrentHashMap<>();
 
-    public void putSqlMapping(String statementId, BoundSql sql){
+    public void putSqlMapping(String statementId, BoundSql sql) {
         sqlMappings.put(statementId, sql);
     }
 
-    public boolean containsSql(String statementId){
+    public boolean containsSql(String statementId) {
         return sqlMappings.containsKey(statementId);
     }
 
-    public void removeSql(String statementId){
+    public void removeSql(String statementId) {
         sqlMappings.remove(statementId);
     }
 
@@ -85,7 +85,7 @@ public class SqlPrintInterceptor implements Interceptor {
 
         String statementId = mappedStatement.getId();
         BoundSql boundSql = sqlMappings.get(statementId);
-        if(boundSql == null){
+        if (boundSql == null) {
             boundSql = mappedStatement.getBoundSql(parameterObject);
         }
         Configuration configuration = mappedStatement.getConfiguration();
@@ -96,7 +96,6 @@ public class SqlPrintInterceptor implements Interceptor {
             Console.magentaLog(theStringLine);
             Console.greenLog("【SQL】执行耗时: {}", timeInterval.intervalPretty());
             Console.yellowLog("【SQL】执行方法：{}", statementId);
-            // Console.yellowLog("【SQL】执行文件：{}", mappedStatement.getResource());
             Console.blueLog("【SQL】执行语句：{}", sql);
             Console.magentaLog(theStringLine);
         }
@@ -147,7 +146,7 @@ public class SqlPrintInterceptor implements Interceptor {
             if (propertyValue instanceof String) {
                 result = "'" + propertyValue + "'";
             } else if (propertyValue instanceof Date) {
-                result = "'" + DateUtil.format(DateFormat.HH_mm_ss, ObjectUtil.getOrElse(propertyValue, null)) + "'";
+                result = "'" + DateUtil.format(DateFormat.yyyy_MM_dd_HH_mm_ss, ObjectUtil.getOrElse(propertyValue, null)) + "'";
             } else {
                 result = propertyValue.toString();
             }
@@ -156,4 +155,5 @@ public class SqlPrintInterceptor implements Interceptor {
         }
         return sql.replaceFirst("\\?", Matcher.quoteReplacement(result));
     }
+
 }

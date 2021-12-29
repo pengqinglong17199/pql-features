@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * 盘客sql核心累
+ * 盘客sql核心类
  *
  * @author pengqinglong
  * @since 2021/12/29
@@ -33,7 +33,6 @@ import java.util.Objects;
 @Component
 @Slf4j
 public class AgentSqlCore implements ApplicationRunner {
-
 
     @Resource
     private KfangInfraCommonProperties kfangInfraCommonProperties;
@@ -45,7 +44,7 @@ public class AgentSqlCore implements ApplicationRunner {
 
         // 打印拦截器特殊环境处理
         String deploy = kfangInfraCommonProperties.getEnv().getDeploy();
-        if(Objects.equals(SaasConstants.DEV, deploy)){
+        if (Objects.equals(SaasConstants.DEV, deploy)) {
             this.addInterceptor(configuration, AgentSqlConfiguration.isPrint(), new SqlPrintInterceptor());
         }
 
@@ -56,8 +55,9 @@ public class AgentSqlCore implements ApplicationRunner {
     }
 
     private void addInterceptor(Configuration configuration, boolean flag, Interceptor interceptor) {
-        if(flag){
+        if (flag) {
             configuration.addInterceptor(interceptor);
         }
     }
+
 }

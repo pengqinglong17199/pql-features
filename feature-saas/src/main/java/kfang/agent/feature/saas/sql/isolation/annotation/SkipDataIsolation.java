@@ -16,6 +16,9 @@ import java.lang.annotation.*;
 @Documented
 public @interface SkipDataIsolation {
 
+    String FPLATFORM_ORG_ID = "FPLATFORM_ORG_ID";
+    String PLATFORM_ORG_ID = "platformOrgId";
+
     /**
      * 需要跳过的数据级别
      */
@@ -24,7 +27,7 @@ public @interface SkipDataIsolation {
     /**
      * 跳过的原因备注
      */
-    String note()default "";
+    String note() default "";
 
     @AllArgsConstructor
     @Getter
@@ -37,7 +40,7 @@ public @interface SkipDataIsolation {
         /**
          * 平台级别
          */
-        PLATFORM("FPLATFORM_ORG_ID", "platformOrgId"),
+        PLATFORM(FPLATFORM_ORG_ID, PLATFORM_ORG_ID),
         ;
 
         private final String sqlFieldName;

@@ -6,6 +6,7 @@ import java.lang.annotation.*;
 
 /**
  * 盘客sql处理注解
+ *
  * @author pengqinglong
  * @since 2021-12-29
  */
@@ -24,4 +25,5 @@ public @interface AgentSql {
      * 是否开启数据隔离
      */
     boolean isolation();
+
 }

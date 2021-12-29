@@ -40,6 +40,13 @@ import java.util.concurrent.ConcurrentHashMap;
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class})})
 public class DataIsolationInterceptor implements Interceptor {
 
+    private static final String AND = "and";
+    private static final String SQL = "sql";
+    private static final String BLANK = " ";
+    private static final String JOIN = "JOIN";
+    private static final String WHERE = "where";
+    private static final String TARGET = "target";
+
     private SqlPrintInterceptor sqlPrintInterceptor;
 
     /**
@@ -50,7 +57,16 @@ public class DataIsolationInterceptor implements Interceptor {
     /**
      * 需要跳过的服务集合
      */
-    private final List<String> SKIP_SERVICES = ListUtil.newArrayList("service-scheduler", "service-dts", "openapi");
+    private static final List<String> SKIP_SERVICES = ListUtil.newArrayList();
+
+    static {
+        // SERVICE-AGENT-JMS
+        SKIP_SERVICES.add("service-scheduler");
+        // SERVICE-AGENT-DTS
+        SKIP_SERVICES.add("service-dts");
+        // WEB-AGENT_THIRDPARTY
+        SKIP_SERVICES.add("openapi");
+    }
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
@@ -60,7 +76,7 @@ public class DataIsolationInterceptor implements Interceptor {
         MappedStatement mappedStatement = this.getCacheMappedStatement(handler);
 
         // insert不处理 交由mysql字段必填处理
-        if(SqlCommandType.INSERT == mappedStatement.getSqlCommandType()){
+        if (SqlCommandType.INSERT == mappedStatement.getSqlCommandType()) {
             return invocation.proceed();
         }
 
@@ -79,9 +95,12 @@ public class DataIsolationInterceptor implements Interceptor {
         SkipDataIsolation annotation = method.getAnnotation(SkipDataIsolation.class);
 
         // 如果无数据隔离注解 或者全部跳过 直接执行
-        if ((method.getAnnotation(DataIsolationDao.class) == null
-        && daoClass.getAnnotation(DataIsolationDao.class) == null)
-        || annotation.level() == SkipDataIsolation.Level.ALL) {
+        boolean methodNoIsolationDaoAnnotation = method.getAnnotation(DataIsolationDao.class) == null;
+        boolean daoClassNoIsolationDaoAnnotation = daoClass.getAnnotation(DataIsolationDao.class) == null;
+        boolean skipDataIsolation = annotation.level() == SkipDataIsolation.Level.ALL;
+        boolean theQuarantineConditionIsNotMet = (methodNoIsolationDaoAnnotation && daoClassNoIsolationDaoAnnotation) || skipDataIsolation;
+        if (theQuarantineConditionIsNotMet) {
+            // 不满足隔离条件
             return invocation.proceed();
         }
 
@@ -97,7 +116,7 @@ public class DataIsolationInterceptor implements Interceptor {
 
         // 无需隔离服务 跳过隔离 无法获取隔离参数
         DataIsolation dataIsolation = (DataIsolation) parameterObject;
-        if(this.checkSkipService(dataIsolation)){
+        if (this.checkSkipService(dataIsolation)) {
             this.removeCacheDevSqlPrint(mappedStatement);
             return invocation.proceed();
         }
@@ -116,8 +135,8 @@ public class DataIsolationInterceptor implements Interceptor {
 
         // 判断sql是否存在表关联 存在表关联只检查sql中是否有对应的查询参数
         String upperCase = sql.toUpperCase();
-        if (upperCase.contains("JOIN")) {
-            upperCase = upperCase.replaceAll(" ","");
+        if (upperCase.contains(JOIN)) {
+            upperCase = upperCase.replaceAll(BLANK, "");
             for (SkipDataIsolation.Level next : sqlList) {
                 boolean contains = upperCase.contains(String.format("%s=?", next.getSqlFieldName()));
                 if (!contains) {
@@ -153,7 +172,7 @@ public class DataIsolationInterceptor implements Interceptor {
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
 
         // 找到where位置
-        int whereIndex = sql.toLowerCase().lastIndexOf("where");
+        int whereIndex = sql.toLowerCase().lastIndexOf(WHERE);
 
         // sql组装
         Iterator<SkipDataIsolation.Level> iterator = sqlList.iterator();
@@ -172,23 +191,23 @@ public class DataIsolationInterceptor implements Interceptor {
         String tail = sql.substring(whereIndex + 5);
 
         // 如果tail中还有and 将head结尾的and干掉
-        if(tail.trim().toLowerCase().startsWith("and")){
-            head = StringUtil.removeEnd(head, "and");
+        if (tail.trim().toLowerCase().startsWith(AND)) {
+            head = StringUtil.removeEnd(head, AND);
         }
 
         // 去除结尾的and
         String newSql = head + tail;
 
         // sql重新赋值
-        ReflectionUtil.setFieldValue(boundSql, "sql", newSql);
+        ReflectionUtil.setFieldValue(boundSql, SQL, newSql);
     }
 
     /**
      * 缓存开发环境的sql打印
      */
     private void cacheDevSqlPrint(MappedStatement mappedStatement, BoundSql boundSql) {
-        if(sqlPrintInterceptor != null){
-            if(!sqlPrintInterceptor.containsSql(mappedStatement.getId())){
+        if (sqlPrintInterceptor != null) {
+            if (!sqlPrintInterceptor.containsSql(mappedStatement.getId())) {
                 sqlPrintInterceptor.putSqlMapping(mappedStatement.getId(), boundSql);
             }
         }
@@ -198,8 +217,8 @@ public class DataIsolationInterceptor implements Interceptor {
      * 清除开发环境的sql打印缓存
      */
     private void removeCacheDevSqlPrint(MappedStatement mappedStatement) {
-        if(sqlPrintInterceptor != null){
-            if(sqlPrintInterceptor.containsSql(mappedStatement.getId())){
+        if (sqlPrintInterceptor != null) {
+            if (sqlPrintInterceptor.containsSql(mappedStatement.getId())) {
                 sqlPrintInterceptor.removeSql(mappedStatement.getId());
             }
         }
@@ -212,7 +231,7 @@ public class DataIsolationInterceptor implements Interceptor {
         // 保存预插入的sql体
         List<SkipDataIsolation.Level> sqlList = ListUtil.newArrayList();
 
-        if(PlatformDataIsolation.class.isAssignableFrom(paramClass)){
+        if (PlatformDataIsolation.class.isAssignableFrom(paramClass)) {
             // 无注解 或者 注解跳过的隔离级别大于platform 则需要处理
             if (annotation == null || annotation.level().ordinal() < SkipDataIsolation.Level.PLATFORM.ordinal()) {
                 sqlList.add(SkipDataIsolation.Level.PLATFORM);
@@ -234,12 +253,11 @@ public class DataIsolationInterceptor implements Interceptor {
         return Arrays.stream(declaredMethods)
                 .filter(methodTemp -> Objects.equals(methodTemp.getName(), methodName))
                 .findFirst()
-                .get();
+                .orElse(null);
     }
 
     /**
      * 从缓存中拿取MappedStatement
-
      */
     private MappedStatement getCacheMappedStatement(StatementHandler handler) throws Throwable {
 
@@ -249,11 +267,11 @@ public class DataIsolationInterceptor implements Interceptor {
         if (mappedStatement == null) {
             Field field = handler.getClass().getSuperclass().getDeclaredField("h");
             Object target = null;
-            while (field != null) {
+            while (true) {
                 try {
                     field.setAccessible(true);
                     Plugin p = (Plugin) field.get(target == null ? handler : target);
-                    target = ReflectionUtil.getFieldValue(p, "target");
+                    target = ReflectionUtil.getFieldValue(p, TARGET);
                     field = target.getClass().getSuperclass().getDeclaredField("h");
                 } catch (NoSuchFieldException e) {
                     break;
@@ -276,4 +294,5 @@ public class DataIsolationInterceptor implements Interceptor {
     @Override
     public void setProperties(Properties properties) {
     }
+
 }
