@@ -67,11 +67,11 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
 
     static {
         // SERVICE-AGENT-JMS
-        SKIP_SERVICES.add("service-scheduler");
+        SKIP_SERVICES.add("SERVICE_SCHEDULER");
         // SERVICE-AGENT-DTS
-        SKIP_SERVICES.add("service-dts");
+        SKIP_SERVICES.add("SERVICE_DTS");
         // WEB-AGENT_THIRDPARTY
-        SKIP_SERVICES.add("openapi");
+        SKIP_SERVICES.add("WEB_AGENT_THIRDPARTY");
     }
 
     @Override
