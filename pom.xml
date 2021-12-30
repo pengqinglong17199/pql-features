@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kfang</groupId>
     <artifactId>agent-features</artifactId>
-    <version>2.3.1-SNAPSHOT</version>
+    <version>2.3.2-SNAPSHOT</version>
     <name>agent-features</name>
     <description>盘客组件集</description>
     <packaging>pom</packaging>

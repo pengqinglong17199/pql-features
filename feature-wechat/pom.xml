@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kfang.agent</groupId>
     <artifactId>feature-wechat</artifactId>
-    <version>2.3.1-SNAPSHOT</version>
+    <version>2.3.2-SNAPSHOT</version>
     <name>feature-wechat</name>
     <description>微信组件</description>
 
     <parent>
         <groupId>com.kfang</groupId>
         <artifactId>cloud-dependencies</artifactId>
-        <version>2.3.1-SNAPSHOT</version>
+        <version>2.3.2-SNAPSHOT</version>
     </parent>
 
     <dependencies>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>cn.hyugatool</groupId>
             <artifactId>hyugatool-all</artifactId>
-            <version>1.0.3-SNAPSHOT</version>
+            <version>1.0.4-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -32,13 +32,6 @@
             <type>pom</type>
             <optional>true</optional>
         </dependency>
-        <!--<dependency>
-            <groupId>com.gitee.yoara.yhao</groupId>
-            <artifactId>cloud-properties-setting</artifactId>
-            <type>pom</type>
-            <optional>true</optional>
-        </dependency>-->
-
     </dependencies>
 
     <build>
