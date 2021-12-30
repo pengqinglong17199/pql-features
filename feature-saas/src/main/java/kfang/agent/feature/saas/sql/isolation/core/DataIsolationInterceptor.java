@@ -65,6 +65,9 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
      */
     private static final List<String> SKIP_SERVICES = ListUtil.newArrayList();
 
+    // 生成预编译参数 放入paramMappings中
+    ParameterMapping build;
+
     static {
         // SERVICE-AGENT-JMS
         SKIP_SERVICES.add("SERVICE_SCHEDULER");
@@ -190,8 +193,25 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
             sb.append(String.format(" %s = ? and", next.getSqlFieldName()));
 
             // 生成预编译参数 放入paramMappings中
-            ParameterMapping build = new ParameterMapping.Builder(mappedStatement.getConfiguration(), next.getJavaFieldName(), new StringTypeHandler()).build();
-            parameterMappings.add(next.ordinal() - 1, build);
+            if(build == null){
+                // 双重检查锁
+                synchronized (SKIP_SERVICES){
+                    if(build == null){
+                        build = new ParameterMapping.Builder(mappedStatement.getConfiguration(), next.getJavaFieldName(), new StringTypeHandler())
+                                .javaType(String.class)
+                                .build();
+                    }
+                }
+            }else{
+                if (!parameterMappings.contains(build)) {
+                    // 双重检查锁
+                    synchronized (SKIP_SERVICES){
+                        if(!parameterMappings.contains(build)){
+                            parameterMappings.add(next.ordinal() - 1, build);
+                        }
+                    }
+                }
+            }
         }
         String head = sb.toString();
         String tail = sql.substring(whereIndex + 5);
@@ -268,27 +288,23 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
     private MappedStatement getCacheMappedStatement(StatementHandler handler) throws Throwable {
 
         // 从缓存中拿取mappedStatement
-        MappedStatement mappedStatement = proxyCache.get(handler);
 
-        if (mappedStatement == null) {
-            Field field = handler.getClass().getSuperclass().getDeclaredField("h");
-            Object target = null;
-            while (true) {
-                try {
-                    field.setAccessible(true);
-                    Plugin p = (Plugin) field.get(target == null ? handler : target);
-                    target = ReflectionUtil.getFieldValue(p, TARGET);
-                    field = target.getClass().getSuperclass().getDeclaredField("h");
-                } catch (NoSuchFieldException e) {
-                    break;
-                }
+        Field field = handler.getClass().getSuperclass().getDeclaredField("h");
+        Object target = null;
+        while (true) {
+            try {
+                field.setAccessible(true);
+                Plugin p = (Plugin) field.get(target == null ? handler : target);
+                target = ReflectionUtil.getFieldValue(p, TARGET);
+                field = target.getClass().getSuperclass().getDeclaredField("h");
+            } catch (NoSuchFieldException e) {
+                break;
             }
-
-            MetaObject metaObject = MetaObject.forObject(target, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, new DefaultReflectorFactory());
-
-            mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
-            proxyCache.put(handler, mappedStatement);
         }
+
+        MetaObject metaObject = MetaObject.forObject(target, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, new DefaultReflectorFactory());
+
+        MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
         return mappedStatement;
     }
 
