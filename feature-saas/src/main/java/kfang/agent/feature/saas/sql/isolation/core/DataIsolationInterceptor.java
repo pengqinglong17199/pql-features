@@ -103,7 +103,7 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
         // 如果无数据隔离注解 或者全部跳过 直接执行
         boolean methodNoIsolationDaoAnnotation = method.getAnnotation(DataIsolationDao.class) == null;
         boolean daoClassNoIsolationDaoAnnotation = daoClass.getAnnotation(DataIsolationDao.class) == null;
-        boolean skipDataIsolation = annotation.level() == SkipDataIsolation.Level.ALL;
+        boolean skipDataIsolation = annotation != null && annotation.level() == SkipDataIsolation.Level.ALL;
         boolean theQuarantineConditionIsNotMet = (methodNoIsolationDaoAnnotation && daoClassNoIsolationDaoAnnotation) || skipDataIsolation;
         if (theQuarantineConditionIsNotMet) {
             // 不满足隔离条件
