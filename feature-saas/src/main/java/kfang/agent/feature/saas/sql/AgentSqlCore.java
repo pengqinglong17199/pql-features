@@ -44,12 +44,17 @@ public class AgentSqlCore implements ApplicationRunner {
 
         // 打印拦截器特殊环境处理
         String deploy = kfangInfraCommonProperties.getEnv().getDeploy();
+
+        SqlPrintInterceptor sqlPrint = null;
         if (Objects.equals(SaasConstants.DEV, deploy)) {
-            this.addInterceptor(configuration, AgentSqlConfiguration.isPrint(), new SqlPrintInterceptor());
+            sqlPrint = new SqlPrintInterceptor();
+            this.addInterceptor(configuration, AgentSqlConfiguration.isPrint(), sqlPrint);
         }
 
-        // 注入拦截器
-        this.addInterceptor(configuration, AgentSqlConfiguration.isIsolation(), new DataIsolationInterceptor());
+        // 数据隔离拦截器
+        DataIsolationInterceptor dataIsolation = new DataIsolationInterceptor();
+        dataIsolation.setSqlPrintInterceptor(sqlPrint);
+        this.addInterceptor(configuration, AgentSqlConfiguration.isIsolation(), dataIsolation);
 
         log.info("AgentSql start success~");
     }

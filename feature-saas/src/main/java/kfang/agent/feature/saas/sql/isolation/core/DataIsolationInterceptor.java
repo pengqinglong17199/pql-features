@@ -10,6 +10,7 @@ import kfang.agent.feature.saas.sql.print.SqlPrintInterceptor;
 import kfang.infra.common.isolation.DataIsolation;
 import kfang.infra.common.isolation.PlatformDataIsolation;
 import kfang.infra.common.spring.SpringBeanPicker;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.executor.parameter.ParameterHandler;
 import org.apache.ibatis.executor.statement.StatementHandler;
@@ -42,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class})})
-public class DataIsolationInterceptor implements Interceptor, ApplicationRunner {
+public class DataIsolationInterceptor implements Interceptor{
 
     private static final String AND = "and";
     private static final String SQL = "sql";
@@ -51,9 +52,8 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
     private static final String WHERE = "where";
     private static final String TARGET = "target";
 
+    @Setter
     private SqlPrintInterceptor sqlPrintInterceptor;
-
-    private void init(){}
 
     /**
      * 代理缓存
@@ -66,7 +66,7 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
     private static final List<String> SKIP_SERVICES = ListUtil.newArrayList();
 
     // 生成预编译参数 放入paramMappings中
-    ParameterMapping build;
+    ParameterMapping param;
 
     static {
         // SERVICE-AGENT-JMS
@@ -193,21 +193,24 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
             sb.append(String.format(" %s = ? and", next.getSqlFieldName()));
 
             // 生成预编译参数 放入paramMappings中
-            if(build == null){
+            if(param == null){
                 // 双重检查锁
                 synchronized (SKIP_SERVICES){
-                    if(build == null){
-                        build = new ParameterMapping.Builder(mappedStatement.getConfiguration(), next.getJavaFieldName(), new StringTypeHandler())
+                    if(param == null){
+                        // 构建一个param对象
+                        param = new ParameterMapping.Builder(mappedStatement.getConfiguration(), next.getJavaFieldName(), new StringTypeHandler())
                                 .javaType(String.class)
                                 .build();
+                        // 初始化进去
+                        parameterMappings.add(next.ordinal() - 1, param);
                     }
                 }
             }else{
-                if (!parameterMappings.contains(build)) {
+                if (!parameterMappings.contains(param)) {
                     // 双重检查锁
                     synchronized (SKIP_SERVICES){
-                        if(!parameterMappings.contains(build)){
-                            parameterMappings.add(next.ordinal() - 1, build);
+                        if(!parameterMappings.contains(param)){
+                            parameterMappings.add(next.ordinal() - 1, param);
                         }
                     }
                 }
@@ -287,24 +290,31 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
      */
     private MappedStatement getCacheMappedStatement(StatementHandler handler) throws Throwable {
 
-        // 从缓存中拿取mappedStatement
+        // 通过sql的字符串常量作为缓存key唯一标示
+        String key = handler.getBoundSql().getSql().intern();
 
-        Field field = handler.getClass().getSuperclass().getDeclaredField("h");
-        Object target = null;
-        while (true) {
-            try {
-                field.setAccessible(true);
-                Plugin p = (Plugin) field.get(target == null ? handler : target);
-                target = ReflectionUtil.getFieldValue(p, TARGET);
-                field = target.getClass().getSuperclass().getDeclaredField("h");
-            } catch (NoSuchFieldException e) {
-                break;
+        // 从缓存中获取MappedStatement
+        MappedStatement mappedStatement = proxyCache.get(key);
+
+        if (mappedStatement == null) {
+            Field field = handler.getClass().getSuperclass().getDeclaredField("h");
+            Object target = null;
+            while (true) {
+                try {
+                    field.setAccessible(true);
+                    Plugin p = (Plugin) field.get(target == null ? handler : target);
+                    target = ReflectionUtil.getFieldValue(p, TARGET);
+                    field = target.getClass().getSuperclass().getDeclaredField("h");
+                } catch (NoSuchFieldException e) {
+                    break;
+                }
             }
+
+            MetaObject metaObject = MetaObject.forObject(target, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, new DefaultReflectorFactory());
+
+            mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
+            proxyCache.put(key, mappedStatement);
         }
-
-        MetaObject metaObject = MetaObject.forObject(target, SystemMetaObject.DEFAULT_OBJECT_FACTORY, SystemMetaObject.DEFAULT_OBJECT_WRAPPER_FACTORY, new DefaultReflectorFactory());
-
-        MappedStatement mappedStatement = (MappedStatement) metaObject.getValue("delegate.mappedStatement");
         return mappedStatement;
     }
 
@@ -315,14 +325,9 @@ public class DataIsolationInterceptor implements Interceptor, ApplicationRunner 
 
     @Override
     public void setProperties(Properties properties) {
+
     }
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
-        try {
-            sqlPrintInterceptor = SpringBeanPicker.getBean(SqlPrintInterceptor.class);
-        }catch (BeansException e){
-            // 非测试环境
-        }
-    }
+
+
 }

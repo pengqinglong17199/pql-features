@@ -40,7 +40,7 @@ public class AgentSqlConfiguration implements ImportBeanDefinitionRegistrar {
         }
         PRINT = (boolean) defaultAttrs.get("print");
 
-        ISOLATION = (boolean) defaultAttrs.get("print");
+        ISOLATION = (boolean) defaultAttrs.get("isolation");
 
         log.info("AgentSql init success~");
     }
