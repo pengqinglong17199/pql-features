@@ -123,9 +123,20 @@ public class DataIsolationInterceptor implements Interceptor{
             throw new DataIsolationException(String.format("%s 参数未实现 DataIsolation 接口", id));
         }
 
+        // 获取sql和预编译参数
+        BoundSql boundSql = handler.getBoundSql();
+
         // 无需隔离服务 跳过隔离 无法获取隔离参数
         DataIsolation dataIsolation = (DataIsolation) parameterObject;
         if (this.checkSkipService(dataIsolation)) {
+
+            List<ParameterMapping> oldParamList = boundSql.getParameterMappings();
+            // 跳过隔离的话将隔离参数重新构建并且remove平台id参数
+            List<ParameterMapping> nowParamList = ListUtil.newArrayList();
+            nowParamList.addAll(oldParamList);
+            nowParamList.remove(param);
+            ReflectionUtil.setFieldValue(boundSql, "parameterMappings", nowParamList);
+
             this.removeCacheDevSqlPrint(mappedStatement);
             return invocation.proceed();
         }
@@ -138,8 +149,6 @@ public class DataIsolationInterceptor implements Interceptor{
             return invocation.proceed();
         }
 
-        // 获取sql和预编译参数
-        BoundSql boundSql = handler.getBoundSql();
         String sql = boundSql.getSql();
 
         // 判断sql是否存在表关联 存在表关联只检查sql中是否有对应的查询参数
@@ -207,8 +216,8 @@ public class DataIsolationInterceptor implements Interceptor{
                 }
             }else{
                 if (!parameterMappings.contains(param)) {
-                    // 双重检查锁
-                    synchronized (SKIP_SERVICES){
+                    // 双重检查锁 这里锁对象使用mybatis的parameterMappings对象 锁粒度细化
+                    synchronized (parameterMappings){
                         if(!parameterMappings.contains(param)){
                             parameterMappings.add(next.ordinal() - 1, param);
                         }
