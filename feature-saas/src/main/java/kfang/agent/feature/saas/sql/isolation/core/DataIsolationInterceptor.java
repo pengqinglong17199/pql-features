@@ -65,7 +65,9 @@ public class DataIsolationInterceptor implements Interceptor{
      */
     private static final List<String> SKIP_SERVICES = ListUtil.newArrayList();
 
-    // 生成预编译参数 放入paramMappings中
+    /**
+     *     生成预编译参数 放入paramMappings中
+     */
     ParameterMapping param;
 
     static {
@@ -194,7 +196,11 @@ public class DataIsolationInterceptor implements Interceptor{
 
         // sql组装
         Iterator<SkipDataIsolation.Level> iterator = sqlList.iterator();
-        StringBuilder sb = new StringBuilder(sql.substring(0, whereIndex + 5));
+        StringBuilder sb = new StringBuilder(sql.substring(0, this.getTailIndex(sql, whereIndex)));
+        // 如果sql无where 则补充一个where
+        if(!this.hasWhere(whereIndex)){
+            sb.append(BLANK + WHERE +BLANK);
+        }
         while (iterator.hasNext()) {
             SkipDataIsolation.Level next = iterator.next();
 
@@ -211,7 +217,8 @@ public class DataIsolationInterceptor implements Interceptor{
                                 .javaType(String.class)
                                 .build();
                         // 初始化进去
-                        parameterMappings.add(next.ordinal() - 1, param);
+                        this.addParam(boundSql, parameterMappings, whereIndex, next);
+
                     }
                 }
             }else{
@@ -219,17 +226,17 @@ public class DataIsolationInterceptor implements Interceptor{
                     // 双重检查锁 这里锁对象使用mybatis的parameterMappings对象 锁粒度细化
                     synchronized (parameterMappings){
                         if(!parameterMappings.contains(param)){
-                            parameterMappings.add(next.ordinal() - 1, param);
+                            this.addParam(boundSql, parameterMappings, whereIndex, next);
                         }
                     }
                 }
             }
         }
         String head = sb.toString();
-        String tail = sql.substring(whereIndex + 5);
+        String tail = sql.substring(getTailIndex(sql, whereIndex));
 
         // 如果tail中还有and 将head结尾的and干掉
-        if (tail.trim().toLowerCase().startsWith(AND)) {
+        if (tail.trim().toLowerCase().startsWith(AND) || !hasWhere(whereIndex)) {
             head = StringUtil.removeEnd(head, AND);
         }
 
@@ -238,6 +245,25 @@ public class DataIsolationInterceptor implements Interceptor{
 
         // sql重新赋值
         ReflectionUtil.setFieldValue(boundSql, SQL, newSql);
+    }
+
+    private void addParam(BoundSql boundSql, List<ParameterMapping> parameterMappings, int whereIndex, SkipDataIsolation.Level next) {
+        if(this.hasWhere(whereIndex)){
+            parameterMappings.add(next.ordinal() - 1, param);
+        }else {
+            List<ParameterMapping> nowParamList = ListUtil.newArrayList();
+            nowParamList.addAll(parameterMappings);
+            nowParamList.add(next.ordinal() - 1, param);
+            ReflectionUtil.setFieldValue(boundSql, "parameterMappings", nowParamList);
+        }
+    }
+
+    private int getTailIndex(String sql, int whereIndex) {
+        return this.hasWhere(whereIndex) ? whereIndex + 5 : sql.length();
+    }
+
+    private boolean hasWhere(int whereIndex) {
+        return !(whereIndex == -1);
     }
 
     /**
