@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.sql.isolation;
+package kfang.agent.feature.saas.sql.isolation.exception;
 
 /**
  * 数据隔离异常
