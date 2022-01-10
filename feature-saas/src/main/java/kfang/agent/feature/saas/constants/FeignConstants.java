@@ -20,7 +20,7 @@ public interface FeignConstants {
 
     String FEIGN_SUFFIX = "feign.suffix";
 
-    String DYNAMIC_SERVICE_NAME_PROPERTIES = "dynamic-service-name.properties";
+    String DYNAMIC_SERVICE_NAME_PROPERTIES = "agent-feign.properties";
     String DEFAULT_ENV_IP_SUFFIX = "default-env-ip-suffix";
 
     /**
