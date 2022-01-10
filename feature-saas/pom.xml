@@ -27,6 +27,11 @@
         <dependency>
             <groupId>com.kfang</groupId>
             <artifactId>infra-service-base</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>feature-redis</artifactId>
             <scope>provided</scope>
         </dependency>
 

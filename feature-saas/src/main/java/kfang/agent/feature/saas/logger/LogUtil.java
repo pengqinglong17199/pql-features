@@ -1,0 +1,145 @@
+package kfang.agent.feature.saas.logger;
+
+import cn.hyugatool.core.collection.ArrayUtil;
+import cn.hyugatool.core.object.ObjectUtil;
+import cn.hyugatool.core.string.StringUtil;
+import kfang.infra.common.KfangInfraCommonProperties;
+import kfang.infra.common.spring.SpringBeanPicker;
+import org.slf4j.Logger;
+import org.springframework.boot.logging.LogLevel;
+import org.springframework.lang.NonNull;
+
+/**
+ * AgentLogger
+ *
+ * @author hyuga
+ * @since 2021/3/25
+ */
+public class LogUtil {
+
+    /**
+     * [TAG][服务名][归属模块][业务操作][文本描述]
+     */
+    private static final String LOG_TEMPLATE = "[{}][{}][{}][{}]";
+
+    private static final String KFANG = "kfang";
+
+    public static void debug(Logger log, LogModule module, String operateType) {
+        log(log, LogType.DEBUG, module, operateType, null, null);
+    }
+
+    public static void debug(Logger log, LogModule module, String operateType, Object content) {
+        log(log, LogType.DEBUG, module, operateType, content, null);
+    }
+
+    public static void info(Logger log, LogModule module, String operateType) {
+        log(log, LogType.INFO, module, operateType, null, null);
+    }
+
+    public static void info(Logger log, LogModule module, String operateType, Object content) {
+        log(log, LogType.INFO, module, operateType, content, null);
+    }
+
+    public static void warn(Logger log, LogModule module, String operateType) {
+        log(log, LogType.WARN, module, operateType, null, null);
+    }
+
+    public static void warn(Logger log, LogModule module, String operateType, Throwable e) {
+        log(log, LogType.WARN, module, operateType, null, e);
+    }
+
+    public static void warn(Logger log, LogModule module, String operateType, Object content) {
+        log(log, LogType.WARN, module, operateType, content, null);
+    }
+
+    public static void warn(Logger log, LogModule module, String operateType, Object content, Throwable e) {
+        log(log, LogType.WARN, module, operateType, content, e);
+    }
+
+    public static void error(Logger log, LogModule module, String operateType) {
+        log(log, LogType.ERROR, module, operateType, null, null);
+    }
+
+    public static void error(Logger log, LogModule module, String operateType, Throwable e) {
+        log(log, LogType.ERROR, module, operateType, null, e);
+    }
+
+    public static void error(Logger log, LogModule module, String operateType, Object content) {
+        log(log, LogType.ERROR, module, operateType, content, null);
+    }
+
+    public static void error(Logger log, LogModule module, String operateType, Object content, Throwable e) {
+        log(log, LogType.ERROR, module, operateType, content, e);
+    }
+
+    private static void log(@NonNull Logger log, @NonNull LogType logType, @NonNull LogModule module,
+                            String operateType, Object content, Throwable e) {
+        String logTemplate = LOG_TEMPLATE;
+        if (StringUtil.isEmpty(content)) {
+            logTemplate = LOG_TEMPLATE.substring(0, LOG_TEMPLATE.length() - 4);
+        }
+        if (StringUtil.isEmpty(operateType)) {
+            throw new RuntimeException("日志操作类型不能为空");
+        }
+
+        String serverName = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getAppName().toUpperCase();
+        switch (logType) {
+            case DEBUG:
+                log.debug(logTemplate, serverName, module.getDesc(), operateType, content);
+                break;
+            case INFO:
+                log.info(logTemplate, serverName, module.getDesc(), operateType, content);
+                break;
+            case WARN:
+                if (ObjectUtil.isNull(e)) {
+                    log.warn(logTemplate, serverName, module.getDesc(), operateType, content);
+                } else {
+                    log.warn(logTemplate, serverName, module.getDesc(), operateType, content, e);
+                }
+                break;
+            case ERROR:
+                if (ObjectUtil.isNull(e)) {
+                    log.error(logTemplate, serverName, module.getDesc(), operateType, content);
+                } else {
+                    log.error(logTemplate, serverName, module.getDesc(), operateType, content, e);
+                    printStackTrace(serverName, log, module, e.getStackTrace());
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * 打印堆栈日志
+     */
+    private static void printStackTrace(String serverName, Logger log, LogModule module, StackTraceElement[] stackTrace) {
+        if (ArrayUtil.isEmpty(stackTrace)) {
+            return;
+        }
+        int maximumFetchLevel = Math.min(stackTrace.length, 10);
+        for (int i = 1; i < maximumFetchLevel; i++) {
+            StackTraceElement stackTraceElement = stackTrace[i];
+            if (ObjectUtil.isNull(stackTraceElement)) {
+                continue;
+            }
+            String className = stackTraceElement.getClassName();
+            String methodName = stackTraceElement.getMethodName();
+            int lineNumber = stackTraceElement.getLineNumber();
+            if (className.contains(KFANG)) {
+                String errorMsg = String.format("class:%s,method:%s,lineNumber:%s", className, methodName, lineNumber);
+                OperatorInfoUtil.logOperatorInfo(LogLevel.ERROR);
+                log.error(LOG_TEMPLATE, serverName, module.getDesc(), "异常调用链", errorMsg);
+                return;
+            }
+        }
+    }
+
+    enum LogType {
+        /**
+         *
+         */
+        DEBUG, INFO, WARN, ERROR
+    }
+
+}

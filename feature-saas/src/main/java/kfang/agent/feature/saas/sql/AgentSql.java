@@ -22,8 +22,8 @@ public @interface AgentSql {
     boolean print() default true;
 
     /**
-     * 是否开启数据隔离
+     * 是否开启数据隔离 默认false 无数据隔离
      */
-    boolean isolation();
+    boolean isolation() default false;
 
 }
