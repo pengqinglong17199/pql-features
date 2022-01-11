@@ -36,7 +36,7 @@ public class RequestParamFormatAspect {
     /**
      * 看房的包头 用于排除非看房的类
      */
-    public static final String KFANG_PACKAGE_NAME = "com.kfang";
+    public static final String KFANG_PACKAGE_NAME = "kfang";
 
     /**
      * 基础类的包名 找父类时跳过该包下的类 优化速度
@@ -74,8 +74,8 @@ public class RequestParamFormatAspect {
             // 获取字段的class
             Class<?> fieldClass = ReflectionUtil.getFieldClass(field);
 
-            // 如果对象是集合且对象是看房的包头 递归去找对象字段处理
-            if (field.getType() == List.class && fieldClass.getPackageName().startsWith(KFANG_PACKAGE_NAME)) {
+            // 如果对象是集合且对象包包含看房的包名 递归去找对象字段处理
+            if (field.getType() == List.class && fieldClass.getPackageName().contains(KFANG_PACKAGE_NAME)) {
                 List<Field> recursionList = this.getFieldList(fieldClass);
                 Object objList = field.get(arg);
                 if (objList instanceof List) {
@@ -87,8 +87,8 @@ public class RequestParamFormatAspect {
                 continue;
             }
 
-            // 如果对象是看房的包头 递归去找对象字段处理
-            if (fieldClass.getPackageName().startsWith(KFANG_PACKAGE_NAME)) {
+            // 如果对象包包含看房的包名 递归去找对象字段处理
+            if (fieldClass.getPackageName().contains(KFANG_PACKAGE_NAME)) {
                 List<Field> recursionList = this.getFieldList(fieldClass);
                 this.handleFieldList(field.get(arg), recursionList);
                 continue;
@@ -132,53 +132,35 @@ public class RequestParamFormatAspect {
     }
 
     public static void main(String[] args) throws Exception {
-        // Package aPackage = RequestParamFormatAspect.class.getPackage();
-        // System.out.println(aPackage);
 
-        // String s = " 1233 ";
-        // s.trim();
-
-        // String s = "         ";
-        // int st = 0;
-        // int len = s.length();
-        // byte[] bytes = s.getBytes(StandardCharsets.UTF_8);
-        // while ((st < len) && ((bytes[st] & 0xff) <= ' ')) {
-        //     st++;
-        // }
-        // while ((st < len) && ((bytes[len - 1] & 0xff) <= ' ')) {
-        //     len--;
-        // }
-        // String s1 = new String(Arrays.copyOfRange(bytes, st, len), StandardCharsets.UTF_8);
-        // System.out.println(s1);
-
-        //TestDemo demo = new TestDemo();
-        //demo.setHouseId("   houseId  👴  TestDemo   ");
+        TestDemo demo = new TestDemo();
+        demo.setHouseId("   houseId  👴  TestDemo   ");
 
         TestDemoObj test1 = new TestDemoObj();
         test1.setGardenId("  你要买什么新房呀   ");
-        //demo.setObj(test1);
+        demo.setObj(test1);
 
-        //TestDemoList test2 = new TestDemoList();
-        //test2.setUnitId("     ");
-        //TestDemoList test3 = new TestDemoList();
-        //test3.setUnitId("  test 3   ");
-        //TestDemoList test4 = new TestDemoList();
-        //test4.setUnitId(null);
-        //List<TestDemoList> list = ListUtil.newArrayList();
-        //list.add(test2);
-        //list.add(test3);
-        //list.add(test4);
-        //demo.setList(list);
+        TestDemoList test2 = new TestDemoList();
+        test2.setUnitId("     ");
+        TestDemoList test3 = new TestDemoList();
+        test3.setUnitId("  test 3   ");
+        TestDemoList test4 = new TestDemoList();
+        test4.setUnitId(null);
+        List<TestDemoList> list = ListUtil.newArrayList();
+        list.add(test2);
+        list.add(test3);
+        list.add(test4);
+        demo.setList(list);
 
         RequestParamFormatAspect requestParamFormatAspect = new RequestParamFormatAspect();
-        Class<?> aClass = test1.getClass();
+        Class<?> aClass = demo.getClass();
         // 循环获取所有字段包括父类的字段
         List<Field> fieldList = requestParamFormatAspect.getFieldList(aClass);
 
         // 循环所有字段 找对应的策略处理自己
-        requestParamFormatAspect.handleFieldList(test1, fieldList);
+        requestParamFormatAspect.handleFieldList(demo, fieldList);
 
-        System.out.println(test1);
+        System.out.println(demo);
     }
 
     @Data

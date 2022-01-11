@@ -4,6 +4,7 @@ import kfang.agent.feature.saas.diff.core.OperationDefaultHandle;
 import kfang.agent.feature.saas.diff.core.OperationHandle;
 
 import java.lang.annotation.*;
+import java.util.List;
 
 /**
  * 操作记录类注解
@@ -45,7 +46,7 @@ public @interface OperationLog {
      * 所以数组长度最多4个就可以包含所有情况
      * 如果超过四个 会按上面的匹配规则 优先匹配成功就返回 后面的直接无视
      *
-     * 有任何疑问 请参考{@link OperationHandle#stringFormat}方法 源码给你答案
+     * 有任何疑问 请参考{@link OperationHandle#stringFormat(List, boolean, Object, Object) }方法 源码给你答案
      *
      * @author 彭清龙
      **/

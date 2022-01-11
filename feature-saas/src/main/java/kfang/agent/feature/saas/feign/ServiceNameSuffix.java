@@ -65,7 +65,7 @@ public class ServiceNameSuffix {
             if (noContains) {
                 throw new RuntimeException(String.format("请确认测试环境是否有该服务器，IP后缀：%s", defaultEnvIpSuffix));
             }
-            return "-" + defaultEnvIpSuffix;
+            return defaultEnvIpSuffix;
         } catch (IOException ignore) {
             // 非本地环境没有该文件
             throw new RuntimeException(String.format("开发本地环境没有该文件，请检查：%s", FeignConstants.DYNAMIC_SERVICE_NAME_PROPERTIES));
