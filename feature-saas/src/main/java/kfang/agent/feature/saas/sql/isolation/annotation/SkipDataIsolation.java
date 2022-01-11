@@ -41,6 +41,9 @@ public @interface SkipDataIsolation {
          * 平台级别
          */
         PLATFORM(FPLATFORM_ORG_ID, PLATFORM_ORG_ID),
+        /**
+         * 人员级别
+         */
         PERSON(FPLATFORM_ORG_ID, PLATFORM_ORG_ID),
         ;
 
