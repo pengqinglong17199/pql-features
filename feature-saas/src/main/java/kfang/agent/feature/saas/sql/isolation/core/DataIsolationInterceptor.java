@@ -156,8 +156,7 @@ public class DataIsolationInterceptor implements Interceptor{
         // 判断sql是否存在表关联 存在表关联只检查sql中是否有对应的查询参数
         if (sqlUpperCase.contains(JOIN)) {
             for (SkipDataIsolation.Level level : sqlList) {
-                boolean contains = sqlUpperCase.contains(String.format(CHECK_SQL_STR, level.getSqlFieldName()));
-                if (!contains) {
+                if (!checkSqlLevelField(sqlUpperCase, level)) {
                     throw new DataIsolationException(String.format("%s 数据隔离sql 没有 [%s] 参数", id, level.getSqlFieldName()));
                 }
             }
