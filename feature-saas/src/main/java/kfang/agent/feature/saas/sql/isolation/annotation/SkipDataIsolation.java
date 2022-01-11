@@ -16,8 +16,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface SkipDataIsolation {
 
-    String FPLATFORM_ORG_ID = "FPLATFORM_ORG_ID";
-    String PLATFORM_ORG_ID = "platformOrgId";
+    String PLATFORM_SQL_FIELD_NAME = "FPLATFORM_ORG_ID";
+    String PLATFORM_JAVA_FIELD_NAME = "platformOrgId";
+
+    String PERSON_SQL_FIELD_NAME = "FCREATE_OPERATOR_ID";
+    String PERSON_JAVA_FIELD_NAME = "operatorId";
 
     /**
      * 需要跳过的数据级别
@@ -40,11 +43,11 @@ public @interface SkipDataIsolation {
         /**
          * 平台级别
          */
-        PLATFORM(FPLATFORM_ORG_ID, PLATFORM_ORG_ID),
+        PLATFORM(PLATFORM_SQL_FIELD_NAME, PLATFORM_JAVA_FIELD_NAME),
         /**
          * 人员级别
          */
-        PERSON(FPLATFORM_ORG_ID, PLATFORM_ORG_ID),
+        PERSON(PERSON_SQL_FIELD_NAME, PERSON_JAVA_FIELD_NAME),
         ;
 
         private final String sqlFieldName;
