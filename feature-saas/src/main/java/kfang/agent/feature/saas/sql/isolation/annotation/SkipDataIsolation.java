@@ -41,6 +41,7 @@ public @interface SkipDataIsolation {
          * 平台级别
          */
         PLATFORM(FPLATFORM_ORG_ID, PLATFORM_ORG_ID),
+        PERSON(FPLATFORM_ORG_ID, PLATFORM_ORG_ID),
         ;
 
         private final String sqlFieldName;

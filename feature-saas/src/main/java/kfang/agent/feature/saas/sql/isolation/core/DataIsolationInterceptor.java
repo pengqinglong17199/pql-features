@@ -3,6 +3,7 @@ package kfang.agent.feature.saas.sql.isolation.core;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
 import cn.hyugatool.core.string.StringUtil;
+import kfang.agent.feature.saas.sql.isolation.PersonDataIsolation;
 import kfang.agent.feature.saas.sql.isolation.exception.DataIsolationException;
 import kfang.agent.feature.saas.sql.isolation.annotation.DataIsolationDao;
 import kfang.agent.feature.saas.sql.isolation.annotation.SkipDataIsolation;
@@ -47,6 +48,7 @@ public class DataIsolationInterceptor implements Interceptor{
     private static final String JOIN = "JOIN";
     private static final String WHERE = "where";
     private static final String TARGET = "target";
+    public static final String CHECK_SQL_STR = "%s=?";
 
     @Setter
     private SqlPrintInterceptor sqlPrintInterceptor;
@@ -62,9 +64,9 @@ public class DataIsolationInterceptor implements Interceptor{
     private static final List<String> SKIP_SERVICES = ListUtil.newArrayList();
 
     /**
-     *     生成预编译参数 放入paramMappings中
+     * 预编译参数 放入paramMappings中
      */
-    ParameterMapping param;
+    private final Map<SkipDataIsolation.Level, ParameterMapping> paramMappings = new ConcurrentHashMap<>();
 
     static {
         // SERVICE-AGENT-JMS
@@ -129,34 +131,34 @@ public class DataIsolationInterceptor implements Interceptor{
         if (this.checkSkipService(dataIsolation)) {
 
             List<ParameterMapping> oldParamList = boundSql.getParameterMappings();
-            // 跳过隔离的话将隔离参数重新构建并且remove平台id参数
+            // 跳过隔离的话将隔离参数重新构建并且remove隔离参数
             List<ParameterMapping> nowParamList = ListUtil.newArrayList();
             nowParamList.addAll(oldParamList);
-            nowParamList.remove(param);
+            nowParamList.removeAll(paramMappings.values());
             ReflectionUtil.setFieldValue(boundSql, "parameterMappings", nowParamList);
 
             this.removeCacheDevSqlPrint(mappedStatement);
             return invocation.proceed();
         }
 
+        // 提前优化点
+        String sql = boundSql.getSql();
+        String sqlUpperCase = sql.toUpperCase().replaceAll(BLANK, "");
+
         // 准备隔离集合
-        List<SkipDataIsolation.Level> sqlList = this.prepareIsolation(paramClass, annotation);
+        List<SkipDataIsolation.Level> sqlList = this.prepareIsolation(sqlUpperCase, paramClass, annotation);
 
         // 如果无需要组装的sql参数 则直接执行
         if (sqlList.isEmpty()) {
             return invocation.proceed();
         }
 
-        String sql = boundSql.getSql();
-
         // 判断sql是否存在表关联 存在表关联只检查sql中是否有对应的查询参数
-        String upperCase = sql.toUpperCase();
-        if (upperCase.contains(JOIN)) {
-            upperCase = upperCase.replaceAll(BLANK, "");
-            for (SkipDataIsolation.Level next : sqlList) {
-                boolean contains = upperCase.contains(String.format("%s=?", next.getSqlFieldName()));
+        if (sqlUpperCase.contains(JOIN)) {
+            for (SkipDataIsolation.Level level : sqlList) {
+                boolean contains = sqlUpperCase.contains(String.format(CHECK_SQL_STR, level.getSqlFieldName()));
                 if (!contains) {
-                    throw new DataIsolationException(String.format("%s 数据隔离sql 没有 [%s] 参数", id, next.getSqlFieldName()));
+                    throw new DataIsolationException(String.format("%s 数据隔离sql 没有 [%s] 参数", id, level.getSqlFieldName()));
                 }
             }
             return invocation.proceed();
@@ -197,29 +199,33 @@ public class DataIsolationInterceptor implements Interceptor{
         if(!this.hasWhere(whereIndex)){
             sb.append(BLANK + WHERE +BLANK);
         }
+
         while (iterator.hasNext()) {
             SkipDataIsolation.Level next = iterator.next();
 
             // 预编译模式 参数值为?
             sb.append(String.format(" %s = ? and", next.getSqlFieldName()));
 
-            // 生成预编译参数 放入paramMappings中
-            if(param == null){
+            // 本地缓存预编译参数未生成 生成预编译参数 放入paramMappings中
+            if(!paramMappings.containsKey(next)){
                 // 双重检查锁
-                synchronized (SKIP_SERVICES){
-                    if(param == null){
-                        // 构建一个param对象
-                        param = new ParameterMapping.Builder(mappedStatement.getConfiguration(), next.getJavaFieldName(), new StringTypeHandler())
+                synchronized (paramMappings){
+                    if(!paramMappings.containsKey(next)){
+                        // 构建一个param对象 存入缓存
+                        ParameterMapping param = new ParameterMapping.Builder(mappedStatement.getConfiguration(), next.getJavaFieldName(), new StringTypeHandler())
                                 .javaType(String.class)
                                 .build();
+                        paramMappings.put(next, param);
                         // 初始化进去
                         this.addParam(boundSql, parameterMappings, whereIndex, next);
 
                     }
                 }
             }else{
+                ParameterMapping param = paramMappings.get(next);
                 if (!parameterMappings.contains(param)) {
-                    // 双重检查锁 这里锁对象使用mybatis的parameterMappings对象 锁粒度细化
+                    // 双重检查锁 这里锁对象使用mybatis的parameterMappings对象
+                    // 此对象经过观察 在boundSql对象中有复用的情况 所以加锁 且锁粒度细化
                     synchronized (parameterMappings){
                         if(!parameterMappings.contains(param)){
                             this.addParam(boundSql, parameterMappings, whereIndex, next);
@@ -243,21 +249,30 @@ public class DataIsolationInterceptor implements Interceptor{
         ReflectionUtil.setFieldValue(boundSql, SQL, newSql);
     }
 
+    /**
+     * 为sql对象添加隔离参数
+     */
     private void addParam(BoundSql boundSql, List<ParameterMapping> parameterMappings, int whereIndex, SkipDataIsolation.Level next) {
         if(this.hasWhere(whereIndex)){
-            parameterMappings.add(next.ordinal() - 1, param);
+            parameterMappings.add(next.ordinal() - 1, paramMappings.get(next));
         }else {
             List<ParameterMapping> nowParamList = ListUtil.newArrayList();
             nowParamList.addAll(parameterMappings);
-            nowParamList.add(next.ordinal() - 1, param);
+            nowParamList.add(next.ordinal() - 1, paramMappings.get(next));
             ReflectionUtil.setFieldValue(boundSql, "parameterMappings", nowParamList);
         }
     }
 
+    /**
+     * 获取sql以where分割后的尾部起始下标
+     */
     private int getTailIndex(String sql, int whereIndex) {
         return this.hasWhere(whereIndex) ? whereIndex + 5 : sql.length();
     }
 
+    /**
+     * sql中是否存在where
+     */
     private boolean hasWhere(int whereIndex) {
         return !(whereIndex == -1);
     }
@@ -287,18 +302,41 @@ public class DataIsolationInterceptor implements Interceptor{
     /**
      * 准备好隔离集合
      */
-    private List<SkipDataIsolation.Level> prepareIsolation(Class<?> paramClass, SkipDataIsolation annotation) {
+    private List<SkipDataIsolation.Level> prepareIsolation(String sqlUpperCase, Class<?> paramClass, SkipDataIsolation annotation) {
         // 保存预插入的sql体
         List<SkipDataIsolation.Level> sqlList = ListUtil.newArrayList();
 
+        // 平台级别
         if (PlatformDataIsolation.class.isAssignableFrom(paramClass)) {
-            // 无注解 或者 注解跳过的隔离级别大于platform 则需要处理
-            if (annotation == null || annotation.level().ordinal() < SkipDataIsolation.Level.PLATFORM.ordinal()) {
-                sqlList.add(SkipDataIsolation.Level.PLATFORM);
-            }
+            this.addSqlIsolationLevel(sqlUpperCase, annotation, sqlList, SkipDataIsolation.Level.PLATFORM);
+        }
+
+        // 人员几杯
+        if (PersonDataIsolation.class.isAssignableFrom(paramClass)) {
+            this.addSqlIsolationLevel(sqlUpperCase, annotation, sqlList, SkipDataIsolation.Level.PERSON);
         }
 
         return sqlList;
+    }
+
+    /**
+     * 添加sql隔离级别
+     */
+    private void addSqlIsolationLevel(String sqlUpperCase, SkipDataIsolation annotation, List<SkipDataIsolation.Level> sqlList, SkipDataIsolation.Level level) {
+        // 无注解 或者 注解跳过的隔离级别大于当前级别 则需要处理
+        if (annotation == null || annotation.level().ordinal() < level.ordinal()) {
+            // 提前优化点 如果sql中存在参数 就不用添加了 如果sql所有的隔离点都加好了 那么直接执行sql 不用做sql替换的处理了
+            if(!checkSqlLevelField(sqlUpperCase, level)){
+                sqlList.add(level);
+            }
+        }
+    }
+
+    /**
+     * 检查sql中是否存在字段
+     */
+    private boolean checkSqlLevelField(String sqlUpperCase, SkipDataIsolation.Level level) {
+        return sqlUpperCase.contains(String.format(CHECK_SQL_STR, level.getSqlFieldName()));
     }
 
     /**
