@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kfang.agent</groupId>
-    <artifactId>feature-saas</artifactId>
+    <artifactId>feature-saas-context</artifactId>
     <version>2.3.2-SNAPSHOT</version>
-    <name>feature-saas</name>
-    <description>SAAS组件</description>
+    <name>feature-saas-context</name>
+    <description>SAAS组件上下文</description>
 
     <parent>
         <artifactId>cloud-dependencies</artifactId>
