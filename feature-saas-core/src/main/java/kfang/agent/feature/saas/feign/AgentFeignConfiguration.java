@@ -4,6 +4,7 @@ import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.system.NetworkUtil;
 import cn.hyugatool.system.SystemUtil;
 import kfang.agent.feature.saas.constants.FeignConstants;
+import kfang.agent.feature.saas.feign.anntations.AgentFeign;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;

@@ -1,7 +1,6 @@
 package kfang.agent.feature.monitor.model;
 
 import cn.hyugatool.core.collection.ListUtil;
-import io.swagger.annotations.ApiModelProperty;
 import kfang.agent.feature.monitor.enums.ProjectEnum;
 import kfang.agent.feature.monitor.enums.StatusEnum;
 import lombok.Data;
@@ -19,39 +18,66 @@ import java.util.List;
  */
 public class ServiceInfo {
 
+    /**
+     * 项目
+     */
     @Setter
     @Getter
-    @ApiModelProperty(value = "项目")
     private ProjectEnum project;
+
+    /**
+     * 服务名
+     */
     @Setter
     @Getter
-    @ApiModelProperty(value = "服务名")
     private String name;
+
+    /**
+     * 服务端口
+     */
     @Setter
     @Getter
-    @ApiModelProperty(value = "服务端口")
     private int port;
+
+    /**
+     * 服务对应多服务器集合
+     */
     @Getter
-    @ApiModelProperty(value = "服务对应多服务器集合")
     private final List<ServiceIpInfo> ipServiceInfoList = ListUtil.newArrayList();
 
     @Data
     public static class ServiceIpInfo {
-        @ApiModelProperty(value = "IP")
+        /**
+         * IP
+         */
         private String ip;
-        @ApiModelProperty(value = "端口")
+        /**
+         * 端口
+         */
         private int port;
-        @ApiModelProperty(value = "IP后缀")
+        /**
+         * IP后缀
+         */
         private int ipTail;
-        @ApiModelProperty(value = "服务状态")
+        /**
+         * 服务状态
+         */
         private StatusEnum status;
-        @ApiModelProperty(value = "服务开始时间")
+        /**
+         * 服务开始时间
+         */
         private Date serverStartTime;
-        @ApiModelProperty(value = "服务最后在线时间")
+        /**
+         * 服务最后在线时间
+         */
         private Date lastOnlineTime;
-        @ApiModelProperty(value = "在线时长")
+        /**
+         * 在线时长
+         */
         private String onlineDuration;
-        @ApiModelProperty(value = "离线时长")
+        /**
+         * 离线时长
+         */
         private String offlineDuration;
 
         public ServiceIpInfo(ServiceLogModel model) {

@@ -1,6 +1,5 @@
 package kfang.agent.feature.saas.diff.entity;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -15,13 +14,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OperationLogEntity {
 
-    @ApiModelProperty(value = "旧数据对象")
+    /**
+     * 旧数据对象
+     */
     private Object historyEntity;
 
-    @ApiModelProperty(value = "新数据对象")
+    /**
+     * 新数据对象
+     */
     private Object nowEntity;
 
-    @ApiModelProperty(value = "对象的class")
+    /**
+     * 对象的class
+     */
     @NonNull
     private Class<?> clazz;
 

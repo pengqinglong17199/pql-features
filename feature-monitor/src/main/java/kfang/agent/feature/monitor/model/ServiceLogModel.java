@@ -1,6 +1,5 @@
 package kfang.agent.feature.monitor.model;
 
-import io.swagger.annotations.ApiModelProperty;
 import kfang.agent.feature.monitor.enums.ProjectEnum;
 import kfang.agent.feature.monitor.enums.StatusEnum;
 import lombok.Data;
@@ -20,44 +19,70 @@ import java.util.List;
 @NoArgsConstructor
 public class ServiceLogModel implements Serializable {
 
-    @ApiModelProperty(value = "主键ID")
+    /**
+     * 主键ID
+     */
     private Integer id;
 
-    @ApiModelProperty(value = "IP")
+    /**
+     * IP
+     */
     private String ip;
 
-    @ApiModelProperty(value = "端口")
+    /**
+     * 端口
+     */
     private Integer port;
 
-    @ApiModelProperty(value = "项目")
+    /**
+     * 项目
+     */
     private ProjectEnum project;
 
 
-    @ApiModelProperty(value = "服务名")
+    /**
+     * 服务名
+     */
     private String name;
 
-    @ApiModelProperty(value = "环境")
+    /**
+     * 环境
+     */
     private String environment;
 
-    @ApiModelProperty(value = "服务状态")
+    /**
+     * 服务状态
+     */
     private StatusEnum status;
 
-    @ApiModelProperty(value = "服务启动时间")
+    /**
+     * 服务启动时间
+     */
     private Date serverStartTime;
 
-    @ApiModelProperty(value = "服务最后在线时间")
+    /**
+     * 服务最后在线时间
+     */
     private Date lastOnlineTime;
 
-    @ApiModelProperty(value = "离线时长")
+    /**
+     * 离线时长
+     */
     private String offlineDuration;
 
-    @ApiModelProperty(value = "在线时长")
+    /**
+     * 在线时长
+     */
     private String onlineDuration;
 
-    @ApiModelProperty(value = "创建时间")
+    /**
+     * 创建时间
+     */
     private Date createTime;
 
-    @ApiModelProperty(value = "IPS")
+    /**
+     * IPS
+     */
     private List<String> ips;
 
 }

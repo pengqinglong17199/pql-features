@@ -145,8 +145,8 @@ public abstract class OperationHandle {
     /**
      * 判断字段是否是对象集合
      *
-     * @param field
-     * @return
+     * @param field field
+     * @return boolean
      */
     private boolean isObjectList(Field field) {
         return field.getType() == List.class && Objects.nonNull(ReflectionUtil.getFieldClass(field).getAnnotation(OperationLog.class));
@@ -273,7 +273,7 @@ public abstract class OperationHandle {
 
     /**
      * 封装definition
-     **/
+     */
     private OperationLogDefinition packageDefinition(OperationLogFieldWrapper fieldWrapper, OperationLog operationLog, OperationLogField operationLogField) {
         OperationLogDefinition definition = new OperationLogDefinition();
 
