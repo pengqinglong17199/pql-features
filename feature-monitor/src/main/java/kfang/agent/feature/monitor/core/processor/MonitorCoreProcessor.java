@@ -5,11 +5,12 @@ import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.snow.SnowflakeIdUtil;
 import cn.hyugatool.json.JsonUtil;
 import cn.hyugatool.system.NetworkUtil;
+import kfang.agent.feature.monitor.MonitorConfiguration;
+import kfang.agent.feature.monitor.constants.MonitorConstant;
 import kfang.agent.feature.monitor.constants.ServiceHeartbeatKey;
+import kfang.agent.feature.monitor.model.ServiceMessage;
 import kfang.infra.common.KfangInfraCommonProperties;
 import kfang.infra.common.spring.SpringBeanPicker;
-import kfang.agent.feature.monitor.constants.MonitorConstant;
-import kfang.agent.feature.monitor.model.ServiceMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -52,6 +53,7 @@ public class MonitorCoreProcessor {
 
     public static void serviceUp() {
         ServiceMessage message = new ServiceMessage();
+        message.setProject(MonitorConfiguration.project());
         message.setIp(IP);
         message.setPort(PORT);
         message.setName(SERVICE_NAME);
@@ -63,6 +65,7 @@ public class MonitorCoreProcessor {
 
     public static void serviceDown() {
         ServiceMessage message = new ServiceMessage();
+        message.setProject(MonitorConfiguration.project());
         message.setIp(MonitorCoreProcessor.IP);
         message.setPort(MonitorCoreProcessor.PORT);
         message.setName(MonitorCoreProcessor.SERVICE_NAME);
@@ -74,6 +77,7 @@ public class MonitorCoreProcessor {
 
     public static void heartbeat() {
         ServiceMessage message = new ServiceMessage();
+        message.setProject(MonitorConfiguration.project());
         message.setIp(MonitorCoreProcessor.IP);
         message.setPort(MonitorCoreProcessor.PORT);
         message.setName(MonitorCoreProcessor.SERVICE_NAME);

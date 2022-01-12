@@ -2,6 +2,7 @@ package kfang.agent.feature.monitor.model;
 
 import cn.hyugatool.core.collection.ListUtil;
 import io.swagger.annotations.ApiModelProperty;
+import kfang.agent.feature.monitor.enums.ProjectEnum;
 import kfang.agent.feature.monitor.enums.StatusEnum;
 import lombok.Data;
 import lombok.Getter;
@@ -18,6 +19,10 @@ import java.util.List;
  */
 public class ServiceInfo {
 
+    @Setter
+    @Getter
+    @ApiModelProperty(value = "项目")
+    private ProjectEnum project;
     @Setter
     @Getter
     @ApiModelProperty(value = "服务名")
