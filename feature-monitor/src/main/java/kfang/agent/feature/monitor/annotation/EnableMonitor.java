@@ -1,6 +1,8 @@
 package kfang.agent.feature.monitor.annotation;
 
+import kfang.agent.feature.monitor.MonitorConfiguration;
 import kfang.agent.feature.monitor.core.AutomaticHeartbeatMechanism;
+import kfang.agent.feature.monitor.enums.ProjectEnum;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.*;
@@ -13,8 +15,11 @@ import java.lang.annotation.*;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(AutomaticHeartbeatMechanism.class)
+@Import({MonitorConfiguration.class, AutomaticHeartbeatMechanism.class})
 @Documented
 @Inherited
 public @interface EnableMonitor {
+
+    ProjectEnum project() default ProjectEnum.AGENT;
+
 }

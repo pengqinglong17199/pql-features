@@ -1,6 +1,7 @@
 package kfang.agent.feature.monitor.model;
 
 import io.swagger.annotations.ApiModelProperty;
+import kfang.agent.feature.monitor.enums.ProjectEnum;
 import kfang.agent.feature.monitor.enums.StatusEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,10 @@ public class ServiceLogModel implements Serializable {
 
     @ApiModelProperty(value = "端口")
     private Integer port;
+
+    @ApiModelProperty(value = "项目")
+    private ProjectEnum project;
+
 
     @ApiModelProperty(value = "服务名")
     private String name;

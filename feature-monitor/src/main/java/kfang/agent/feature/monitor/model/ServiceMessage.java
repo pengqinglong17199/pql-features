@@ -1,6 +1,7 @@
 package kfang.agent.feature.monitor.model;
 
 import io.swagger.annotations.ApiModelProperty;
+import kfang.agent.feature.monitor.enums.ProjectEnum;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,6 +16,9 @@ import java.io.Serializable;
 public class ServiceMessage implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    @ApiModelProperty(value = "项目")
+    private ProjectEnum project;
 
     @ApiModelProperty(value = "IP")
     private String ip;
