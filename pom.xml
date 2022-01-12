@@ -13,6 +13,7 @@
         <module>feature-monitor</module>
         <module>feature-wechat</module>
         <module>feature-saas</module>
+        <module>feature-saas-core</module>
     </modules>
 
 </project>

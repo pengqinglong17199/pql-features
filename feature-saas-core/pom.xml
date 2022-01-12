@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.kfang.agent</groupId>
+    <artifactId>feature-saas-core</artifactId>
+    <version>2.3.2-SNAPSHOT</version>
+    <name>feature-saas</name>
+    <description>SAAS组件</description>
+
+    <parent>
+        <artifactId>cloud-dependencies</artifactId>
+        <groupId>com.kfang</groupId>
+        <version>2.3.2-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <java.version>11</java.version>
+        <mybatis_version>3.3.0</mybatis_version>
+    </properties>
+    <dependencies>
+
+        <dependency>
+            <groupId>com.kfang.agent</groupId>
+            <artifactId>feature-saas</artifactId>
+            <version>2.3.2-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>infra-web-base</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>infra-service-base</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>feature-redis</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>infra-common-base</artifactId>
+            <version>2.3.2-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hyugatool</groupId>
+            <artifactId>hyugatool-all</artifactId>
+            <version>1.0.4-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.16</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
