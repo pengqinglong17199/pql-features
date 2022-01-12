@@ -1,6 +1,5 @@
 package kfang.agent.feature.saas.diff.entity;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
@@ -12,6 +11,8 @@ import lombok.Data;
 @Data
 public class OperationLogBase {
 
-    @ApiModelProperty(value = "主键id")
+    /**
+     * 主键id
+     */
     private String id;
 }
