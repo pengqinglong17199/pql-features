@@ -5,8 +5,8 @@
     <groupId>com.kfang.agent</groupId>
     <artifactId>feature-saas-context</artifactId>
     <version>2.3.2-SNAPSHOT</version>
-    <name>feature-saas</name>
-    <description>SAAS组件</description>
+    <name>feature-saas-context</name>
+    <description>SAAS组件上下文</description>
 
     <parent>
         <artifactId>cloud-dependencies</artifactId>

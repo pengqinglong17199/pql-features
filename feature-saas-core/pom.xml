@@ -5,8 +5,8 @@
     <groupId>com.kfang.agent</groupId>
     <artifactId>feature-saas-core</artifactId>
     <version>2.3.2-SNAPSHOT</version>
-    <name>feature-saas</name>
-    <description>SAAS组件</description>
+    <name>feature-saas-core</name>
+    <description>SAAS组件核心</description>
 
     <parent>
         <artifactId>cloud-dependencies</artifactId>
@@ -22,7 +22,7 @@
 
         <dependency>
             <groupId>com.kfang.agent</groupId>
-            <artifactId>feature-saas</artifactId>
+            <artifactId>feature-saas-context</artifactId>
             <version>2.3.2-SNAPSHOT</version>
         </dependency>
 
@@ -53,12 +53,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.hyugatool</groupId>
-            <artifactId>hyugatool-all</artifactId>
-            <version>1.0.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
