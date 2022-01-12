@@ -35,6 +35,11 @@ public class FeignBuilderHelper extends Feign.Builder {
             @SneakyThrows
             @Override
             public String url() {
+                boolean isolation = AgentFeignConfiguration.isIsolation();
+                if (!isolation) {
+                    return super.url();
+                }
+
                 final String urlStr = super.url();
                 final URL url = URLUtil.url(urlStr);
                 final String uri = URLUtil.getHost(url).toString();

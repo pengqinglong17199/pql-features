@@ -47,6 +47,16 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
         ISOLATION = (boolean) defaultAttrs.get("isolation");
         SERVICE_SIGN = ServiceSignEnum.valueOf(String.valueOf(defaultAttrs.get("serviceSign")));
 
+        if (ISOLATION) {
+            feignIsolation();
+        } else {
+            System.setProperty(FeignConstants.FEIGN_SUFFIX, StringUtil.EMPTY);
+        }
+
+        log.info("AgentFeign init success~");
+    }
+
+    private void feignIsolation() {
         String localIpAddr = NetworkUtil.getLocalIpAddr();
 
         // 校验本地IP地址是否允许的开发ip或测试服务器ip
@@ -66,7 +76,6 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
         } else {
             System.setProperty(FeignConstants.FEIGN_SUFFIX, StringUtil.EMPTY);
         }
-        log.info("AgentFeign init success~");
     }
 
 }
