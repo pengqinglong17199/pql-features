@@ -19,6 +19,7 @@ import java.util.List;
 
 /**
  * 多任务分页查询工具类
+ * 注：使用该工具查询的sql一定要有一个唯一性质的排序，不然多次查询可能导致数据重复
  *
  * @author hyuga
  * @since 2021/6/8
