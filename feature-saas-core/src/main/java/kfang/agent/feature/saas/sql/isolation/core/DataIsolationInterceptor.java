@@ -48,6 +48,7 @@ public class DataIsolationInterceptor implements Interceptor{
     private static final String WHERE = "where";
     private static final String TARGET = "target";
     public static final String CHECK_SQL_STR = "%s=?";
+    public static final String SET = "set";
 
     @Setter
     private SqlPrintInterceptor sqlPrintInterceptor;
@@ -156,6 +157,11 @@ public class DataIsolationInterceptor implements Interceptor{
                 return invocation.proceed();
             }
 
+            // update 需要检查一下 update不允许更新数据隔离的字段
+            if(SqlCommandType.UPDATE == mappedStatement.getSqlCommandType()){
+                this.checkUpdateSql(sqlUpperCase, sqlList);
+            }
+
             // 判断sql是否存在表关联 存在表关联只检查sql中是否有对应的查询参数
             if (sqlUpperCase.contains(JOIN)) {
                 for (Level level : sqlList) {
@@ -180,6 +186,21 @@ public class DataIsolationInterceptor implements Interceptor{
         }
         return invocation.proceed();
 
+    }
+
+    /**
+     * 检查update的Sql
+     */
+    private void checkUpdateSql(String sqlUpperCase, List<Level> sqlList) {
+        // 截取从第一个set字符串到第一个where中间
+        String substring = sqlUpperCase.substring(sqlUpperCase.indexOf(SET.toUpperCase()), sqlUpperCase.indexOf(WHERE.toUpperCase()));
+
+        for (Level level : sqlList) {
+            // 如果set中存在隔离参数 抛出异常 不允许更新
+            if (substring.contains(level.getSqlFieldName())) {
+                throw new DataIsolationException(String.format(" 数据隔离sql update中更新到了 [%s] 隔离参数", level.getSqlFieldName()));
+            }
+        }
     }
 
     /**
