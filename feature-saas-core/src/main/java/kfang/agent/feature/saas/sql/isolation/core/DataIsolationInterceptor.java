@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -251,7 +252,7 @@ public class DataIsolationInterceptor implements Interceptor{
                                 .build();
                         paramMappings.put(next, param);
                         // 初始化进去
-                        this.addParam(boundSql, parameterMappings, whereIndex, next);
+                        this.addParam(mappedStatement.getSqlCommandType(), boundSql, parameterMappings, whereIndex, next);
 
                     }
                 }
@@ -262,7 +263,7 @@ public class DataIsolationInterceptor implements Interceptor{
                     // 此对象经过观察 在boundSql对象中有复用的情况 所以加锁 且锁粒度细化
                     synchronized (parameterMappings){
                         if(!parameterMappings.contains(param)){
-                            this.addParam(boundSql, parameterMappings, whereIndex, next);
+                            this.addParam(mappedStatement.getSqlCommandType(), boundSql, parameterMappings, whereIndex, next);
                         }
                     }
                 }
@@ -286,13 +287,29 @@ public class DataIsolationInterceptor implements Interceptor{
     /**
      * 为sql对象添加隔离参数
      */
-    private void addParam(BoundSql boundSql, List<ParameterMapping> parameterMappings, int whereIndex, Level next) {
+    private void addParam(SqlCommandType sqlCommandType, BoundSql boundSql, List<ParameterMapping> parameterMappings, int whereIndex, Level next) {
+
+        // 默认为当前隔离级别 -1
+        int paramIndex = next.ordinal() - 1;
+
+        // 如果是update 则要算出where之前的update有几个参数
+        String sql = boundSql.getSql().toLowerCase();
+        String set = sql.substring(0, this.hasWhere(whereIndex) ? whereIndex : sql.length());
+
+        byte[] bytes = set.getBytes(StandardCharsets.UTF_8);
+
+        for (int i = 0; i < bytes.length; i++) {
+            if (bytes[i] == '?') {
+                paramIndex++;
+            }
+        }
+
         if(this.hasWhere(whereIndex)){
-            parameterMappings.add(next.ordinal() - 1, paramMappings.get(next));
+            parameterMappings.add(paramIndex, paramMappings.get(next));
         }else {
             List<ParameterMapping> nowParamList = ListUtil.newArrayList();
             nowParamList.addAll(parameterMappings);
-            nowParamList.add(next.ordinal() - 1, paramMappings.get(next));
+            nowParamList.add(paramIndex, paramMappings.get(next));
             ReflectionUtil.setFieldValue(boundSql, "parameterMappings", nowParamList);
         }
     }
