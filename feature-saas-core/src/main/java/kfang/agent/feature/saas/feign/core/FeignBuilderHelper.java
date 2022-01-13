@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.feign;
+package kfang.agent.feature.saas.feign.core;
 
 import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.core.uri.URLUtil;
@@ -7,6 +7,7 @@ import cn.hyugatool.system.SystemUtil;
 import feign.Feign;
 import feign.Target;
 import kfang.agent.feature.saas.constants.FeignConstants;
+import kfang.agent.feature.saas.feign.AgentFeignConfiguration;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;

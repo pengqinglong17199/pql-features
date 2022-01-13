@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.feign;
+package kfang.agent.feature.saas.feign.core;
 
 import cn.hyugatool.core.properties.PropertiesUtil;
 import cn.hyugatool.core.string.StringUtil;

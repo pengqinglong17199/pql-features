@@ -1,7 +1,5 @@
-package kfang.agent.feature.saas.feign.anntations;
+package kfang.agent.feature.saas.feign;
 
-import kfang.agent.feature.saas.feign.AgentFeignConfiguration;
-import kfang.agent.feature.saas.feign.AgentFeignCore;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
 import org.springframework.context.annotation.Import;
 

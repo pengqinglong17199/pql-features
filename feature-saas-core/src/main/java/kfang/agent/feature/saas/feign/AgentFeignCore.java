@@ -1,6 +1,7 @@
 package kfang.agent.feature.saas.feign;
 
 import kfang.agent.feature.saas.constants.SaasConstants;
+import kfang.agent.feature.saas.feign.core.FeignBuilderHelper;
 import kfang.infra.common.KfangInfraCommonProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
