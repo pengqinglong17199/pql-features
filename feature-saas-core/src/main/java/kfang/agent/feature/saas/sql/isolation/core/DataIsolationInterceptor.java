@@ -26,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -48,6 +49,7 @@ public class DataIsolationInterceptor implements Interceptor{
     private static final String WHERE = "where";
     private static final String TARGET = "target";
     public static final String CHECK_SQL_STR = "%s=?";
+    public static final String SET = "set";
 
     @Setter
     private SqlPrintInterceptor sqlPrintInterceptor;
@@ -156,6 +158,11 @@ public class DataIsolationInterceptor implements Interceptor{
                 return invocation.proceed();
             }
 
+            // update 需要检查一下 update不允许更新数据隔离的字段
+            if(SqlCommandType.UPDATE == mappedStatement.getSqlCommandType()){
+                this.checkUpdateSql(sqlUpperCase, sqlList);
+            }
+
             // 判断sql是否存在表关联 存在表关联只检查sql中是否有对应的查询参数
             if (sqlUpperCase.contains(JOIN)) {
                 for (Level level : sqlList) {
@@ -180,6 +187,21 @@ public class DataIsolationInterceptor implements Interceptor{
         }
         return invocation.proceed();
 
+    }
+
+    /**
+     * 检查update的Sql
+     */
+    private void checkUpdateSql(String sqlUpperCase, List<Level> sqlList) {
+        // 截取从第一个set字符串到第一个where中间
+        String substring = sqlUpperCase.substring(sqlUpperCase.indexOf(SET.toUpperCase()), sqlUpperCase.indexOf(WHERE.toUpperCase()));
+
+        for (Level level : sqlList) {
+            // 如果set中存在隔离参数 抛出异常 不允许更新
+            if (substring.contains(level.getSqlFieldName())) {
+                throw new DataIsolationException(String.format(" 数据隔离sql update中更新到了 [%s] 隔离参数", level.getSqlFieldName()));
+            }
+        }
     }
 
     /**
@@ -230,7 +252,7 @@ public class DataIsolationInterceptor implements Interceptor{
                                 .build();
                         paramMappings.put(next, param);
                         // 初始化进去
-                        this.addParam(boundSql, parameterMappings, whereIndex, next);
+                        this.addParam(mappedStatement.getSqlCommandType(), boundSql, parameterMappings, whereIndex, next);
 
                     }
                 }
@@ -241,7 +263,7 @@ public class DataIsolationInterceptor implements Interceptor{
                     // 此对象经过观察 在boundSql对象中有复用的情况 所以加锁 且锁粒度细化
                     synchronized (parameterMappings){
                         if(!parameterMappings.contains(param)){
-                            this.addParam(boundSql, parameterMappings, whereIndex, next);
+                            this.addParam(mappedStatement.getSqlCommandType(), boundSql, parameterMappings, whereIndex, next);
                         }
                     }
                 }
@@ -265,13 +287,29 @@ public class DataIsolationInterceptor implements Interceptor{
     /**
      * 为sql对象添加隔离参数
      */
-    private void addParam(BoundSql boundSql, List<ParameterMapping> parameterMappings, int whereIndex, Level next) {
+    private void addParam(SqlCommandType sqlCommandType, BoundSql boundSql, List<ParameterMapping> parameterMappings, int whereIndex, Level next) {
+
+        // 默认为当前隔离级别 -1
+        int paramIndex = next.ordinal() - 1;
+
+        // 如果是update 则要算出where之前的update有几个参数
+        String sql = boundSql.getSql().toLowerCase();
+        String set = sql.substring(0, this.hasWhere(whereIndex) ? whereIndex : sql.length());
+
+        byte[] bytes = set.getBytes(StandardCharsets.UTF_8);
+
+        for (int i = 0; i < bytes.length; i++) {
+            if (bytes[i] == '?') {
+                paramIndex++;
+            }
+        }
+
         if(this.hasWhere(whereIndex)){
-            parameterMappings.add(next.ordinal() - 1, paramMappings.get(next));
+            parameterMappings.add(paramIndex, paramMappings.get(next));
         }else {
             List<ParameterMapping> nowParamList = ListUtil.newArrayList();
             nowParamList.addAll(parameterMappings);
-            nowParamList.add(next.ordinal() - 1, paramMappings.get(next));
+            nowParamList.add(paramIndex, paramMappings.get(next));
             ReflectionUtil.setFieldValue(boundSql, "parameterMappings", nowParamList);
         }
     }
