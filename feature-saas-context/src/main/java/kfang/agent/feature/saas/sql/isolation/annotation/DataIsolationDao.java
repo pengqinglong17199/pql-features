@@ -1,5 +1,7 @@
 package kfang.agent.feature.saas.sql.isolation.annotation;
 
+import kfang.agent.feature.saas.sql.isolation.enums.Level;
+
 import java.lang.annotation.*;
 
 /**
@@ -12,4 +14,9 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface DataIsolationDao {
+
+    /**
+     * 隔离级别 默认平台级别隔离
+     */
+    Level level() default Level.PLATFORM;
 }
