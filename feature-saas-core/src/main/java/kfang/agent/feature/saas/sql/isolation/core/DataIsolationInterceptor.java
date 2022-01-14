@@ -362,6 +362,10 @@ public class DataIsolationInterceptor implements Interceptor{
 
         // 隔离级别循环
         for (Level e : Level.values()) {
+            // ALL作为最顶层不参与隔离业务逻辑处理
+            if(e == Level.ALL){
+                continue;
+            }
             // 小于等于当前隔离级别的都应该被隔离
             if(level.ordinal() >= e.ordinal()){
                 this.addSqlIsolationLevel(sqlUpperCase, annotation, sqlList, e);
