@@ -55,7 +55,6 @@ public class AgentLoggerAspect {
         LogModule module = agentServiceLog::logModule;
         Class<?> clazz = agentServiceLog.clazz();
 
-
         Logger logger = clazz == AgentLogger.class ? log : LoggerFactory.getLogger(clazz);
 
         Object[] args = joinPoint.getArgs();
