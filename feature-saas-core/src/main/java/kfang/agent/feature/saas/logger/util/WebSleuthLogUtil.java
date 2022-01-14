@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.logger;
+package kfang.agent.feature.saas.logger.util;
 
 import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
@@ -10,7 +10,7 @@ import org.slf4j.MDC;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static kfang.agent.feature.saas.logger.OperatorInfoUtil.*;
+import static kfang.agent.feature.saas.logger.util.OperatorInfoUtil.*;
 
 /**
  * WebSleuthLogUtil

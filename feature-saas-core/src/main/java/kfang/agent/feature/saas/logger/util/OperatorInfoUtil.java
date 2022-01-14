@@ -1,6 +1,8 @@
-package kfang.agent.feature.saas.logger;
+package kfang.agent.feature.saas.logger.util;
 
 import cn.hyugatool.core.string.StringUtil;
+import kfang.agent.feature.saas.logger.LogLevel;
+import kfang.agent.feature.saas.logger.LogModule;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

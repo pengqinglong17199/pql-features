@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.logger;
+package kfang.agent.feature.saas.logger.util;
 
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.object.ObjectUtil;

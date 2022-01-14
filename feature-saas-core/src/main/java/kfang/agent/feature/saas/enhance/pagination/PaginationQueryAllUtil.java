@@ -6,7 +6,7 @@ import cn.hyugatool.core.instance.ReflectionUtil;
 import cn.hyugatool.core.string.snow.SnowflakeIdUtil;
 import io.swagger.annotations.ApiModelProperty;
 import kfang.agent.feature.saas.logger.LogModule;
-import kfang.agent.feature.saas.logger.LogUtil;
+import kfang.agent.feature.saas.logger.util.LogUtil;
 import kfang.infra.api.validate.SecurityPageForm;
 import kfang.infra.api.validate.extend.PageExtendForm;
 import lombok.AllArgsConstructor;
