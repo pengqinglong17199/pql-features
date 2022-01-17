@@ -25,55 +25,55 @@ public class LogUtil {
 
     private static final String KFANG = "kfang";
 
-    public static void debug(Logger log, LogModule module, String operateType) {
+    public static void debug(Logger log, String module, String operateType) {
         log(log, LogLevel.DEBUG, module, operateType, null, null);
     }
 
-    public static void debug(Logger log, LogModule module, String operateType, Object content) {
+    public static void debug(Logger log, String module, String operateType, Object content) {
         log(log, LogLevel.DEBUG, module, operateType, content, null);
     }
 
-    public static void info(Logger log, LogModule module, String operateType) {
+    public static void info(Logger log, String module, String operateType) {
         log(log, LogLevel.INFO, module, operateType, null, null);
     }
 
-    public static void info(Logger log, LogModule module, String operateType, Object content) {
+    public static void info(Logger log, String module, String operateType, Object content) {
         log(log, LogLevel.INFO, module, operateType, content, null);
     }
 
-    public static void warn(Logger log, LogModule module, String operateType) {
+    public static void warn(Logger log, String module, String operateType) {
         log(log, LogLevel.WARN, module, operateType, null, null);
     }
 
-    public static void warn(Logger log, LogModule module, String operateType, Throwable e) {
+    public static void warn(Logger log, String module, String operateType, Throwable e) {
         log(log, LogLevel.WARN, module, operateType, null, e);
     }
 
-    public static void warn(Logger log, LogModule module, String operateType, Object content) {
+    public static void warn(Logger log, String module, String operateType, Object content) {
         log(log, LogLevel.WARN, module, operateType, content, null);
     }
 
-    public static void warn(Logger log, LogModule module, String operateType, Object content, Throwable e) {
+    public static void warn(Logger log, String module, String operateType, Object content, Throwable e) {
         log(log, LogLevel.WARN, module, operateType, content, e);
     }
 
-    public static void error(Logger log, LogModule module, String operateType) {
+    public static void error(Logger log, String module, String operateType) {
         log(log, LogLevel.ERROR, module, operateType, null, null);
     }
 
-    public static void error(Logger log, LogModule module, String operateType, Throwable e) {
+    public static void error(Logger log, String module, String operateType, Throwable e) {
         log(log, LogLevel.ERROR, module, operateType, null, e);
     }
 
-    public static void error(Logger log, LogModule module, String operateType, Object content) {
+    public static void error(Logger log, String module, String operateType, Object content) {
         log(log, LogLevel.ERROR, module, operateType, content, null);
     }
 
-    public static void error(Logger log, LogModule module, String operateType, Object content, Throwable e) {
+    public static void error(Logger log, String module, String operateType, Object content, Throwable e) {
         log(log, LogLevel.ERROR, module, operateType, content, e);
     }
 
-    private static void log(@NonNull Logger log, @NonNull LogLevel logType, @NonNull LogModule module,
+    private static void log(@NonNull Logger log, @NonNull LogLevel logType, @NonNull String module,
                             String operateType, Object content, Throwable e) {
         String logTemplate = LOG_TEMPLATE;
         if (StringUtil.isEmpty(content)) {
@@ -86,23 +86,23 @@ public class LogUtil {
         String serverName = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getAppName().toUpperCase();
         switch (logType) {
             case DEBUG:
-                log.debug(logTemplate, serverName, module.getDesc(), operateType, content);
+                log.debug(logTemplate, serverName, module, operateType, content);
                 break;
             case INFO:
-                log.info(logTemplate, serverName, module.getDesc(), operateType, content);
+                log.info(logTemplate, serverName, module, operateType, content);
                 break;
             case WARN:
                 if (ObjectUtil.isNull(e)) {
-                    log.warn(logTemplate, serverName, module.getDesc(), operateType, content);
+                    log.warn(logTemplate, serverName, module, operateType, content);
                 } else {
-                    log.warn(logTemplate, serverName, module.getDesc(), operateType, content, e);
+                    log.warn(logTemplate, serverName, module, operateType, content, e);
                 }
                 break;
             case ERROR:
                 if (ObjectUtil.isNull(e)) {
-                    log.error(logTemplate, serverName, module.getDesc(), operateType, content);
+                    log.error(logTemplate, serverName, module, operateType, content);
                 } else {
-                    log.error(logTemplate, serverName, module.getDesc(), operateType, content, e);
+                    log.error(logTemplate, serverName, module, operateType, content, e);
                     printStackTrace(serverName, log, module, e.getStackTrace());
                 }
                 break;
@@ -114,7 +114,7 @@ public class LogUtil {
     /**
      * 打印堆栈日志
      */
-    private static void printStackTrace(String serverName, Logger log, LogModule module, StackTraceElement[] stackTrace) {
+    private static void printStackTrace(String serverName, Logger log, String module, StackTraceElement[] stackTrace) {
         if (ArrayUtil.isEmpty(stackTrace)) {
             return;
         }
@@ -130,7 +130,7 @@ public class LogUtil {
             if (className.contains(KFANG)) {
                 String errorMsg = String.format("class:%s,method:%s,lineNumber:%s", className, methodName, lineNumber);
                 OperatorInfoUtil.logOperatorInfo(LogLevel.ERROR);
-                log.error(LOG_TEMPLATE, serverName, module.getDesc(), "异常调用链", errorMsg);
+                log.error(LOG_TEMPLATE, serverName, module, "异常调用链", errorMsg);
                 return;
             }
         }

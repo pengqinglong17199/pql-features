@@ -50,7 +50,7 @@ public class AgentLoggerAspect {
         final String snowflakeId = SnowflakeIdUtil.getSnowflakeIdStr();
 
         AgentLogger agentServiceLog = AopUtil.getDeclaredAnnotation(joinPoint, AgentLogger.class);
-        LogModule module = agentServiceLog::logModule;
+        String module = agentServiceLog.logModule();
         Class<?> clazz = agentServiceLog.clazz();
 
         Logger logger = clazz == AgentLogger.class ? log : LoggerFactory.getLogger(clazz);

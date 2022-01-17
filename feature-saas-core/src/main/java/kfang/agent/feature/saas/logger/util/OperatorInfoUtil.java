@@ -64,16 +64,16 @@ public class OperatorInfoUtil {
 
         switch (logLevel) {
             case DEBUG:
-                LogUtil.debug(log, LogModuleEnum.OPERATOR_INFO, operatorInfo);
+                LogUtil.debug(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
                 break;
             case WARN:
-                LogUtil.warn(log, LogModuleEnum.OPERATOR_INFO, operatorInfo);
+                LogUtil.warn(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
                 break;
             case ERROR:
-                LogUtil.error(log, LogModuleEnum.OPERATOR_INFO, operatorInfo);
+                LogUtil.error(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
                 break;
             default:
-                LogUtil.info(log, LogModuleEnum.OPERATOR_INFO, operatorInfo);
+                LogUtil.info(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
                 break;
         }
     }

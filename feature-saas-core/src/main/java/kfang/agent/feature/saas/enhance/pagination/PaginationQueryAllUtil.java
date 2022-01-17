@@ -32,10 +32,10 @@ public final class PaginationQueryAllUtil {
     private static final String QUERY_RECORD_COUNT = "queryRecordCount";
 
     public static <T, V> List<V> speedyExecute(T pageQueryForm, int sizeOfOneTask, PaginationQueryAllFunc<T, V> paginationQueryAllFunc) {
-        return speedyExecute(LogModuleEnum.PAGINATION_QUERY_ALL, pageQueryForm, sizeOfOneTask, paginationQueryAllFunc);
+        return speedyExecute(LogModuleEnum.PAGINATION_QUERY_ALL.getDesc(), pageQueryForm, sizeOfOneTask, paginationQueryAllFunc);
     }
 
-    public static <T, V> List<V> speedyExecute(LogModule logModuleEnum, T pageQueryForm, int sizeOfOneTask, PaginationQueryAllFunc<T, V> paginationQueryAllFunc) {
+    public static <T, V> List<V> speedyExecute(String logModuleEnum, T pageQueryForm, int sizeOfOneTask, PaginationQueryAllFunc<T, V> paginationQueryAllFunc) {
         setPageIndexRang(pageQueryForm, 1, 1, true);
         // 先得到总数据量
         int recordCount = paginationQueryAllFunc.pageQuery(pageQueryForm).getRecordCount();
@@ -62,10 +62,10 @@ public final class PaginationQueryAllUtil {
     }
 
     public static <T, V> TaskResult speedyExecute(T pageQueryForm, int sizeOfOneTask, PaginationQueryAllFunc<T, V> paginationQueryAllFunc, TaskExecuteFunc<V> taskExecuteFunc) {
-        return speedyExecute(LogModuleEnum.PAGINATION_QUERY_EXECUTE_ALL, pageQueryForm, sizeOfOneTask, paginationQueryAllFunc, taskExecuteFunc);
+        return speedyExecute(LogModuleEnum.PAGINATION_QUERY_EXECUTE_ALL.getDesc(), pageQueryForm, sizeOfOneTask, paginationQueryAllFunc, taskExecuteFunc);
     }
 
-    public static <T, V> TaskResult speedyExecute(LogModule logModuleEnum, T pageQueryForm, int sizeOfOneTask, PaginationQueryAllFunc<T, V> paginationQueryAllFunc, TaskExecuteFunc<V> taskExecuteFunc) {
+    public static <T, V> TaskResult speedyExecute(String logModuleEnum, T pageQueryForm, int sizeOfOneTask, PaginationQueryAllFunc<T, V> paginationQueryAllFunc, TaskExecuteFunc<V> taskExecuteFunc) {
         LogUtil.info(log, logModuleEnum, "任务开始");
 
         TaskResult taskResult = new TaskResult();
