@@ -37,6 +37,8 @@ import java.util.stream.Collectors;
 @Component
 public class AgentLoggerAspect {
 
+    private final static String LOGIN_EXTEND_DTO = "loginExtendDto";
+
     @Pointcut("@annotation(kfang.agent.feature.saas.logger.annotations.AgentLogger)")
     private void cutMethod() {
 
@@ -59,7 +61,13 @@ public class AgentLoggerAspect {
         List<Object> canSerializableArgs = ListUtil.optimize(args).stream()
                 .filter(arg -> arg instanceof Serializable)
                 .filter(arg -> !(arg instanceof MultipartFile)).collect(Collectors.toList());
-        String params = JsonUtil.toJsonString(canSerializableArgs);
+
+        String params;
+        if (agentServiceLog.loginDto()) {
+            params = JsonUtil.toJsonString(canSerializableArgs);
+        } else {
+            params = JsonUtil.toJsonString(canSerializableArgs, LOGIN_EXTEND_DTO);
+        }
 
         String startTime = DateUtil.format(DateFormat.yyyy_MM_dd_HH_mm_ss_SSS, DateUtil.now());
 

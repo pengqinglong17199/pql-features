@@ -22,8 +22,19 @@ public @interface AgentLogger {
 
     Class<?> clazz() default AgentLogger.class;
 
+    /**
+     * 记录请求信息
+     */
     boolean logParams() default true;
 
+    /**
+     * 记录登陆人(操作人)信息
+     */
+    boolean loginDto() default false;
+
+    /**
+     * 记录打印结果
+     */
     boolean logResult() default true;
 
 }
