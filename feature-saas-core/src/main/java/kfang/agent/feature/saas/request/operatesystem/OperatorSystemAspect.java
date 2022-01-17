@@ -26,7 +26,7 @@ import java.util.Objects;
 @Slf4j
 @Aspect
 @Component
-public class OperateSystemAspect {
+public class OperatorSystemAspect {
 
     private static final String OPERATOR_SYSTEM = "operatorSystem";
 
@@ -42,18 +42,18 @@ public class OperateSystemAspect {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             if (arg instanceof OperateExtendForm) {
-                OperateSystem operateSystem = AnnotationUtil.getDeclaredAnnotation(joinPoint, OperateSystem.class);
-                if (Objects.isNull(operateSystem)) {
+                OperatorSystem operatorSystem = AnnotationUtil.getDeclaredAnnotation(joinPoint, OperatorSystem.class);
+                if (Objects.isNull(operatorSystem)) {
                     return;
                 }
-                boolean penetration = operateSystem.penetration();
-                setOperateSystemValue(arg, operateSystem, penetration);
+                boolean penetration = operatorSystem.penetration();
+                setOperateSystemValue(arg, operatorSystem, penetration);
             }
         }
     }
 
-    private void setOperateSystemValue(Object arg, OperateSystem operateSystem, boolean penetration) {
-        String system = operateSystem.system();
+    private void setOperateSystemValue(Object arg, OperatorSystem operatorSystem, boolean penetration) {
+        String system = operatorSystem.system();
         ReflectionUtil.setFieldValue(arg, OPERATOR_SYSTEM, system);
         if (!penetration) {
             return;
@@ -65,7 +65,7 @@ public class OperateSystemAspect {
                     Object fieldObject = ReflectionUtil.getFieldValue(arg, field);
                     if (fieldObject instanceof OperateExtendForm) {
                         // 仅渗透一层，避免死循环嵌套
-                        setOperateSystemValue(fieldObject, operateSystem, false);
+                        setOperateSystemValue(fieldObject, operatorSystem, false);
                     }
                 });
     }

@@ -14,8 +14,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 // @Inherited  //可以继承
-@Import({OperateSystemAspect.class})
-public @interface OperateSystem {
+@Import({OperatorSystemAspect.class})
+public @interface OperatorSystem {
 
     /**
      * 导出缓存key
