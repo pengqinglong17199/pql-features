@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.request.logger.filter;
+package kfang.agent.feature.saas.request.logger.web.filter;
 
 import cn.hyugatool.core.constants.HyugaConstants;
 import cn.hyugatool.core.enums.ByteType;
@@ -9,7 +9,7 @@ import cn.hyugatool.extra.spring.AccessObjectUtil;
 import cn.hyugatool.system.NetworkUtil;
 import kfang.agent.feature.saas.constants.FeignConstants;
 import kfang.agent.feature.saas.enums.EnvironmentEnum;
-import kfang.agent.feature.saas.request.logger.AgentRequestLogConfiguration;
+import kfang.agent.feature.saas.request.logger.web.AgentWebRequestLogConfiguration;
 import kfang.infra.common.KfangInfraCommonProperties;
 import kfang.infra.common.spring.SpringBeanPicker;
 import kfang.infra.web.common.util.CommonWebUtil;
@@ -36,20 +36,20 @@ import java.util.stream.Collectors;
  * @date 2019-09-17 18:10
  */
 @Component
-public class RequestCostLogFilter extends OncePerRequestFilter {
+public class WebRequestCostLogFilter extends OncePerRequestFilter {
 
     private static final String ACTUATOR = "actuator";
 
     @Override
     protected void doFilterInternal(@Nonnull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        if (!AgentRequestLogConfiguration.isCost()) {
+        if (!AgentWebRequestLogConfiguration.isCost()) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String envUpperCase = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getDeploy().toUpperCase();
 
-        EnvironmentEnum[] environmentEnum = AgentRequestLogConfiguration.env();
+        EnvironmentEnum[] environmentEnum = AgentWebRequestLogConfiguration.env();
         boolean containsEnv = Arrays.stream(environmentEnum).map(EnvironmentEnum::name).collect(Collectors.toSet()).contains(envUpperCase);
         if (!containsEnv) {
             filterChain.doFilter(request, response);
@@ -79,7 +79,7 @@ public class RequestCostLogFilter extends OncePerRequestFilter {
 
     private void threadPoolSaveLog(HttpServletRequest request, long requestTime, ContentCachingRequestWrapper wrapperRequest, ContentCachingResponseWrapper wrapperResponse, long responseTime) {
         // 耗时阈值,单位：ms
-        long requestCostTimeThresholdMs = AgentRequestLogConfiguration.costThresholdMs();
+        long requestCostTimeThresholdMs = AgentWebRequestLogConfiguration.costThresholdMs();
         // 请求耗时
         long costTime = responseTime - requestTime;
         String responseBody = AccessObjectUtil.getResponseBody(wrapperResponse);

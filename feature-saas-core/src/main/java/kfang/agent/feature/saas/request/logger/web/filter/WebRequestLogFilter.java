@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.request.logger.filter;
+package kfang.agent.feature.saas.request.logger.web.filter;
 
 import cn.hyugatool.core.constants.HyugaConstants;
 import cn.hyugatool.core.enums.ByteType;
@@ -11,9 +11,9 @@ import cn.hyugatool.system.NetworkUtil;
 import io.micrometer.core.lang.NonNull;
 import kfang.agent.feature.saas.constants.FeignConstants;
 import kfang.agent.feature.saas.enums.EnvironmentEnum;
-import kfang.agent.feature.saas.request.logger.AgentRequestLogConfiguration;
-import kfang.agent.feature.saas.request.logger.model.TerminalRequestModel;
-import kfang.agent.feature.saas.request.logger.model.TerminalRequestSimpleModel;
+import kfang.agent.feature.saas.request.logger.web.AgentWebRequestLogConfiguration;
+import kfang.agent.feature.saas.request.logger.web.model.TerminalRequestModel;
+import kfang.agent.feature.saas.request.logger.web.model.TerminalRequestSimpleModel;
 import kfang.infra.common.KfangInfraCommonProperties;
 import kfang.infra.common.spring.SpringBeanPicker;
 import kfang.infra.web.common.util.CommonWebUtil;
@@ -49,14 +49,14 @@ public class WebRequestLogFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(@Nonnull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
-        if (!AgentRequestLogConfiguration.isRequest()) {
+        if (!AgentWebRequestLogConfiguration.isRequest()) {
             filterChain.doFilter(request, response);
             return;
         }
 
         String envUpperCase = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getDeploy().toUpperCase();
 
-        EnvironmentEnum[] environmentEnum = AgentRequestLogConfiguration.env();
+        EnvironmentEnum[] environmentEnum = AgentWebRequestLogConfiguration.env();
         boolean containsEnv = Arrays.stream(environmentEnum).map(EnvironmentEnum::name).collect(Collectors.toSet()).contains(envUpperCase);
         if (!containsEnv) {
             filterChain.doFilter(request, response);

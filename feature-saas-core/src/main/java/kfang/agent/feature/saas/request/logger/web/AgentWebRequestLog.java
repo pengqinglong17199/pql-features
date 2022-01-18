@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.request.logger;
+package kfang.agent.feature.saas.request.logger.web;
 
 import kfang.agent.feature.saas.enums.EnvironmentEnum;
 import org.springframework.context.annotation.Import;
@@ -14,8 +14,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import({AgentRequestLogConfiguration.class, AgentRequestLogCore.class})
-public @interface AgentRequestLog {
+@Import({AgentWebRequestLogConfiguration.class, AgentWebRequestLogCore.class})
+public @interface AgentWebRequestLog {
 
     boolean request() default false;
 

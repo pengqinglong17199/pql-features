@@ -1,7 +1,7 @@
-package kfang.agent.feature.saas.request.logger;
+package kfang.agent.feature.saas.request.logger.web;
 
-import kfang.agent.feature.saas.request.logger.filter.RequestCostLogFilter;
-import kfang.agent.feature.saas.request.logger.filter.WebRequestLogFilter;
+import kfang.agent.feature.saas.request.logger.web.filter.WebRequestCostLogFilter;
+import kfang.agent.feature.saas.request.logger.web.filter.WebRequestLogFilter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -16,8 +16,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
-@Import({WebRequestLogFilter.class, RequestCostLogFilter.class})
-public class AgentRequestLogCore implements ApplicationRunner {
+@Import({WebRequestLogFilter.class, WebRequestCostLogFilter.class})
+public class AgentWebRequestLogCore implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {

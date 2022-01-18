@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.request.logger.model;
+package kfang.agent.feature.saas.request.logger.web.model;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

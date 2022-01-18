@@ -12,4 +12,6 @@ public interface SaasConstants {
     String DEV = "dev";
     String PRE = "pre";
 
+    String LOGIN_EXTEND_DTO = "loginExtendDto";
+
 }

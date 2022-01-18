@@ -9,7 +9,6 @@ import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.core.string.snow.SnowflakeIdUtil;
 import cn.hyugatool.extra.aop.AopUtil;
 import cn.hyugatool.json.JsonUtil;
-import kfang.agent.feature.saas.logger.LogModule;
 import kfang.agent.feature.saas.logger.annotations.AgentLogger;
 import kfang.agent.feature.saas.logger.util.LogUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +25,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kfang.agent.feature.saas.constants.SaasConstants.LOGIN_EXTEND_DTO;
+
 /**
  * Agent门面层请求响应日志切面
  *
@@ -37,7 +38,6 @@ import java.util.stream.Collectors;
 @Component
 public class AgentLoggerAspect {
 
-    private final static String LOGIN_EXTEND_DTO = "loginExtendDto";
 
     @Pointcut("@annotation(kfang.agent.feature.saas.logger.annotations.AgentLogger)")
     private void cutMethod() {

@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.request.logger;
+package kfang.agent.feature.saas.request.logger.web;
 
 import kfang.agent.feature.saas.enums.EnvironmentEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import java.util.Map;
  */
 @Component
 @Slf4j
-public class AgentRequestLogConfiguration implements ImportBeanDefinitionRegistrar {
+public class AgentWebRequestLogConfiguration implements ImportBeanDefinitionRegistrar {
 
     private static boolean REQUEST;
     private static boolean COST;
@@ -43,7 +43,7 @@ public class AgentRequestLogConfiguration implements ImportBeanDefinitionRegistr
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, @Nonnull BeanDefinitionRegistry registry) {
-        Map<String, Object> defaultAttrs = metadata.getAnnotationAttributes(AgentRequestLog.class.getName());
+        Map<String, Object> defaultAttrs = metadata.getAnnotationAttributes(AgentWebRequestLog.class.getName());
         if (defaultAttrs == null) {
             log.info("AgentRequestLog init fail~");
             return;
