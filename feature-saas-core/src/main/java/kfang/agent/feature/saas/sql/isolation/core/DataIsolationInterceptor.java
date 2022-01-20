@@ -188,6 +188,7 @@ public class DataIsolationInterceptor implements Interceptor{
 
         }catch (DataIsolationException e){
             // 重新组织错误信息 补充id至错误信息中
+            LogUtil.error(log, "数据隔离", "隔离处理异常",e);
             throw new DataIsolationException(id + e.getMessage());
         }catch (Exception e){
             LogUtil.error(log, "数据隔离", "隔离处理异常",e);
