@@ -3,6 +3,8 @@ package kfang.agent.feature.saas.sql.isolation.core;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
 import cn.hyugatool.core.string.StringUtil;
+import kfang.agent.feature.saas.logger.LogModule;
+import kfang.agent.feature.saas.logger.util.LogUtil;
 import kfang.agent.feature.saas.sql.isolation.annotation.DataIsolationDao;
 import kfang.agent.feature.saas.sql.isolation.annotation.SkipDataIsolation;
 import kfang.agent.feature.saas.sql.isolation.enums.Level;
@@ -188,6 +190,7 @@ public class DataIsolationInterceptor implements Interceptor{
             // 重新组织错误信息 补充id至错误信息中
             throw new DataIsolationException(id + e.getMessage());
         }catch (Exception e){
+            LogUtil.error(log, "数据隔离", "隔离处理异常",e);
             throw e;
         }
         return invocation.proceed();
