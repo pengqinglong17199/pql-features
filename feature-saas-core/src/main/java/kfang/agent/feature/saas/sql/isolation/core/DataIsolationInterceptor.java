@@ -127,6 +127,11 @@ public class DataIsolationInterceptor implements Interceptor{
         Object parameterObject = parameterHandler.getParameterObject();
         Class<?> paramClass = parameterObject.getClass();
 
+        // 如果参数没有实现接口 在开发阶段就抛出异常
+        if (!DataIsolation.class.isAssignableFrom(paramClass)) {
+            throw new DataIsolationException(" 参数未实现 DataIsolation 接口");
+        }
+
         // 获取sql和预编译参数
         BoundSql boundSql = handler.getBoundSql();
 
