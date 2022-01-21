@@ -74,7 +74,7 @@ public class AgentDingTalkCore {
                     DingTalkConfiguration.getServiceName(),
                     joinPoint.getSignature().getName(),
                     ListUtil.flat(ListUtil.optimize(authors), Author::getName));
-            String context = String.format("所属class类：[%s] <br> 异常信息：%s", joinPoint.getSignature().getDeclaringTypeName(), e.getMessage());
+            String context = String.format("所属class类：[%s] \n 异常信息：%s", joinPoint.getSignature().getDeclaringTypeName(), e.getMessage());
 
             // 发送钉钉消息
             DingTalkUtil.builder()
