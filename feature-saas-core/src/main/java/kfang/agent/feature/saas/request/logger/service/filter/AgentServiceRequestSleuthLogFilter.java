@@ -68,6 +68,7 @@ public class AgentServiceRequestSleuthLogFilter extends OncePerRequestFilter {
         JSONObject jsonObject = JsonUtil.parseObject(jsonParams);
         String loginExtendDtoStr = jsonObject.getString(SaasConstants.LOGIN_EXTEND_DTO);
         if (StringUtil.isEmpty(loginExtendDtoStr)) {
+            MDC.put(LOG_PLATFORM_ORG_ID, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_ID, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_USERNAME, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_ORG_ID, StringUtil.EMPTY);
@@ -84,6 +85,7 @@ public class AgentServiceRequestSleuthLogFilter extends OncePerRequestFilter {
 
         LoginDto loginDto = JsonUtil.toJavaObject(JsonUtil.toJsonString(loginExtendDtoStr), LoginDto.class);
 
+        MDC.put(LOG_PLATFORM_ORG_ID, loginDto.getPlatformOrgId());
         MDC.put(LOG_OPERATOR_ID, loginDto.getId());
         MDC.put(LOG_OPERATOR_USERNAME, loginDto.getName());
         MDC.put(LOG_OPERATOR_ORG_ID, loginDto.getOrgId());

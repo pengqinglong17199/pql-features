@@ -23,6 +23,7 @@ public class WebSleuthLogUtil {
     public static void initSleuthInfo(HttpServletRequest request) {
         LoginDto loginDto = ObjectUtil.cast(request.getSession().getAttribute(WebCommonConstants.CURRENT_LOGIN_PERSON));
         if (ObjectUtil.nonNull(loginDto)) {
+            MDC.put(LOG_PLATFORM_ORG_ID, loginDto.getPlatformOrgId());
             MDC.put(LOG_OPERATOR_ID, loginDto.getId());
             MDC.put(LOG_OPERATOR_USERNAME, loginDto.getName());
             MDC.put(LOG_OPERATOR_ORG_ID, loginDto.getOrgId());
@@ -35,6 +36,7 @@ public class WebSleuthLogUtil {
             MDC.put(LOG_OPERATOR_IP, IpAddressUtil.getIpAddr(request)[0]);
             MDC.put(LOG_OPERATOR_TERMINAL_TYPE, loginDto.getTerminalType());
         } else {
+            MDC.put(LOG_PLATFORM_ORG_ID, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_ID, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_USERNAME, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_ORG_ID, StringUtil.EMPTY);

@@ -17,6 +17,7 @@ import org.slf4j.MDC;
 @Slf4j
 public class OperatorInfoUtil {
 
+    public static final String LOG_PLATFORM_ORG_ID = "platform-org-id";
     public static final String LOG_OPERATOR_ID = "operator-id";
     public static final String LOG_OPERATOR_USERNAME = "operator-username";
     public static final String LOG_OPERATOR_ORG_ID = "operator-org-id";
@@ -31,7 +32,7 @@ public class OperatorInfoUtil {
 
     public static final String LOG_OPERATOR_INFO_TEMPLATE =
             "ip:%s,terminalType:%s," +
-                    "id:%s,name:%s," +
+                    "platformOrgId:%s,id:%s,name:%s," +
                     "orgId:%s,orgName:%s," +
                     "positionId:%s,positionName:%s," +
                     "companyOrgId:%s,companyOrgName:%s" +
@@ -42,6 +43,7 @@ public class OperatorInfoUtil {
     }
 
     public static void logOperatorInfo(LogLevel logLevel) {
+        String platformOrgId = MDC.get(LOG_PLATFORM_ORG_ID);
         String operatorId = MDC.get(LOG_OPERATOR_ID);
         String operatorUsername = MDC.get(LOG_OPERATOR_USERNAME);
         String operatorOrgId = MDC.get(LOG_OPERATOR_ORG_ID);
@@ -59,7 +61,7 @@ public class OperatorInfoUtil {
         }
 
         String operatorInfo = String.format(LOG_OPERATOR_INFO_TEMPLATE,
-                operatorIp, operatorTerminalType, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
+                operatorIp, operatorTerminalType, platformOrgId, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
                 operatorOrgPositionId, operatorOrgPositionName, operatorCompanyOrgId, operatorCompanyOrgName, operatorIsMajor);
 
         switch (logLevel) {
