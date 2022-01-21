@@ -10,7 +10,9 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.kfang</groupId>
     <artifactId>feature-dingtalk</artifactId>
+    <version>2.3.2-SNAPSHOT</version>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -18,6 +20,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>infra-service-base</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.kfang</groupId>
             <artifactId>infra-common-base</artifactId>

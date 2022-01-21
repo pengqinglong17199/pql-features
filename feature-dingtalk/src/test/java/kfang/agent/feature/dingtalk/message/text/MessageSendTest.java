@@ -27,7 +27,7 @@ public class MessageSendTest {
                 .build();
 
         MessageText text = new MessageText(coreParameter);
-        text.setText("agent exception message.");
+        text.setText("agent \n exception message.");
         DingTalkUtil.sendMessage(text);
     }
 
@@ -62,7 +62,7 @@ public class MessageSendTest {
         link.setText("agent exception message.");
         link.setPicUrl("https://pic1.zhimg.com/v2-66fedbd3b7051cbd68a54c090a64f9c8_r.jpg");
         link.setMessageUrl("http://www.baidu.com");
-        DingTalkUtil.sendMessage(link);
+        //DingTalkUtil.sendMessage(link);
     }
 
     @Test
@@ -80,7 +80,7 @@ public class MessageSendTest {
         activeCard.setText("agent exception message.");
         activeCard.setSingleTitle("Single标题");
         activeCard.setSingleURL("http://www.baidu.com");
-        DingTalkUtil.sendMessage(activeCard);
+        //DingTalkUtil.sendMessage(activeCard);
     }
 
     @Test
@@ -105,7 +105,7 @@ public class MessageSendTest {
         }
 
         feedcard.setFeedCardItems(feedCardItems);
-        DingTalkUtil.sendMessage(feedcard);
+        //DingTalkUtil.sendMessage(feedcard);
     }
 
 }

@@ -1,12 +1,21 @@
 package kfang.agent.feature.dingtalk.util;
 
+import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.json.JsonUtil;
 import com.dingtalk.api.DefaultDingTalkClient;
 import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiRobotSendRequest;
 import com.dingtalk.api.response.OapiRobotSendResponse;
+import kfang.agent.feature.dingtalk.config.DingTalkConfiguration;
+import kfang.agent.feature.dingtalk.enums.Author;
 import kfang.agent.feature.dingtalk.message.AbstractMessage;
+import kfang.agent.feature.dingtalk.message.CoreParameter;
+import kfang.agent.feature.dingtalk.message.MessageMarkdown;
+import kfang.agent.feature.dingtalk.message.MessageText;
+import kfang.infra.common.spring.SpringBeanPicker;
+import lombok.Builder;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 
@@ -16,6 +25,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 /**
  * DingTalk工具类
@@ -35,7 +45,7 @@ public final class DingTalkUtil {
      * @param secret    密钥串
      * @return 获取签名串
      */
-    public static String getSign(long timestamp, String secret) {
+    private static String getSign(long timestamp, String secret) {
         if (timestamp <= 0 || StringUtil.isEmpty(secret)) {
             throw new RuntimeException("参数错误");
         }
@@ -61,10 +71,9 @@ public final class DingTalkUtil {
      * @param secret      密钥串
      * @return 请求url
      */
-    public static String getServerUrl(String accessToken, long timestamp, String secret) {
+    private static String getServerUrl(String accessToken, long timestamp, String secret) {
         String sign = getSign(timestamp, secret);
-        String serverUrl = "https://oapi.dingtalk.com/robot/send?access_token=%s&timestamp=%s&sign=%s";
-        return String.format(serverUrl, accessToken, timestamp, sign);
+        return String.format(DingTalkConfiguration.SEND_URL, accessToken, timestamp, sign);
     }
 
 
@@ -88,7 +97,81 @@ public final class DingTalkUtil {
         OapiRobotSendResponse response = client.execute(sendRequest);
         log.info("钉钉推送返回结果：");
         System.out.println(StringUtil.formatString(response));
-
     }
+
+    public static Build builder(){
+        return new Build();
+    }
+
+    @Data
+    public static class Build{
+
+        private List<Author> authorList;
+
+        private String title;
+
+        private String context;
+
+        private String secret;
+
+        private String accessToken;
+
+        public Build atMobile(Author author){
+            if (authorList == null) {
+                authorList = ListUtil.newArrayList();
+            }
+            authorList.add(author);
+            return this;
+        }
+
+        public Build atMobiles(Author... author){
+            if (authorList == null) {
+                authorList = ListUtil.newArrayList();
+            }
+            authorList.addAll(ListUtil.optimize(author));
+            return this;
+        }
+
+        public Build title(String title){
+            this.title = title;
+            return this;
+        }
+
+        public Build context(String context){
+            this.context = context;
+            return this;
+        }
+
+        public Build secret(String secret){
+            this.secret = secret;
+            return this;
+        }
+
+        public Build accessToken(String accessToken){
+            this.accessToken = accessToken;
+            return this;
+        }
+
+        DingTalkConfiguration dingTalkConfiguration = SpringBeanPicker.getBean(DingTalkConfiguration.class);
+
+        public boolean send(){
+            CoreParameter coreParameter = CoreParameter.builder()
+                    .accessToken(StringUtil.hasText(accessToken) ? accessToken : dingTalkConfiguration.getAccessToken())
+                    .secret(StringUtil.hasText(secret) ? secret : dingTalkConfiguration.getSecret())
+                    .atMobiles(ListUtil.flat(authorList, Author::getPhone))
+                    .build();
+
+            try {
+                MessageText text = new MessageText(coreParameter);
+                text.setText(String.format("%s \n %s", title, context));
+                DingTalkUtil.sendMessage(text);
+                return true;
+            } catch (Exception e) {
+                log.error("钉钉推送消息异常", e);
+                return false;
+            }
+        }
+    }
+
 
 }
