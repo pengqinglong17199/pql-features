@@ -163,7 +163,7 @@ public final class DingTalkUtil {
 
             try {
                 MessageText text = new MessageText(coreParameter);
-                text.setText(String.format("%s \n %s", title, context));
+                text.setText(String.format("%s \n\n %s", title, context));
                 DingTalkUtil.sendMessage(text);
                 return true;
             } catch (Exception e) {
