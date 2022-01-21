@@ -70,7 +70,7 @@ public class AgentDingTalkCore {
             Author[] authors = annotation.authors();
 
             // 组装内容
-            String title = String.format("发生异常 服务名:[%s] 方法名:[%s] 作者:%s",
+            String title = String.format("发生异常 \n服务名:[%s] \n方法名:[%s] \n作者:%s",
                     DingTalkConfiguration.getServiceName(),
                     joinPoint.getSignature().getName(),
                     ListUtil.flat(ListUtil.optimize(authors), Author::getName));
