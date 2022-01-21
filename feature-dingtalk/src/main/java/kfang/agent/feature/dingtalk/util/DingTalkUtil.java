@@ -11,10 +11,8 @@ import kfang.agent.feature.dingtalk.config.DingTalkConfiguration;
 import kfang.agent.feature.dingtalk.enums.Author;
 import kfang.agent.feature.dingtalk.message.AbstractMessage;
 import kfang.agent.feature.dingtalk.message.CoreParameter;
-import kfang.agent.feature.dingtalk.message.MessageMarkdown;
 import kfang.agent.feature.dingtalk.message.MessageText;
 import kfang.infra.common.spring.SpringBeanPicker;
-import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -78,11 +76,9 @@ public final class DingTalkUtil {
 
 
     /**
-     * @param abstractMessage
-     * @description: 推送消息
-     * @return: void
-     * @author: zxq
-     * @Date: 2020/11/26 13:28
+     * 推送消息
+     *
+     * @param abstractMessage abstractMessage
      */
     public static void sendMessage(AbstractMessage abstractMessage) throws Exception {
         log.info("开始推送钉钉消息：" + JsonUtil.toJsonString(abstractMessage));
@@ -99,12 +95,12 @@ public final class DingTalkUtil {
         System.out.println(StringUtil.formatString(response));
     }
 
-    public static Build builder(){
+    public static Build builder() {
         return new Build();
     }
 
     @Data
-    public static class Build{
+    public static class Build {
 
         private List<Author> authorList;
 
@@ -116,7 +112,7 @@ public final class DingTalkUtil {
 
         private String accessToken;
 
-        public Build atMobile(Author author){
+        public Build atMobile(Author author) {
             if (authorList == null) {
                 authorList = ListUtil.newArrayList();
             }
@@ -124,7 +120,7 @@ public final class DingTalkUtil {
             return this;
         }
 
-        public Build atMobiles(Author... author){
+        public Build atMobiles(Author... author) {
             if (authorList == null) {
                 authorList = ListUtil.newArrayList();
             }
@@ -132,29 +128,29 @@ public final class DingTalkUtil {
             return this;
         }
 
-        public Build title(String title){
+        public Build title(String title) {
             this.title = title;
             return this;
         }
 
-        public Build context(String context){
+        public Build context(String context) {
             this.context = context;
             return this;
         }
 
-        public Build secret(String secret){
+        public Build secret(String secret) {
             this.secret = secret;
             return this;
         }
 
-        public Build accessToken(String accessToken){
+        public Build accessToken(String accessToken) {
             this.accessToken = accessToken;
             return this;
         }
 
         DingTalkConfiguration dingTalkConfiguration = SpringBeanPicker.getBean(DingTalkConfiguration.class);
 
-        public boolean send(){
+        public boolean send() {
             CoreParameter coreParameter = CoreParameter.builder()
                     .accessToken(StringUtil.hasText(accessToken) ? accessToken : dingTalkConfiguration.getAccessToken())
                     .secret(StringUtil.hasText(secret) ? secret : dingTalkConfiguration.getSecret())
@@ -173,5 +169,22 @@ public final class DingTalkUtil {
         }
     }
 
+    // public static void main(String[] args) {
+    //     String title = String.format("当前环境 : %s \n异常服务 : %s \n所属类名 : %s \n方法名称 : %s \n研发人员 : %s",
+    //             "dev".toUpperCase() + " [" + NetworkUtil.getLocalIpAddr() + "]",
+    //             "service-agent-house".toUpperCase(),
+    //             "joinPoint.getSignature().getDeclaringTypeName()",
+    //             "joinPoint.getSignature().getName()",
+    //             Author.HUANG_ZE_YUAN.getName());
+    //     String context = String.format("异常信息 : %s", "e.getMessage()");
+    //     DingTalkUtil.builder()
+    //             .accessToken("446cfbe11456505cf01ac32f26bf88748395b1761121d991105154134244e35b")
+    //             .secret("SECc4c82c1fc0fc9e171682236c330c3245553bc18f887d1a215daf3aae1b6c479a")
+    //             .atMobiles(Author.HUANG_ZE_YUAN)
+    //             .title(title)
+    //             .context(context)
+    //             .send();
+    //
+    // }
 
 }

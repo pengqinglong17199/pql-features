@@ -16,7 +16,7 @@ public enum Author {
     /**
      *
      */
-    HUANG_ZHE_YUAN("黄泽源", "15919907075"),
+    HUANG_ZE_YUAN("黄泽源", "15919907075"),
     FANG_JIN_KUN("方锦坤", "18814128895"),
     PENG_QING_LONG("彭清龙", "13265116714"),
     LIU_WEI("刘威", "18274805040"),

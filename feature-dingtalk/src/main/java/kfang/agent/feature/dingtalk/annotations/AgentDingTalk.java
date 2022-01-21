@@ -1,6 +1,5 @@
 package kfang.agent.feature.dingtalk.annotations;
 
-
 import kfang.agent.feature.dingtalk.enums.Author;
 
 import java.lang.annotation.*;
@@ -20,4 +19,5 @@ public @interface AgentDingTalk {
      * 当前方法作者
      */
     Author[] authors();
+
 }

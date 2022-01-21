@@ -14,8 +14,6 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.lang.annotation.Annotation;
 import java.util.List;
 
 /**
@@ -28,9 +26,6 @@ import java.util.List;
 @Aspect
 @Slf4j
 public class AgentDingTalkCore {
-
-    @Resource
-    private DingTalkConfiguration dingTalkConfiguration;
 
     /**
      * 一个线程调用的一整个方法链 只发送一次异常告警
@@ -45,7 +40,7 @@ public class AgentDingTalkCore {
     @Around("cutMethod()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        try{
+        try {
             // 线程刚进来 先remove 清空标志位 防止内存泄露
             threadLocal.remove();
 
@@ -55,10 +50,10 @@ public class AgentDingTalkCore {
             // 正常执行 异常才需要处理
             return joinPoint.proceed();
 
-        }catch (Throwable e){
+        } catch (Throwable e) {
 
             // 检测是否下级方法已经发送警告
-            if(threadLocal.get()){
+            if (threadLocal.get()) {
                 // 直接抛出异常
                 throw e;
             }
@@ -73,14 +68,13 @@ public class AgentDingTalkCore {
             Author[] authors = annotation.authors();
 
             // 组装内容
-            String title = String.format("盘客系统预警:[%s] \n机器ip:[%s] \n服务名:[%s] \n所属class类:[%s] \n方法名:[%s] \n研发人员:%s",
-                    DingTalkConfiguration.getDeploy(),
-                    NetworkUtil.getLocalIpAddr(),
-                    DingTalkConfiguration.getServiceName(),
+            String title = String.format("当前环境 : %s \n异常服务 : %s \n所属类名 : %s \n方法名称 : %s \n研发人员 : %s",
+                    DingTalkConfiguration.getDeploy().toUpperCase() + " [" + NetworkUtil.getLocalIpAddr() + "]",
+                    DingTalkConfiguration.getServiceName().toUpperCase(),
                     joinPoint.getSignature().getDeclaringTypeName(),
                     joinPoint.getSignature().getName(),
                     ListUtil.flat(ListUtil.optimize(authors), Author::getName));
-            String context = String.format("异常信息：%s", e.getMessage());
+            String context = String.format("异常信息 : %s", e.getMessage());
 
             // 发送钉钉消息
             List<Author> list = ListUtil.optimize(DingTalkConfiguration.PRO_AUTHORS);
