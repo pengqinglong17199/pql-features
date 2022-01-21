@@ -47,7 +47,7 @@ public class AgentDingTalkCore {
             // 线程刚进来 先remove 清空标志位 防止内存泄露
             threadLocal.remove();
 
-            // 防止线程复用情况下拉到线程上一次的true 所以设置一次false
+            // 防止线程复用情况下拉到线程上一次异常设置的true 所以设置一次false
             threadLocal.set(false);
 
             // 正常执行 异常才需要处理
