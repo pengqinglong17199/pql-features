@@ -41,7 +41,7 @@ public class AgentDingTalkCore {
     }
 
     @Around("cutMethod()")
-    public void around(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
 
         try{
             // 线程刚进来 先remove 清空标志位 防止内存泄露
@@ -51,13 +51,14 @@ public class AgentDingTalkCore {
             threadLocal.set(false);
 
             // 正常执行 异常才需要处理
-            joinPoint.proceed();
+            return joinPoint.proceed();
 
         }catch (Throwable e){
 
             // 检测是否下级方法已经发送警告
             if(threadLocal.get()){
-                return;
+                // 直接抛出异常
+                throw e;
             }
 
             // 第一次也就是最内层方法报错 设置属性
