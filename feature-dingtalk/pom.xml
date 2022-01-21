@@ -10,7 +10,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.kfang</groupId>
     <artifactId>feature-dingtalk</artifactId>
     <version>2.3.2-SNAPSHOT</version>
 
