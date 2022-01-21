@@ -14,7 +14,7 @@
         <module>feature-wechat</module>
         <module>feature-saas-context</module>
         <module>feature-saas-core</module>
-        <module>feature-dingding</module>
+        <module>feature-dingtalk</module>
     </modules>
 
 </project>
