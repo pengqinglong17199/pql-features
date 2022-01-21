@@ -48,7 +48,7 @@ public class DingTalkConfiguration {
         properties = new Properties();
 
         kfangProperties = SpringBeanPicker.getBean(KfangInfraCommonProperties.class);
-        String deploy = kfangProperties.getEnv().getDeploy();
+        String deploy = isDev() ? kfangProperties.getEnv().getDeploy() : "pro";
 
         InputStream resource = getClass().getClassLoader().getResourceAsStream(String.format(PATH, deploy));
 
@@ -64,6 +64,13 @@ public class DingTalkConfiguration {
      */
     public static String getServiceName(){
         return kfangProperties.getEnv().getAppName();
+    }
+
+    /**
+     * 获取当前环境
+     */
+    public static String getDeploy(){
+        return kfangProperties.getEnv().getDeploy();
     }
 
     public static final Author[] PRO_AUTHORS = {Author.PENG_QING_LONG, Author.HUANG_ZHE_YUAN, Author.FANG_JIN_KUN};

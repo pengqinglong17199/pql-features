@@ -2,6 +2,7 @@ package kfang.agent.feature.dingtalk.core;
 
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.extra.aop.AopUtil;
+import cn.hyugatool.system.NetworkUtil;
 import kfang.agent.feature.dingtalk.annotations.AgentDingTalk;
 import kfang.agent.feature.dingtalk.config.DingTalkConfiguration;
 import kfang.agent.feature.dingtalk.enums.Author;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.lang.annotation.Annotation;
+import java.util.List;
 
 /**
  * AgentDingTalkCore
@@ -71,15 +73,25 @@ public class AgentDingTalkCore {
             Author[] authors = annotation.authors();
 
             // 组装内容
-            String title = String.format("发生异常 \n服务名:[%s] \n方法名:[%s] \n作者:%s",
+            String title = String.format("盘客系统预警:[%s] \n机器ip:[%s] \n服务名:[%s] \n所属class类:[%s] \n方法名:[%s] \n研发人员:%s",
+                    DingTalkConfiguration.getDeploy(),
+                    NetworkUtil.getLocalIpAddr(),
                     DingTalkConfiguration.getServiceName(),
+                    joinPoint.getSignature().getDeclaringTypeName(),
                     joinPoint.getSignature().getName(),
                     ListUtil.flat(ListUtil.optimize(authors), Author::getName));
-            String context = String.format("所属class类：[%s] \n 异常信息：%s", joinPoint.getSignature().getDeclaringTypeName(), e.getMessage());
+            String context = String.format("异常信息：%s", e.getMessage());
 
             // 发送钉钉消息
+            List<Author> list = ListUtil.optimize(DingTalkConfiguration.PRO_AUTHORS);
+            for (Author author : authors) {
+                if (!list.contains(author)) {
+                    list.add(author);
+                }
+            }
+
             DingTalkUtil.builder()
-                    .atMobiles(DingTalkConfiguration.isDev() ? authors : DingTalkConfiguration.PRO_AUTHORS)
+                    .atMobiles(DingTalkConfiguration.isDev() ? authors : list.toArray(new Author[0]))
                     .title(title)
                     .context(context)
                     .send();
