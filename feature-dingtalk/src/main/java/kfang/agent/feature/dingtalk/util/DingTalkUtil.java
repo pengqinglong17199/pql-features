@@ -169,22 +169,4 @@ public final class DingTalkUtil {
         }
     }
 
-    // public static void main(String[] args) {
-    //     String title = String.format("当前环境 : %s \n异常服务 : %s \n所属类名 : %s \n方法名称 : %s \n研发人员 : %s",
-    //             "dev".toUpperCase() + " [" + NetworkUtil.getLocalIpAddr() + "]",
-    //             "service-agent-house".toUpperCase(),
-    //             "joinPoint.getSignature().getDeclaringTypeName()",
-    //             "joinPoint.getSignature().getName()",
-    //             Author.HUANG_ZE_YUAN.getName());
-    //     String context = String.format("异常信息 : %s", "e.getMessage()");
-    //     DingTalkUtil.builder()
-    //             .accessToken("446cfbe11456505cf01ac32f26bf88748395b1761121d991105154134244e35b")
-    //             .secret("SECc4c82c1fc0fc9e171682236c330c3245553bc18f887d1a215daf3aae1b6c479a")
-    //             .atMobiles(Author.HUANG_ZE_YUAN)
-    //             .title(title)
-    //             .context(context)
-    //             .send();
-    //
-    // }
-
 }
