@@ -1,12 +1,15 @@
 package kfang.agent.feature.dingtalk.message.text;
 
 import cn.hyugatool.core.collection.ListUtil;
+import cn.hyugatool.core.properties.PropertiesUtil;
 import kfang.agent.feature.dingtalk.message.*;
 import kfang.agent.feature.dingtalk.util.DingTalkUtil;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * MessageSendTest
@@ -15,6 +18,13 @@ import java.util.List;
  * @since 2022-01-19 17:06:21
  */
 public class MessageSendTest {
+
+    @Test
+    public void test() throws IOException {
+        Properties fileProperties = PropertiesUtil.getFilePropertiesInSourceModule("ding-pro.properties");
+        System.out.println(fileProperties.getProperty("accessToken"));
+        System.out.println(fileProperties.getProperty("secret"));
+    }
 
     @Test
     public void text() throws Exception {
