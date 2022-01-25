@@ -313,13 +313,13 @@ public class DataIsolationInterceptor implements Interceptor{
             }
         }
 
-        if(this.hasWhere(whereIndex)){
-            parameterMappings.add(paramIndex, paramMappings.get(next));
-        }else {
+        if(ListUtil.isEmpty(parameterMappings)){
             List<ParameterMapping> nowParamList = ListUtil.newArrayList();
             nowParamList.addAll(parameterMappings);
             nowParamList.add(paramIndex, paramMappings.get(next));
             ReflectionUtil.setFieldValue(boundSql, "parameterMappings", nowParamList);
+        }else {
+            parameterMappings.add(paramIndex, paramMappings.get(next));
         }
     }
 
