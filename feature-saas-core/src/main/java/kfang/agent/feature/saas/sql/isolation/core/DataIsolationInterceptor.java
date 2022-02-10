@@ -327,7 +327,28 @@ public class DataIsolationInterceptor implements Interceptor{
      * 获取sql以where分割后的尾部起始下标
      */
     private int getTailIndex(String sql, int whereIndex) {
-        return this.hasWhere(whereIndex) ? whereIndex + 5 : sql.length();
+        // 判断where是否存在 如果where不存在 则找出应该插入where的位子
+        return this.hasWhere(whereIndex) ? whereIndex + 5 : this.getInsertWhereIndex(sql);
+    }
+
+    /**
+     * 找出sql插入where的位子
+     */
+    private int getInsertWhereIndex(String sql){
+        int from = sql.indexOf(" FROM ") + 6;
+        sql = sql.substring(from);
+        byte[] bytes = sql.getBytes(StandardCharsets.UTF_8);
+
+        boolean flag = false;
+        for (int i = 0; i < bytes.length; i++) {
+            if (bytes[i] == '.') {
+                flag = true;
+            }
+            if(flag && bytes[i] == ' '){
+                return from + i;
+            }
+        }
+        return sql.length();
     }
 
     /**
