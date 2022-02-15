@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * 盘客sql核心累
+ * 盘客sql核心类
  *
  * @author pengqinglong
  * @since 2021/12/29

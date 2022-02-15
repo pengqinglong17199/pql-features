@@ -17,6 +17,16 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import({BlockRepeatedRequests.class, RequestParamFormatAspect.class})
+@Import({BlockRepeatedRequests.class, RequestParamFormatAspect.class, AgentRequestConfiguration.class})
 public @interface AgentRequest {
+
+    /**
+     * 请求参数是否填充基础信息
+     */
+    boolean basicParam() default false;
+
+    /**
+     * 请求次数限制
+     */
+    boolean requestLimit() default false;
 }
