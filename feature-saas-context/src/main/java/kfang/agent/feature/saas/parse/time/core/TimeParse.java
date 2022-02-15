@@ -47,7 +47,8 @@ public abstract class TimeParse implements AgentParse<String, Long> {
             entity.setDay(1);
             return;
         }
-        String snapShoot = time;
+        // 快照增加一个占位符 防止越界
+        String snapShoot = time + "#";
 
         snapShoot = this.formatYear(snapShoot, entity);
 
