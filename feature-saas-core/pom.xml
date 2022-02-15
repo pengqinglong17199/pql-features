@@ -34,6 +34,11 @@
             <artifactId>infra-service-base</artifactId>
         </dependency>
         <dependency>
+            <groupId>nl.bitwalker</groupId>
+            <artifactId>UserAgentUtils</artifactId>
+            <version>1.2.4</version>
+        </dependency>
+        <dependency>
             <groupId>com.kfang</groupId>
             <artifactId>feature-redis</artifactId>
             <scope>provided</scope>
