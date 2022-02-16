@@ -70,6 +70,7 @@ public abstract class TimeParse implements AgentParse<String, Long> {
         if(entity.isToDay()){
             return (long) CommonDateUtil.getTodayLeftSeconds();
         }
+        Date now = new Date();
         Date date = new Date();
         date = DateUtil.moreOrLessYears(date, entity.getYear());
         date = DateUtil.moreOrLessMonths(date, entity.getMonth());
@@ -77,7 +78,7 @@ public abstract class TimeParse implements AgentParse<String, Long> {
         date = DateUtil.moreOrLessHours(date, entity.getHour());
         date = DateUtil.moreOrLessMinutes(date, entity.getMinute());
         date = DateUtil.moreOrLessSeconds(date, entity.getSecond());
-        return DateUtil.secondDifference(new Date(), date);
+        return DateUtil.secondDifference(now, date);
     }
 
     private String formatSecond(String time, TimeParseEntity entity) {

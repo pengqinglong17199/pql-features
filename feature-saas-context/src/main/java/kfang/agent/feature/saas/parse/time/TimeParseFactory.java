@@ -40,4 +40,11 @@ public class TimeParseFactory {
 
         throw new ParseException("[%s] 无法找到匹配的parse");
     }
+
+    public static void main(String[] args) {
+        String time = "1分50秒";
+        TimeParse timeParse = create(time);
+        Long parse = timeParse.parse(time);
+        System.out.println(parse);
+    }
 }
