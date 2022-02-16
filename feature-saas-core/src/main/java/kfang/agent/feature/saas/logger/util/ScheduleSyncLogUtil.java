@@ -25,7 +25,7 @@ public class ScheduleSyncLogUtil {
 
     private static ThreadLocal<String> context = new InheritableThreadLocal<>();
 
-    private static final String KEY_PREFIX = "SCHEDULE_SYNC_LOG:";
+    private static final String KEY_PREFIX = ":SCHEDULE_SYNC_LOG:";
 
     private static final String END_PREFIX = "SCHEDULE_SYNC_LOG_END_";
 
