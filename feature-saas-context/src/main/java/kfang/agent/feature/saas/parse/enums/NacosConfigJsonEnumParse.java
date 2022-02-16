@@ -14,19 +14,23 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 
 /**
- * NacosConfigJsonEnumParse
+ * nacos配置json枚举解析器
  *
  * @author pengqinglong
  * @since 2022/2/16
  */
 @Slf4j
-public abstract class NacosConfigJsonEnumParse implements EnumParse<String, String>{
+public abstract class NacosConfigJsonEnumParse implements EnumParse{
 
     /**
-     * nacos配置文件
+     * nacos配置数据源
      */
     private static ConfigService CONFIG_SERVICE;
 
+    /**
+     * 类第一次被加载进jvm时触发
+     * 初始化nacos配置数据源
+     */
     static{
         try {
             AbstractApplicationContext applicationContext = SpringBeanPicker.getApplicationContext();
@@ -42,11 +46,12 @@ public abstract class NacosConfigJsonEnumParse implements EnumParse<String, Stri
     }
 
     /**
-     * 原始配置数据
+     * 原始配置数据 缓存原始数据 子类可以读取
      */
     private String config;
 
     public NacosConfigJsonEnumParse(String dataId, String groupId) throws NacosException {
+
         this.initConfig(dataId, groupId);
 
         CONFIG_SERVICE.addListener(dataId, groupId, new Listener() {
@@ -57,16 +62,19 @@ public abstract class NacosConfigJsonEnumParse implements EnumParse<String, Stri
 
             @Override
             public void receiveConfigInfo(String configInfo) {
-                initAfter(configInfo);
+                initConfig(dataId, groupId);
             }
         });
 
     }
 
-    public void initConfig(String dataId, String groupId){
+    /**
+     * 初始化原始数据
+     */
+    public final void initConfig(String dataId, String groupId){
         try {
             config = CONFIG_SERVICE.getConfig(dataId, groupId, 10000);
-
+            // 模版方法模式 子类实现
             this.initAfter(config);
         }catch (NacosException e){
             log.error("nacos获取配置异常", e);
@@ -75,6 +83,7 @@ public abstract class NacosConfigJsonEnumParse implements EnumParse<String, Stri
 
     /**
      * 获取到config的后置操作 钩子函数 丢给子类实现
+     * (模版方法模式)
      */
     protected abstract void initAfter(String config);
 

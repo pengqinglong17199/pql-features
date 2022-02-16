@@ -8,7 +8,7 @@ import kfang.agent.feature.saas.parse.AgentParse;
  * @author pengqinglong
  * @since 2022/2/16
  */
-public interface EnumParse<T, V> extends AgentParse<T, V> {
+public interface EnumParse extends AgentParse<String, String> {
 
 
 }
