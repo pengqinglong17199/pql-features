@@ -21,4 +21,5 @@ public class EnglishTimeParse extends TimeParse {
         entity.setSecondUnit("s");
         return entity;
     }
+
 }

@@ -21,4 +21,5 @@ public class ChineseTimeParse extends TimeParse {
         entity.setSecondUnit("秒");
         return entity;
     }
+
 }

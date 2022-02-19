@@ -19,6 +19,8 @@ public abstract class TimeParse implements AgentParse<String, Long> {
 
     /**
      * 初始化parse的规则
+     *
+     * @return 时间解析实体
      */
     protected abstract TimeParseEntity initParseUnit();
 
@@ -37,13 +39,13 @@ public abstract class TimeParse implements AgentParse<String, Long> {
     /**
      * 格式是否符合要求
      */
-    protected void handle(String time, TimeParseEntity entity){
-        if(Objects.equals(LimitTime.TO_DAY, time)){
+    protected void handle(String time, TimeParseEntity entity) {
+        if (Objects.equals(LimitTime.TO_DAY, time)) {
             entity.setToDay(true);
             return;
         }
 
-        if(Objects.equals(LimitTime.TO_DAY_NOW, time)){
+        if (Objects.equals(LimitTime.TO_DAY_NOW, time)) {
             entity.setDay(1);
             return;
         }
@@ -60,14 +62,14 @@ public abstract class TimeParse implements AgentParse<String, Long> {
 
         snapShoot = this.formatMinute(snapShoot, entity);
 
-        snapShoot = this.formatSecond(snapShoot, entity);
+        this.formatSecond(snapShoot, entity);
     }
 
     /**
      * 计算结果
      */
-    protected Long calculate(TimeParseEntity entity){
-        if(entity.isToDay()){
+    protected Long calculate(TimeParseEntity entity) {
+        if (entity.isToDay()) {
             return (long) CommonDateUtil.getTodayLeftSeconds();
         }
         Date now = new Date();
@@ -81,20 +83,19 @@ public abstract class TimeParse implements AgentParse<String, Long> {
         return DateUtil.secondDifference(now, date);
     }
 
-    private String formatSecond(String time, TimeParseEntity entity) {
+    private void formatSecond(String time, TimeParseEntity entity) {
         int i = time.indexOf(entity.getSecondUnit());
-        if(i == -1){
+        if (i == -1) {
             entity.setSecond(0);
-            return time;
+            return;
         }
         String[] split = time.split(entity.getSecondUnit());
         entity.setSecond(Integer.parseInt(split[0]));
-        return split[1];
     }
 
     private String formatMinute(String time, TimeParseEntity entity) {
         int i = time.indexOf(entity.getMinuteUnit());
-        if(i == -1){
+        if (i == -1) {
             entity.setMinute(0);
             return time;
         }
@@ -105,7 +106,7 @@ public abstract class TimeParse implements AgentParse<String, Long> {
 
     private String formatHour(String time, TimeParseEntity entity) {
         int i = time.indexOf(entity.getHourUnit());
-        if(i == -1){
+        if (i == -1) {
             entity.setHour(0);
             return time;
         }
@@ -116,7 +117,7 @@ public abstract class TimeParse implements AgentParse<String, Long> {
 
     private String formatDay(String time, TimeParseEntity entity) {
         int i = time.indexOf(entity.getDayUnit());
-        if(i == -1){
+        if (i == -1) {
             entity.setDay(0);
             return time;
         }
@@ -127,7 +128,7 @@ public abstract class TimeParse implements AgentParse<String, Long> {
 
     private String formatMonth(String time, TimeParseEntity entity) {
         int i = time.indexOf(entity.getMonthUnit());
-        if(i == -1){
+        if (i == -1) {
             entity.setMonth(0);
             return time;
         }
@@ -138,7 +139,7 @@ public abstract class TimeParse implements AgentParse<String, Long> {
 
     private String formatYear(String time, TimeParseEntity entity) {
         int i = time.indexOf(entity.getYearUnit());
-        if(i == -1){
+        if (i == -1) {
             entity.setYear(0);
             return time;
         }
