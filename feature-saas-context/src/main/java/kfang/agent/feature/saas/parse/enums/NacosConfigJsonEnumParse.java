@@ -39,7 +39,6 @@ public abstract class NacosConfigJsonEnumParse implements EnumParse {
             properties.setProperty(PropertyKeyConst.SERVER_ADDR, environment.getProperty("spring.cloud.nacos.config.server-addr"));
             properties.setProperty(PropertyKeyConst.NAMESPACE, environment.getProperty("spring.cloud.nacos.config.namespace"));
             CONFIG_SERVICE = NacosFactory.createConfigService(properties);
-
         } catch (NacosException e) {
             e.printStackTrace();
         }
