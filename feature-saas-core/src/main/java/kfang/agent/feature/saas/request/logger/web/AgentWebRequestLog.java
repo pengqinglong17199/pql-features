@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 import java.lang.annotation.*;
 
 /**
- * 盘客请求日志参数处理
+ * 盘客web端请求日志参数处理
  *
  * @author pengqinglong
  * @since 2022-01-10

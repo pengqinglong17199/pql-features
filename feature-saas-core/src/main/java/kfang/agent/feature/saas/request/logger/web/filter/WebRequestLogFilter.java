@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 
 /**
  * WebRequestLogFilter
+ * web端请求日志过滤器
  *
  * @author hyuga
  * @since 2021/3/11

@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
 /**
- * 盘客feign核心类
+ * 盘客web端请求日志核心类
  *
  * @author pengqinglong
  * @since 2021/12/29
