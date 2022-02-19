@@ -2,6 +2,7 @@ package kfang.agent.feature.saas.diff.core;
 
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
+import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.diff.entity.OperationLogBase;
 import kfang.agent.feature.saas.diff.entity.OperationLogDefinition;
@@ -191,8 +192,8 @@ public class OperationDefaultHandle extends OperationHandle {
                 2.如果新集合中的对象有id 并且能匹配上旧集合中的对象id     视为修改信息
                 3.如果旧集合中的对象有id 但是在新集合中找不到相同id的对象  视为修改删除
              */
-            List<OperationLogBase> nowList = (List) field.get(operationLogEntity.getNowEntity());
-            List<OperationLogBase> historyList = (List) field.get(operationLogEntity.getHistoryEntity());
+            List<OperationLogBase> nowList = ObjectUtil.cast(field.get(operationLogEntity.getNowEntity()));
+            List<OperationLogBase> historyList = ObjectUtil.cast(field.get(operationLogEntity.getHistoryEntity()));
 
             List<OperationLogEntity> logEntityList = ListUtil.newArrayList();
 
@@ -221,7 +222,7 @@ public class OperationDefaultHandle extends OperationHandle {
 
             // 寻找符合条件3的
             ListUtil.optimize(historyList).forEach(historyBase -> {
-                boolean isDelete = ListUtil.optimize(nowList).stream().allMatch(nowBase -> !Objects.equals(historyBase.getId(), nowBase.getId()));
+                boolean isDelete = ListUtil.optimize(nowList).stream().noneMatch(nowBase -> Objects.equals(historyBase.getId(), nowBase.getId()));
                 if (isDelete) {
                     OperationLogEntity logEntity = new OperationLogEntity(historyBase.getClass());
                     logEntity.setHistoryEntity(historyBase);
@@ -263,7 +264,6 @@ public class OperationDefaultHandle extends OperationHandle {
         // 判断是否需要合并
         boolean isMerge = definition.isMerge();
         if (isMerge) {
-
             // 获取合并字段 并用mergeIndex排序
             int mergeSum = definition.getMergeSum();
             List<OperationLogDefinition> mergeList = wrapper.getMergeList().stream()
@@ -280,9 +280,6 @@ public class OperationDefaultHandle extends OperationHandle {
             StringBuilder nowBuilder = new StringBuilder();
             StringBuilder historyBuilder = new StringBuilder();
             for (OperationLogDefinition merge : mergeList) {
-
-
-
                 // 获取字段值
                 Field field = merge.getField();
                 Object nowValue = field.get(operationLogEntity.getNowEntity());
@@ -352,7 +349,8 @@ public class OperationDefaultHandle extends OperationHandle {
             String separator = definition.getSeparator();
 
             // 处理新值
-            List<Object> nowList = ListUtil.optimize((List<Object>) nowValue).stream().sorted().collect(Collectors.toList());
+            List<Object> nowValueList = ObjectUtil.cast(nowValue);
+            List<Object> nowList = ListUtil.optimize(nowValueList).stream().sorted().collect(Collectors.toList());
             StringBuilder nowBuilder = new StringBuilder();
             for (Object now : nowList) {
                 now = super.handleEnum(now);
@@ -361,7 +359,8 @@ public class OperationDefaultHandle extends OperationHandle {
             }
 
             // 处理旧值
-            List<Object> historyList = ListUtil.optimize((List<Object>) historyValue).stream().sorted().collect(Collectors.toList());
+            List<Object> historyValueList = ObjectUtil.cast(historyValue);
+            List<Object> historyList = ListUtil.optimize(historyValueList).stream().sorted().collect(Collectors.toList());
 
             StringBuilder historyBuilder = new StringBuilder();
             for (Object history : historyList) {
@@ -435,6 +434,5 @@ public class OperationDefaultHandle extends OperationHandle {
 
         return builder.toString();
     }
-
 
 }

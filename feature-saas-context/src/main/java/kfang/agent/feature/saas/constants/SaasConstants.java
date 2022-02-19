@@ -8,9 +8,9 @@ package kfang.agent.feature.saas.constants;
  */
 public interface SaasConstants {
 
-    String PRO = "pro";
     String DEV = "dev";
     String PRE = "pre";
+    String PRO = "pro";
 
     String LOGIN_EXTEND_DTO = "loginExtendDto";
 
