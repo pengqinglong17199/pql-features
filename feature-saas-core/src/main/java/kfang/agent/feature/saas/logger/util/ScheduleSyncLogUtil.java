@@ -8,9 +8,11 @@ import kfang.infra.common.cache.KfangCache;
 import kfang.infra.common.cache.redis.RedisAction;
 import kfang.infra.common.spring.SpringBeanPicker;
 import lombok.Data;
+import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 定时任务异步日志工具
@@ -78,12 +80,47 @@ public class ScheduleSyncLogUtil {
             return false;
         }
         String key = SERVICE_AGENT_JMS + KEY_PREFIX + taskId;
-        agentCache.<RedisAction>doCustomAction(CacheOpeType.SAVE, redis -> {
-            return redis.opsForList().leftPush(key, logMessage);
-        });
+        agentCache.<RedisAction>doCustomAction(CacheOpeType.SAVE, redis -> redis.opsForList().leftPush(key, logMessage));
         return true;
     }
+    /**
+     * 打印异步处理任务日志
+     * 注意 taskId必须真实有效
+     */
+    public static void printSyncLog(Logger logger, String taskId) throws InterruptedException {
 
+        if (StringUtil.isEmpty(taskId)) {
+            return;
+        }
+
+        // 防止taskId无效导致的死循环
+        int count = 0;
+
+        // 循环一个接口查询是否还有日志
+        while (true){
+            List<String> logList = ScheduleSyncLogUtil.getLogList(taskId);
+
+            // 循环100次 500秒 未有日志 认为taskId无效 or 任务失效 跳出死循环 结束任务
+            if(ListUtil.isEmpty(logList) && ++count > 100){
+                logger.info("日志打印 等待超时 异常结束");
+                return;
+            }
+
+            for (String message : logList) {
+                // 有日志打印 任务还存活 count归零重新计数
+                count = 0;
+
+                // 结束 直接return
+                if(ScheduleSyncLogUtil.isEnd(taskId, message)){
+                    logger.info("任务正常结束");
+                    return;
+                }
+                logger.info(message);
+            }
+
+            TimeUnit.SECONDS.sleep(5L);
+        }
+    }
     /**
      * 获取任务日志
      */

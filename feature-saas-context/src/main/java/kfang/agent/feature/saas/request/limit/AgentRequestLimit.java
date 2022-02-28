@@ -1,6 +1,7 @@
 package kfang.agent.feature.saas.request.limit;
 
 import kfang.agent.feature.saas.parse.time.constant.LimitTime;
+import kfang.infra.api.JsonReturnCode;
 
 import java.lang.annotation.*;
 
@@ -13,7 +14,6 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Documented
-
 public @interface AgentRequestLimit {
 
     String name();
@@ -31,4 +31,9 @@ public @interface AgentRequestLimit {
      * 2. ?年?月?天?时?分?秒
      */
     String time() default LimitTime.TO_DAY;
+
+    /**
+     * 到达限制后的返回错误码
+     */
+    String returnCode();
 }
