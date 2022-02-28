@@ -4,14 +4,11 @@ import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.system.NetworkUtil;
 import cn.hyugatool.system.SystemUtil;
 import kfang.agent.feature.saas.constants.FeignConstants;
-import kfang.agent.feature.saas.constants.SaasConstants;
 import kfang.agent.feature.saas.enums.EnvironmentEnum;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
-import kfang.infra.common.spring.SpringBeanPicker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
-import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 
