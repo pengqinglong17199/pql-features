@@ -4,7 +4,6 @@ import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.system.NetworkUtil;
 import cn.hyugatool.system.SystemUtil;
 import kfang.agent.feature.saas.constants.FeignConstants;
-import kfang.agent.feature.saas.enums.EnvironmentEnum;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -13,7 +12,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -28,7 +26,6 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
     private static boolean ISOLATION;
     private static ServiceSignEnum SERVICE_SIGN;
-    private static EnvironmentEnum[] ENV;
 
     public static boolean isIsolation() {
         return ISOLATION;
@@ -36,10 +33,6 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
     public static ServiceSignEnum serviceSign() {
         return SERVICE_SIGN;
-    }
-
-    public static EnvironmentEnum[] env() {
-        return ENV;
     }
 
     @Override
@@ -52,12 +45,12 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
         ISOLATION = (boolean) defaultAttrs.get("isolation");
         SERVICE_SIGN = ServiceSignEnum.valueOf(String.valueOf(defaultAttrs.get("serviceSign")));
-        ENV = (EnvironmentEnum[]) defaultAttrs.get("env");
 
-        boolean containDevEnv = Arrays.stream(ENV).anyMatch(env -> env == EnvironmentEnum.DEV);
+        String localIpAddr = NetworkUtil.getLocalIpAddr();
+        boolean isIntranetIp = localIpAddr.startsWith("10.210.");
 
-        if (ISOLATION && containDevEnv) {
-            feignIsolation();
+        if (ISOLATION && isIntranetIp) {
+            feignIsolation(localIpAddr);
         } else {
             System.setProperty(FeignConstants.FEIGN_SUFFIX, StringUtil.EMPTY);
         }
@@ -65,9 +58,7 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
         log.info("AgentFeign init success~");
     }
 
-    private void feignIsolation() {
-        String localIpAddr = NetworkUtil.getLocalIpAddr();
-
+    private void feignIsolation(String localIpAddr) {
         // 校验本地IP地址是否允许的开发ip或测试服务器ip
         FeignConstants.ipWhetherNeedIsolation(localIpAddr);
 

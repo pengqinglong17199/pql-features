@@ -1,6 +1,5 @@
 package kfang.agent.feature.saas.feign;
 
-import kfang.agent.feature.saas.enums.EnvironmentEnum;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
 import org.springframework.context.annotation.Import;
 
@@ -27,7 +26,5 @@ public @interface AgentFeign {
      * 指定隔离的服务名标识 请求的service服务名中包含该标识才进行隔离
      */
     ServiceSignEnum serviceSign() default ServiceSignEnum.AGENT;
-
-    EnvironmentEnum[] env() default EnvironmentEnum.DEV;
 
 }
