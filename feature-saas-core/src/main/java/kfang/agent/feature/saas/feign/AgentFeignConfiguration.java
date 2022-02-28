@@ -5,16 +5,18 @@ import cn.hyugatool.system.NetworkUtil;
 import cn.hyugatool.system.SystemUtil;
 import kfang.agent.feature.saas.constants.FeignConstants;
 import kfang.agent.feature.saas.constants.SaasConstants;
+import kfang.agent.feature.saas.enums.EnvironmentEnum;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
-import kfang.infra.common.KfangInfraCommonProperties;
+import kfang.infra.common.spring.SpringBeanPicker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -29,9 +31,7 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
     private static boolean ISOLATION;
     private static ServiceSignEnum SERVICE_SIGN;
-
-    @Resource
-    private KfangInfraCommonProperties kfangInfraCommonProperties;
+    private static EnvironmentEnum[] ENV;
 
     public static boolean isIsolation() {
         return ISOLATION;
@@ -39,6 +39,10 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
     public static ServiceSignEnum serviceSign() {
         return SERVICE_SIGN;
+    }
+
+    public static EnvironmentEnum[] env() {
+        return ENV;
     }
 
     @Override
@@ -51,10 +55,11 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
         ISOLATION = (boolean) defaultAttrs.get("isolation");
         SERVICE_SIGN = ServiceSignEnum.valueOf(String.valueOf(defaultAttrs.get("serviceSign")));
+        ENV = (EnvironmentEnum[]) defaultAttrs.get("env");
 
-        boolean isDevEnv = StringUtil.equalsIgnoreCase(kfangInfraCommonProperties.getEnv().getDeploy(), SaasConstants.DEV);
+        boolean containDevEnv = Arrays.stream(ENV).anyMatch(env -> env == EnvironmentEnum.DEV);
 
-        if (ISOLATION && isDevEnv) {
+        if (ISOLATION && containDevEnv) {
             feignIsolation();
         } else {
             System.setProperty(FeignConstants.FEIGN_SUFFIX, StringUtil.EMPTY);
