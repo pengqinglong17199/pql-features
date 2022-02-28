@@ -1,6 +1,5 @@
 package kfang.agent.feature.saas.diff.core;
 
-
 import kfang.agent.feature.saas.diff.annotations.OperationLog;
 
 import java.util.Objects;
@@ -31,4 +30,5 @@ public class OperationLogUtil {
         OperationHandle operationHandle = operationLog.handle().getDeclaredConstructor().newInstance();
         return operationHandle.handle(nowEntity, history, clazz);
     }
+
 }

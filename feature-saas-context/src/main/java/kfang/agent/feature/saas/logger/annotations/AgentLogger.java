@@ -1,7 +1,5 @@
 package kfang.agent.feature.saas.logger.annotations;
 
-import kfang.agent.feature.saas.logger.LogModule;
-
 import java.lang.annotation.*;
 
 /**

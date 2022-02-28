@@ -18,6 +18,7 @@ public enum ProjectEnum {
      */
     AGENT("房客宝"),
     TUOKEBEN("拓客本"),
+    TUOFANGBAO("拓房宝"),
     ;
 
     private final String desc;

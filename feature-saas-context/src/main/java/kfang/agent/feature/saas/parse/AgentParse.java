@@ -10,6 +10,10 @@ public interface AgentParse<T, V> {
 
     /**
      * 将对象解析后返回
+     *
+     * @param t t
+     * @return v
      */
     V parse(T t);
+
 }

@@ -25,7 +25,8 @@ import java.io.IOException;
 import static kfang.agent.feature.saas.logger.util.OperatorInfoUtil.*;
 
 /**
- * ServiceRequestLogFilter
+ * AgentServiceRequestSleuthLogFilter
+ * 服务端链路日志过滤器，配合logback.xml使用
  *
  * @author hyuga
  * @since 2021/10/28

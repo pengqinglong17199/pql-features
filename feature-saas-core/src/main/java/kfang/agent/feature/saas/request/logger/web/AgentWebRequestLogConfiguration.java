@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * 盘客feign核心类
+ * 盘客web端请求日志配置类
  *
  * @author hyuga
  * @since 2022/01/07

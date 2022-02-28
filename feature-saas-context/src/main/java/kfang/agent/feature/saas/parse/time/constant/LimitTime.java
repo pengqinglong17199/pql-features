@@ -18,5 +18,4 @@ public interface LimitTime {
      */
     String TO_DAY_NOW = "toDayNow";
 
-
 }

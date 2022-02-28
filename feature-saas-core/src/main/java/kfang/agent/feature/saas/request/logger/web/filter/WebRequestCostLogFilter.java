@@ -30,7 +30,8 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
- * RequestCostLogFilter
+ * WebRequestCostLogFilter
+ * web端请求耗时日志过滤器
  *
  * @author hyuga
  * @date 2019-09-17 18:10
