@@ -180,6 +180,19 @@ public class DataIsolationInterceptor implements Interceptor{
                 return invocation.proceed();
             }
 
+            // 判断字段是否有值
+            for (Level level : sqlList) {
+                // 需要拼接sql
+                if (level.isJoinSql()) {
+                    String javaFieldName = level.getJavaFieldName();
+                    String methodName = "get" + javaFieldName.substring(0, 1).toUpperCase() + javaFieldName.substring(1);
+                    Object fieldValue = ReflectionUtil.invokeMethod(parameterObject, methodName);
+                    if(StringUtil.isEmpty(fieldValue)){
+                        throw new DataIsolationException(String.format(" 数据隔离sql 没有 [%s] 参数", level.getSqlFieldName()));
+                    }
+                }
+            }
+
             // 开始组装
             this.handleSql(mappedStatement, sqlList, boundSql);
 
