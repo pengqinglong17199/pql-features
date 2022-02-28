@@ -6,8 +6,12 @@ import cn.hyugatool.system.SystemUtil;
 import kfang.agent.feature.saas.constants.FeignConstants;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.stereotype.Component;
 
@@ -42,7 +46,9 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
             log.info("AgentFeign init fail~");
             return;
         }
-
+        DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) registry;
+        ConfigurableEnvironment environment = (ConfigurableEnvironment)beanFactory.getBean(ConfigurableApplicationContext.ENVIRONMENT_BEAN_NAME);
+        String property = environment.getProperty("spring.profiles.active");
         ISOLATION = (boolean) defaultAttrs.get("isolation");
         SERVICE_SIGN = ServiceSignEnum.valueOf(String.valueOf(defaultAttrs.get("serviceSign")));
 
