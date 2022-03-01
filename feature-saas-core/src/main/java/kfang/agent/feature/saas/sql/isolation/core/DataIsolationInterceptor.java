@@ -3,7 +3,6 @@ package kfang.agent.feature.saas.sql.isolation.core;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
 import cn.hyugatool.core.string.StringUtil;
-import kfang.agent.feature.saas.logger.LogModule;
 import kfang.agent.feature.saas.logger.util.LogUtil;
 import kfang.agent.feature.saas.sql.isolation.annotation.DataIsolationDao;
 import kfang.agent.feature.saas.sql.isolation.annotation.SkipDataIsolation;
@@ -188,8 +187,8 @@ public class DataIsolationInterceptor implements Interceptor{
                     String methodName = "get" + javaFieldName.substring(0, 1).toUpperCase() + javaFieldName.substring(1);
                     Object fieldValue = ReflectionUtil.invokeMethod(parameterObject, methodName);
                     if(StringUtil.isEmpty(fieldValue)){
-                        ReflectionUtil.setFieldValue(parameterObject, level.getJavaFieldName(), "000001");
-                        //throw new DataIsolationException(String.format(" 数据隔离sql 没有 [%s] 参数", level.getSqlFieldName()));
+                        // ReflectionUtil.setFieldValue(parameterObject, level.getJavaFieldName(), "000001");
+                        throw new DataIsolationException(String.format(" 数据隔离sql 没有 [%s] 参数", level.getSqlFieldName()));
                     }
                 }
             }
