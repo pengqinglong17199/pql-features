@@ -172,8 +172,7 @@ public class DataIsolationInterceptor implements Interceptor{
                     String methodName = "get" + javaFieldName.substring(0, 1).toUpperCase() + javaFieldName.substring(1);
                     Object fieldValue = ReflectionUtil.invokeMethod(parameterObject, methodName);
                     if(StringUtil.isEmpty(fieldValue)){
-                        ReflectionUtil.setFieldValue(parameterObject, level.getJavaFieldName(), "000001");
-                        // throw new DataIsolationException(String.format(" 数据隔离sql 没有 [%s] 参数", level.getSqlFieldName()));
+                        throw new DataIsolationException(String.format(" 数据隔离sql 没有 [%s] 参数", level.getSqlFieldName()));
                     }
                 }
             }
