@@ -27,6 +27,9 @@ public abstract class NacosConfigJsonEnumParse implements EnumParse {
      */
     private static ConfigService CONFIG_SERVICE;
 
+    private static final String SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR = "spring.cloud.nacos.config.server-addr";
+    private static final String SPRING_CLOUD_NACOS_CONFIG_NAMESPACE = "spring.cloud.nacos.config.namespace";
+
     static {
         /*
          * 类第一次被加载进jvm时触发
@@ -36,8 +39,8 @@ public abstract class NacosConfigJsonEnumParse implements EnumParse {
             AbstractApplicationContext applicationContext = SpringBeanPicker.getApplicationContext();
             ConfigurableEnvironment environment = applicationContext.getEnvironment();
             Properties properties = new Properties();
-            properties.setProperty(PropertyKeyConst.SERVER_ADDR, environment.getProperty("spring.cloud.nacos.config.server-addr"));
-            properties.setProperty(PropertyKeyConst.NAMESPACE, environment.getProperty("spring.cloud.nacos.config.namespace"));
+            properties.setProperty(PropertyKeyConst.SERVER_ADDR, environment.getProperty(SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR));
+            properties.setProperty(PropertyKeyConst.NAMESPACE, environment.getProperty(SPRING_CLOUD_NACOS_CONFIG_NAMESPACE));
             CONFIG_SERVICE = NacosFactory.createConfigService(properties);
         } catch (NacosException e) {
             e.printStackTrace();

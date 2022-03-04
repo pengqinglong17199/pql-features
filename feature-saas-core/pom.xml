@@ -14,17 +14,8 @@
         <version>2.3.2-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <java.version>11</java.version>
-        <mybatis_version>3.3.0</mybatis_version>
-    </properties>
-
     <dependencies>
-        <dependency>
-            <groupId>com.kfang.agent</groupId>
-            <artifactId>feature-saas-context</artifactId>
-            <version>2.3.2-SNAPSHOT</version>
-        </dependency>
+        <!-- kfang -->
         <dependency>
             <groupId>com.kfang</groupId>
             <artifactId>infra-web-base</artifactId>
@@ -34,14 +25,20 @@
             <artifactId>infra-service-base</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>feature-redis</artifactId>
+        </dependency>
+        <!-- saas -->
+        <dependency>
+            <groupId>com.kfang.agent</groupId>
+            <artifactId>feature-saas-context</artifactId>
+            <version>2.3.2-SNAPSHOT</version>
+        </dependency>
+        <!-- ua -->
+        <dependency>
             <groupId>nl.bitwalker</groupId>
             <artifactId>UserAgentUtils</artifactId>
             <version>1.2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.kfang</groupId>
-            <artifactId>feature-redis</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

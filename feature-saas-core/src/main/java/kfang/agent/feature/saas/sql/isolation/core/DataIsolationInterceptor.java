@@ -164,6 +164,20 @@ public class DataIsolationInterceptor implements Interceptor{
                 return invocation.proceed();
             }
 
+            // 判断字段是否有值
+            for (Level level : sqlList) {
+                // 需要拼接sql
+                if (level.isJoinSql()) {
+                    String javaFieldName = level.getJavaFieldName();
+                    String methodName = "get" + javaFieldName.substring(0, 1).toUpperCase() + javaFieldName.substring(1);
+                    Object fieldValue = ReflectionUtil.invokeMethod(parameterObject, methodName);
+                    if(StringUtil.isEmpty(fieldValue)){
+                        ReflectionUtil.setFieldValue(parameterObject, level.getJavaFieldName(), "000001");
+                        // throw new DataIsolationException(String.format(" 数据隔离sql 没有 [%s] 参数", level.getSqlFieldName()));
+                    }
+                }
+            }
+
             // update 需要检查一下 update不允许更新数据隔离的字段
             if(SqlCommandType.UPDATE == mappedStatement.getSqlCommandType()){
                 this.checkUpdateSql(sqlUpperCase, sqlList);
@@ -177,20 +191,6 @@ public class DataIsolationInterceptor implements Interceptor{
                     }
                 }
                 return invocation.proceed();
-            }
-
-            // 判断字段是否有值
-            for (Level level : sqlList) {
-                // 需要拼接sql
-                if (level.isJoinSql()) {
-                    String javaFieldName = level.getJavaFieldName();
-                    String methodName = "get" + javaFieldName.substring(0, 1).toUpperCase() + javaFieldName.substring(1);
-                    Object fieldValue = ReflectionUtil.invokeMethod(parameterObject, methodName);
-                    if(StringUtil.isEmpty(fieldValue)){
-                        // ReflectionUtil.setFieldValue(parameterObject, level.getJavaFieldName(), "000001");
-                        throw new DataIsolationException(String.format(" 数据隔离sql 没有 [%s] 参数", level.getSqlFieldName()));
-                    }
-                }
             }
 
             // 开始组装
