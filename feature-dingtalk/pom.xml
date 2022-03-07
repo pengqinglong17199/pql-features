@@ -26,6 +26,12 @@
         <dependency>
             <groupId>com.kfang</groupId>
             <artifactId>infra-common-base</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.springfox</groupId>
+                    <artifactId>springfox-swagger2</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.aliyun</groupId>
