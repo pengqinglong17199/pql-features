@@ -1,5 +1,6 @@
 package kfang.agent.feature.saas.request.limit;
 
+import kfang.agent.feature.saas.constants.SaasErrorCode;
 import kfang.agent.feature.saas.parse.time.constant.LimitTime;
 import kfang.infra.api.JsonReturnCode;
 
@@ -33,7 +34,12 @@ public @interface AgentRequestLimit {
     String time() default LimitTime.TO_DAY;
 
     /**
-     * 到达限制后的返回错误码
+     * 到达限制后的自定义返回错误码
      */
-    String returnCode();
+    String code() default SaasErrorCode.E9001;
+
+    /**
+     * 到达限制后的自定义返回错误码
+     */
+    String message() default "当前请求次数已达上限";
 }

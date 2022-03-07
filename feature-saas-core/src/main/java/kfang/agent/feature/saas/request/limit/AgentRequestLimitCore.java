@@ -64,7 +64,7 @@ public class AgentRequestLimitCore {
             Integer count = (Integer) agentCache.get(RequestCacheKey.LIMIT, String.format("%s:%s", id, name));
             long limit = requestLimit.limit();
             if (limit < count) {
-                throw new RequestLimitException("当前请求次数已达上限");
+                throw new RequestLimitException(requestLimit.message(), requestLimit.code());
             }
             agentCache.put(RequestCacheKey.LIMIT, String.format("%s:%s", id, name), count + 1, (int) ttl);
         }finally {
