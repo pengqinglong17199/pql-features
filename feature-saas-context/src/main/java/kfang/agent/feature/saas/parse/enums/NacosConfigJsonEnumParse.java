@@ -94,4 +94,28 @@ public abstract class NacosConfigJsonEnumParse implements EnumParse {
      */
     protected abstract void initAfter(String config);
 
+
+    /**
+     * 解析默认使用json的key解析出json的value
+     * @param key json的key
+     * @return value
+     */
+    @Override
+    public String parse(String key){
+        return parseKey(key);
+    }
+
+    /**
+     * 解析默认使用json的key解析出json的value
+     * @param key json的key
+     * @return value
+     */
+    public abstract String parseKey(String key);
+
+    /**
+     * 解析默认使用json的value获得出json的key
+     * @param value json的value
+     * @return key
+     */
+    public abstract String parseValue(String value);
 }
