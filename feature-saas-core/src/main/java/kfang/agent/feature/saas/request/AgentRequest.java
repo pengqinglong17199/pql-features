@@ -23,10 +23,15 @@ public @interface AgentRequest {
     /**
      * 请求参数是否填充基础信息
      */
-    boolean basicParam() default false;
+    boolean basicParam() default true;
 
     /**
      * 请求次数限制
      */
     boolean requestLimit() default false;
+
+    /**
+     * 操作系统来源 OperatorSystem枚举的name
+     */
+    String operatorSystem();
 }

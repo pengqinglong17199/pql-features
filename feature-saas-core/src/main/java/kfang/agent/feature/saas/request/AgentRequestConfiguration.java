@@ -24,6 +24,7 @@ public class AgentRequestConfiguration implements ImportBeanDefinitionRegistrar 
 
     private static boolean basicParam;
     private static boolean requestLimit;
+    private static String operatorSystem;
 
     @Override
     public void registerBeanDefinitions(AnnotationMetadata metadata, @Nonnull BeanDefinitionRegistry registry) {
@@ -45,6 +46,8 @@ public class AgentRequestConfiguration implements ImportBeanDefinitionRegistrar 
             registry.registerBeanDefinition("agentRequestLimitCore", beanDefinition);
         }
 
+        operatorSystem = (String) defaultAttrs.get("operatorSystem");
+        log.info("AgentRequest 当前操作系统来源:[{}]", operatorSystem);
         log.info("AgentRequest init success~");
     }
 
@@ -54,5 +57,9 @@ public class AgentRequestConfiguration implements ImportBeanDefinitionRegistrar 
 
     public static boolean isRequestLimit() {
         return requestLimit;
+    }
+
+    public static String getOperatorSystem(){
+        return operatorSystem;
     }
 }

@@ -8,6 +8,7 @@ import cn.hyugatool.core.instance.ReflectionUtil;
 import cn.hyugatool.core.object.MapperUtil;
 import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
+import kfang.agent.feature.saas.request.AgentRequestConfiguration;
 import kfang.infra.api.validate.extend.LoginExtendDto;
 import kfang.infra.api.validate.extend.OperateExtendForm;
 import kfang.infra.api.validate.extend.PageExtendForm;
@@ -87,14 +88,10 @@ public final class RequestBasicParamsProcessor {
             ReflectionUtil.setFieldValue(object, field, browser.toString());
             return true;
         }
-       /* if (StringUtil.contains(field, new String[]{OPERATOR_SYSTEM})) {
-            String operatorSystem = OperatorSystemEnum.getOperatorSystemEnumName(system);
-            if (StringUtil.isEmpty(system)) {
-                throw new RuntimeException("操作来源不能为空");
-            }
-            ReflectionUtil.setFieldValue(object, OPERATOR_SYSTEM, operatorSystem);
+       if (StringUtil.contains(field, new String[]{OPERATOR_SYSTEM})) {
+            ReflectionUtil.setFieldValue(object, OPERATOR_SYSTEM, AgentRequestConfiguration.getOperatorSystem());
             return true;
-        }*/
+        }
         return false;
     }
 

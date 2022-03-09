@@ -29,7 +29,9 @@ public class RequestBasicParamsInjectAspect {
     /**
      * 匹配所有的
      */
-    @Pointcut("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    @Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)" +
+            "||@annotation(org.springframework.web.bind.annotation.PostMapping)" +
+            "||@annotation(org.springframework.web.bind.annotation.RequestMapping)")
     private void pointCutMethodService() {
     }
 
