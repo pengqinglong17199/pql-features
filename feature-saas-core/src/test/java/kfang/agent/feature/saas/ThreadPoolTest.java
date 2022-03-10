@@ -2,7 +2,6 @@ package kfang.agent.feature.saas;
 
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.concurrent.HyugaThreadPoolExecutor;
-import cn.hyugatool.extra.concurrent.SleuthThreadPool;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.List;
@@ -30,14 +29,13 @@ public class ThreadPoolTest {
 
         // 修改后线程池初始化
         threadFactory = (new ThreadFactoryBuilder()).setNameFormat("new-pool-%d").build();
-        TaskFullExecutionHandler taskFullExecutionHandler = new TaskFullExecutionHandler();
+        HyugaRejectedExecutionHandler hyugaRejectedExecutionHandler = new HyugaRejectedExecutionHandler();
         workQueue = new LinkedBlockingQueue<>(20);
-        newPool = new HyugaThreadPoolExecutor(10, 20, 60L, TimeUnit.SECONDS, workQueue, threadFactory, taskFullExecutionHandler);
+        newPool = new HyugaThreadPoolExecutor(10, 20, 60L, TimeUnit.SECONDS, workQueue, threadFactory, hyugaRejectedExecutionHandler);
     }
 
     public static void main(String[] args) throws InterruptedException {
         ExecutorService pool = Executors.newCachedThreadPool();
-        pool.shutdown();
         System.out.println("第一次运行");
         List<TestCallable> list = ListUtil.newArrayList();
         list.add(() -> newPoolTest(100));
