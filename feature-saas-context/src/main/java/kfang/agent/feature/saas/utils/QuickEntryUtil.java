@@ -20,6 +20,7 @@ import javax.management.MalformedObjectNameException;
 public final class QuickEntryUtil {
 
     public static void print(String operatorSystem) throws MalformedObjectNameException {
+        operatorSystem = operatorSystem.replaceAll("_", "-").toLowerCase();
         String deploy = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getDeploy();
         if (!SaasConstants.DEV.equals(deploy)) {
             return;
