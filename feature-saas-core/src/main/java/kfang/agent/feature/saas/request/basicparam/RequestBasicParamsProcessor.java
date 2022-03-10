@@ -18,7 +18,6 @@ import nl.bitwalker.useragentutils.UserAgent;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -36,7 +35,7 @@ public final class RequestBasicParamsProcessor {
     public static final String OPERATOR_TIME = "operatorTime";
     public static final String LOGIN_EXTEND_DTO = "loginExtendDto";
 
-    public static void setBasicParams(Object object, HttpServletRequest request, LoginDto loginDto, String system, String ip) {
+    public static void setBasicParams(Object object, HttpServletRequest request, LoginDto loginDto, String ip) {
         if (ObjectUtil.isNull(object)) {
             return;
         }
@@ -48,7 +47,7 @@ public final class RequestBasicParamsProcessor {
             final Object fieldValue = ReflectionUtil.getFieldValue(object, field);
 
             String fieldName = field.getName();
-            if (basicParamsSetValue(object, request, loginDto, system, ip, fieldName)) {
+            if (basicParamsSetValue(object, request, loginDto, ip, fieldName)) {
                 continue;
             }
             Field declaredField = ReflectionUtil.getDeclaredField(object.getClass(), fieldName);
@@ -58,15 +57,15 @@ public final class RequestBasicParamsProcessor {
                 if (ObjectUtil.nonNull(fieldValue)) {
                     List<Object> fieldValueObjectList = ObjectUtil.cast(fieldValue);
                     List<Object> optimize = ListUtil.optimize(fieldValueObjectList);
-                    optimize.forEach(item -> setBasicParams(item, request, loginDto, system, ip));
+                    optimize.forEach(item -> setBasicParams(item, request, loginDto, ip));
                 }
             } else if (ClassUtil.isNormalClass(type) && !ClassUtil.isBasicDataType(type)) {
-                setBasicParams(fieldValue, request, loginDto, system, ip);
+                setBasicParams(fieldValue, request, loginDto, ip);
             }
         }
     }
 
-    private static boolean basicParamsSetValue(Object object, HttpServletRequest request, LoginDto loginDto, String system, String ip, String field) {
+    private static boolean basicParamsSetValue(Object object, HttpServletRequest request, LoginDto loginDto, String ip, String field) {
         if (object instanceof OperateExtendForm || object instanceof PageExtendForm) {
             LoginExtendDto dto = MapperUtil.copy(loginDto, LoginExtendDto.class);
             if (dto.getMenuFunctionList() == null) {
