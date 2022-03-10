@@ -80,7 +80,11 @@ public class ScheduleSyncLogUtil {
             return false;
         }
         String key = SERVICE_AGENT_JMS + KEY_PREFIX + taskId;
-        agentCache.<RedisAction>doCustomAction(CacheOpeType.SAVE, redis -> redis.opsForList().leftPush(key, logMessage));
+        agentCache.<RedisAction>doCustomAction(CacheOpeType.SAVE, redis -> {
+            Long result = redis.opsForList().leftPush(key, logMessage);
+            redis.expire(key, 500, TimeUnit.SECONDS);
+            return result;
+        });
         return true;
     }
     /**
