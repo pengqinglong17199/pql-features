@@ -1,3 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-kfang.agent.feature.saas.logger.AgentLoggerAutoConfiguration,\
-kfang.agent.feature.saas.swagger.SwaggerConfig
+kfang.agent.feature.saas.logger.AgentLoggerAutoConfiguration

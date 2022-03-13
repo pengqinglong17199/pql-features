@@ -1,6 +1,5 @@
 package kfang.agent.feature.saas.processor;
 
-import cn.hyugatool.core.jar.JarUtil;
 import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.constants.FeignConstants;
 import org.springframework.boot.SpringApplication;
@@ -18,7 +17,8 @@ public class AgentEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
-        if (JarUtil.isJarRun(AgentEnvironmentPostProcessor.class)) {
+        String feignSuffix = System.getProperty(FeignConstants.FEIGN_SUFFIX);
+        if (StringUtil.hasText(feignSuffix)) {
             return;
         }
         // 本地单元测试赋值spring.application.name后缀
