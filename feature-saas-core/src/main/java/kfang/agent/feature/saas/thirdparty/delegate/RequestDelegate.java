@@ -50,6 +50,7 @@ public interface RequestDelegate {
             }else {
                 httpRequest = new HttpPost(builder.build());
             }
+
             httpRequest.setConfig(RequestConfig.custom().setConnectionRequestTimeout(10000).setConnectTimeout(10000).setSocketTimeout(10000).build());
 
             // body跟随序列化直接进入body了 不用处理

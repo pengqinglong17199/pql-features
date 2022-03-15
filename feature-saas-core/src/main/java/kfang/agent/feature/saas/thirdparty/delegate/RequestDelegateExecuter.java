@@ -13,7 +13,6 @@ import kfang.agent.feature.saas.thirdparty.enums.SerializeMode;
  */
 public class RequestDelegateExecuter {
 
-
     /**
      * 执行
      */
@@ -33,6 +32,7 @@ public class RequestDelegateExecuter {
         if(RequestMode.GET == mode){
             return delegate.get(url, form);
         }
+        return null;
     }
 
     private static RequestDelegate createDelegate(SerializeMode serialize) {
@@ -45,5 +45,7 @@ public class RequestDelegateExecuter {
         if(SerializeMode.PARAM == serialize){
             return new ParamRequestDelegate();
         }
+
+        return null;
     }
 }

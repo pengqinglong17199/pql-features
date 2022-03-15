@@ -1,4 +1,4 @@
-package kfang.agent.feature.saas.thirdparty;
+package kfang.agent.feature.saas.thirdparty.factory;
 
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.collection.MapUtil;
@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
- * 第三方请求鉴权器仓库类
+ * 第三方请求鉴权器工厂类
  *
  * @author pengqinglong
  * @since 2022/3/15
