@@ -99,6 +99,8 @@ public interface FeignConstants {
         add(new IpIsolation("192.168.3.34", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION)); // ch
         add(new IpIsolation("10.210.31.26", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION)); // ch
         add(new IpIsolation("192.168.1.102", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION)); // zy
+        add(new IpIsolation("10.210.30.55", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION)); // zy
+        add(new IpIsolation("192.168.0.144", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION)); // cy
     }};
 
 }

@@ -25,5 +25,9 @@ public class AgentEnvironmentPostProcessor implements EnvironmentPostProcessor {
         System.setProperty(FeignConstants.FEIGN_SUFFIX, StringUtil.EMPTY);
     }
 
+    public static void main(String[] args) {
+        System.out.println(1);
+    }
+
 }
 

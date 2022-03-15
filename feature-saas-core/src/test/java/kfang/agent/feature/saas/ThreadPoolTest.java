@@ -59,8 +59,9 @@ public class ThreadPoolTest {
         list.add(() -> newPoolTest(500));
         list.add(() -> oldPoolTest(500));
         pool.invokeAll(list);
-    }
 
+        pool.shutdown();
+    }
     public static String oldPoolTest(int count) throws InterruptedException {
         long l = System.currentTimeMillis();
         List<TestCallable> list = ListUtil.newArrayList();
