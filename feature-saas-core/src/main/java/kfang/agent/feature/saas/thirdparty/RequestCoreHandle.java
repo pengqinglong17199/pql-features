@@ -22,7 +22,7 @@ public class RequestCoreHandle {
      * @param clazz 返回对象
      * @param <T>  返回泛形
      */
-    public <T> T request(ThirdpartyForm form, Class<T> clazz){
+    public static  <T> T request(ThirdpartyForm form, Class<T> clazz){
         ThirdpartyAuthentication<ThirdpartyConfig, ThirdpartyForm> authentication = ThirdpartyAuthenticationFactory.getAuthentication(form);
 
         ThirdpartyConfig config = authentication.getConfig();

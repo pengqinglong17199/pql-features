@@ -86,10 +86,10 @@ public interface RequestDelegate {
     private void packHeader(ThirdpartyForm form, HttpRequestBase httpRequest, List<Field> fieldList) {
         // 存在鉴权参数 开始封装
         for (Field field : fieldList) {
-
+            field.setAccessible(true);
             // 获取鉴权字段名
             AuthParam authParam = field.getAnnotation(AuthParam.class);
-            String key = StringUtil.hasText(authParam) ? authParam.value() : field.getName();
+            String key = StringUtil.hasText(authParam.value()) ? authParam.value() : field.getName();
             try {
 
                 // 为空校验

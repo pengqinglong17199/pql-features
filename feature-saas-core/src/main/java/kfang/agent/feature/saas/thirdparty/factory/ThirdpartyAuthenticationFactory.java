@@ -50,12 +50,8 @@ public class ThirdpartyAuthenticationFactory {
     public static ThirdpartyAuthentication<ThirdpartyConfig, ThirdpartyForm> getAuthentication(ThirdpartyForm form) {
         ThirdpartyAuthentication<ThirdpartyConfig, ThirdpartyForm> authentication = CONFIG_MAPPING.get(form.getClass());
         if (authentication == null) {
-            Type genericSuperclass = authentication.getClass().getGenericSuperclass();
-            try {
-                authentication = CONFIG_MAPPING.get(Class.forName(genericSuperclass.getTypeName()));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            Class<?> superclass = form.getClass().getSuperclass();
+            authentication = CONFIG_MAPPING.get(superclass);
         }
         return authentication;
     }

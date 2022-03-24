@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class ResultHandleParse {
 
-    private static Map<Class<? extends ThirdpartyForm>, ResultHandle<ThirdpartyForm>> HANDLE_MAPPING;
+    private static final Map<Class<? extends ThirdpartyForm>, ResultHandle<ThirdpartyForm>> HANDLE_MAPPING;
 
     static {
         HANDLE_MAPPING = MapUtil.newHashMap();

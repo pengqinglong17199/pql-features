@@ -2,6 +2,7 @@ package kfang.agent.feature.saas.thirdparty.delegate;
 
 import cn.hyugatool.json.JsonUtil;
 import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
+import kfang.agent.feature.saas.thirdparty.factory.SerializeHandle;
 import org.apache.http.Consts;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -30,7 +31,7 @@ public class JsonRequestDelegate implements RequestDelegate{
         httpPost.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
 
         // 封装请求参数
-        String json = JsonUtil.toJsonString(form);
+        String json = SerializeHandle.serialize(form);
         httpPost.setEntity(new StringEntity(json, Consts.UTF_8));
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();

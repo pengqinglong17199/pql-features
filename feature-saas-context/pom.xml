@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kfang.agent</groupId>
     <artifactId>feature-saas-context</artifactId>
-    <version>2.3.2-SNAPSHOT</version>
+    <version>2.3.2-THRIDPARTY-REQUEST-SNAPSHOT</version>
     <name>feature-saas-context</name>
     <description>SAAS组件上下文</description>
 
