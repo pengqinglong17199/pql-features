@@ -28,18 +28,16 @@ public class MapperUtil {
     /**
      * 单个对象拷贝
      *
-     * @param source 源对象
-     * @param target 目标对象
      * @param <T>    泛型
      * @param <R>    泛型
-     * @return 拷贝后的目标对象
+     * @param source 源对象
+     * @param target 目标对象
      */
-    public static <T, R> R copy(T source, R target) {
+    public static <T, R> void copy(T source, R target) {
         if (HyugaOptional.ofNullable(source).isEmpty()) {
-            return null;
+            return;
         }
         MAPPER.map(source, target);
-        return target;
     }
 
     /**
