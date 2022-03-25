@@ -9,7 +9,6 @@ import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
 import kfang.infra.common.spring.SpringBeanPicker;
 import org.springframework.context.support.AbstractApplicationContext;
 
-import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -22,10 +21,12 @@ public class ThirdpartyAuthenticationFactory {
 
     /**
      * 配置映射
+     * key : Class<? extends ThirdpartyForm>
+     * value : ThirdpartyAuthentication<ThirdpartyConfig, ThirdpartyForm>
      */
     private static final Map<Class<? extends ThirdpartyForm>, ThirdpartyAuthentication<ThirdpartyConfig, ThirdpartyForm>> CONFIG_MAPPING;
 
-    static{
+    static {
         /*
          * 初始化配置映射
          */

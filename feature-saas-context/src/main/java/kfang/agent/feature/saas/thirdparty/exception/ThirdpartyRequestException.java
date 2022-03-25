@@ -6,9 +6,10 @@ package kfang.agent.feature.saas.thirdparty.exception;
  * @author pengqinglong
  * @since 2022/3/15
  */
-public class ThirdpartyRequestException extends RuntimeException{
+public class ThirdpartyRequestException extends RuntimeException {
 
-    public ThirdpartyRequestException(String message){
+    public ThirdpartyRequestException(String message) {
         super(message);
-    };
+    }
+
 }

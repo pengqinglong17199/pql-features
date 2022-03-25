@@ -1,12 +1,10 @@
 package kfang.agent.feature.saas.thirdparty.delegate;
 
-import cn.hyugatool.json.JsonUtil;
 import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
 import kfang.agent.feature.saas.thirdparty.factory.SerializeHandle;
 import org.apache.http.Consts;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -21,14 +19,13 @@ import java.io.IOException;
  * @author pengqinglong
  * @since 2022/3/15
  */
-public class JsonRequestDelegate implements RequestDelegate{
+public class JsonRequestDelegate implements RequestDelegate {
 
     @Override
     public String post(String url, ThirdpartyForm form) {
-
         // 创建request
-        HttpPost httpPost = (HttpPost)this.buildHttpRequest(url, form);
-        httpPost.setHeader("Content-Type", ContentType.APPLICATION_JSON.toString());
+        HttpPost httpPost = (HttpPost) this.buildHttpRequest(url, form);
+        httpPost.setHeader(CONTENT_TYPE, ContentType.APPLICATION_JSON.toString());
 
         // 封装请求参数
         String json = SerializeHandle.serialize(form);
@@ -48,4 +45,5 @@ public class JsonRequestDelegate implements RequestDelegate{
     public String get(String url, ThirdpartyForm form) {
         return null;
     }
+
 }

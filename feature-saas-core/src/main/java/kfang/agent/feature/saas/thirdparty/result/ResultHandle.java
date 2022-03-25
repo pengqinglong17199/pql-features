@@ -1,16 +1,10 @@
 package kfang.agent.feature.saas.thirdparty.result;
 
-import cn.hyugatool.core.collection.MapUtil;
 import cn.hyugatool.core.object.ObjectUtil;
-import cn.hyugatool.json.JsonUtil;
 import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
-import kfang.infra.common.spring.SpringBeanPicker;
-import org.springframework.context.support.AbstractApplicationContext;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Map;
-import java.util.logging.Handler;
 
 /**
  * 结果处理器
@@ -20,6 +14,14 @@ import java.util.logging.Handler;
  */
 public interface ResultHandle<T extends ThirdpartyForm> {
 
+    /**
+     * request请求结果result转换为resultClass类型对象
+     *
+     * @param result      request请求结果字符串
+     * @param resultClass 返回对象Class
+     * @param <K>         K
+     * @return K
+     */
     <K> K handle(String result, Class<K> resultClass);
 
     /**
@@ -36,6 +38,7 @@ public interface ResultHandle<T extends ThirdpartyForm> {
         }
         return null;
     }
+
 }
 
 

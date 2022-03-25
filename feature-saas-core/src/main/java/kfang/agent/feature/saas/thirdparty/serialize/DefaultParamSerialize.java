@@ -4,7 +4,6 @@ import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.collection.MapUtil;
 import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
 import kfang.agent.feature.saas.thirdparty.exception.ThirdpartyRequestException;
-import org.apache.http.message.BasicNameValuePair;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -40,4 +39,5 @@ public class DefaultParamSerialize<T extends ThirdpartyForm> implements Thirdpar
         }
         return map;
     }
+
 }

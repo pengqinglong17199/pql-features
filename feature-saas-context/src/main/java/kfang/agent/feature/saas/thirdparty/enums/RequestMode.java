@@ -9,6 +9,6 @@ package kfang.agent.feature.saas.thirdparty.enums;
 public enum RequestMode {
     /**
      *
-     * */
-    GET, POST;
+     */
+    GET, POST
 }

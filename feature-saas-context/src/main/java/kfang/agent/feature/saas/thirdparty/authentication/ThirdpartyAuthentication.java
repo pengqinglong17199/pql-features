@@ -13,15 +13,20 @@ import java.lang.reflect.Type;
  * @author pengqinglong
  * @since 2022/3/14
  */
-public interface ThirdpartyAuthentication <T extends ThirdpartyConfig, K extends ThirdpartyForm>{
+public interface ThirdpartyAuthentication<T extends ThirdpartyConfig, K extends ThirdpartyForm> {
 
     /**
      * 获取config对象
+     *
+     * @return T
      */
     T getConfig();
 
     /**
      * 对请求form进行封装
+     *
+     * @param k the key
+     * @return K
      */
     K initForm(K k);
 

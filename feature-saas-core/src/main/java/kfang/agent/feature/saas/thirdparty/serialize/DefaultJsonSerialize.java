@@ -15,4 +15,5 @@ public class DefaultJsonSerialize<T extends ThirdpartyForm> implements Thirdpart
     public String serialize(T t) {
         return JsonUtil.toJsonString(t);
     }
+
 }

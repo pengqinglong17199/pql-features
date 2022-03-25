@@ -39,24 +39,23 @@ public class SerializeHandle {
     /**
      * 解析返回结果
      */
-    public static <T> T serialize(ThirdpartyForm form){
-
+    public static <T> T serialize(ThirdpartyForm form) {
         // 优先使用form的自定义的处理器进行处理
         ThirdpartySerialize<ThirdpartyForm, ?> handle = HANDLE_MAPPING.get(form.getClass());
 
         // form没有自定义处理器再寻找模块的自定义处理器进行处理
-        if(handle == null){
+        if (handle == null) {
             handle = HANDLE_MAPPING.get(form.getClass().getSuperclass());
         }
 
         // 模块也没有自定义处理器 则通过序列化模式寻找默认处理器
-        if(handle == null) {
+        if (handle == null) {
             RequestEntity annotation = form.getClass().getAnnotation(RequestEntity.class);
             SerializeMode serialize = annotation.serialize();
             if (SerializeMode.JSON == serialize) {
-                handle = new DefaultJsonSerialize();
+                handle = new DefaultJsonSerialize<>();
             } else {
-                handle = new DefaultParamSerialize();
+                handle = new DefaultParamSerialize<>();
             }
         }
 
@@ -64,4 +63,5 @@ public class SerializeHandle {
         Object serialize = handle.serialize(form);
         return ObjectUtil.cast(serialize);
     }
+
 }

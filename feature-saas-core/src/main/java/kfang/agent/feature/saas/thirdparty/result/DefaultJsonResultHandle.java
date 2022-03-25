@@ -15,4 +15,5 @@ public class DefaultJsonResultHandle implements ResultHandle<ThirdpartyForm> {
     public <K> K handle(String result, Class<K> resultClass) {
         return JsonUtil.toJavaObject(result, resultClass);
     }
+
 }

@@ -10,5 +10,5 @@ public enum SerializeMode {
     /**
      *
      */
-    JSON, PARAM;
+    JSON, PARAM
 }

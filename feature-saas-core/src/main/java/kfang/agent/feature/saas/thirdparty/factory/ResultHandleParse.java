@@ -36,22 +36,22 @@ public class ResultHandleParse {
     /**
      * 解析返回结果
      */
-    public static <T> T parse(String result, ThirdpartyForm form, Class<T> clazz){
-
+    public static <T> T parse(String result, ThirdpartyForm form, Class<T> clazz) {
         // 优先使用form的自定义的处理器进行处理
         ResultHandle<ThirdpartyForm> handle = HANDLE_MAPPING.get(form.getClass());
 
         // form没有自定义处理器再寻找模块的自定义处理器进行处理
-        if(handle == null){
+        if (handle == null) {
             handle = HANDLE_MAPPING.get(form.getClass().getSuperclass());
         }
 
         // 模块也没有自定义处理器 则使用默认的json处理器
-        if(handle == null){
+        if (handle == null) {
             handle = new DefaultJsonResultHandle();
         }
 
         // 处理返回结果
         return handle.handle(result, clazz);
     }
+
 }

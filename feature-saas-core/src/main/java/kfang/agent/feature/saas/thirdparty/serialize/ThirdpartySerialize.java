@@ -5,7 +5,6 @@ import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 /**
  * 第三方序列化器
@@ -17,6 +16,9 @@ public interface ThirdpartySerialize<T extends ThirdpartyForm, K> {
 
     /**
      * 序列化参数
+     *
+     * @param t the t
+     * @return the K
      */
     K serialize(T t);
 
@@ -34,4 +36,5 @@ public interface ThirdpartySerialize<T extends ThirdpartyForm, K> {
         }
         return null;
     }
+
 }

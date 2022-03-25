@@ -1,7 +1,6 @@
 package kfang.agent.feature.saas.thirdparty.delegate;
 
 import cn.hyugatool.core.collection.ListUtil;
-import cn.hyugatool.core.collection.MapUtil;
 import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.thirdparty.annotations.AuthParam;
 import kfang.agent.feature.saas.thirdparty.annotations.RequestEntity;
@@ -9,8 +8,6 @@ import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
 import kfang.agent.feature.saas.thirdparty.enums.AuthenticationMode;
 import kfang.agent.feature.saas.thirdparty.enums.RequestMode;
 import kfang.agent.feature.saas.thirdparty.exception.ThirdpartyRequestException;
-import kfang.infra.web.common.util.HttpClientUtil;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -18,36 +15,56 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
 
 import java.lang.reflect.Field;
-import java.net.URISyntaxException;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
  * 请求委托器
  *
  * @author pengqinglong
- * @since 2022/3/15
+ * @since 2022 /3/15
  */
 public interface RequestDelegate {
 
+    String CONTENT_TYPE = "Content-Type";
+
+    /**
+     * Post string.
+     *
+     * @param url  the url
+     * @param form the form
+     * @return the string
+     */
     String post(String url, ThirdpartyForm form);
 
+    /**
+     * Get string.
+     *
+     * @param url  the url
+     * @param form the form
+     * @return the string
+     */
     String get(String url, ThirdpartyForm form);
 
-    default HttpRequestBase buildHttpRequest(String url, ThirdpartyForm form){
+    /**
+     * Build http request http request base.
+     *
+     * @param url  the url
+     * @param form the form
+     * @return the http request base
+     */
+    default HttpRequestBase buildHttpRequest(String url, ThirdpartyForm form) {
 
         Class<? extends ThirdpartyForm> clazz = form.getClass();
         RequestEntity annotation = clazz.getAnnotation(RequestEntity.class);
 
         try {
             URIBuilder builder = new URIBuilder(url);
-            HttpRequestBase httpRequest = null;
-            if(annotation.mode() == RequestMode.GET){
+            HttpRequestBase httpRequest;
+            if (annotation.mode() == RequestMode.GET) {
                 httpRequest = new HttpGet(builder.build());
-            }else {
+            } else {
                 httpRequest = new HttpPost(builder.build());
             }
 
@@ -77,12 +94,19 @@ public interface RequestDelegate {
             this.packHeader(form, httpRequest, fieldList);
 
             return httpRequest;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new ThirdpartyRequestException(e.fillInStackTrace().toString() + Arrays.toString(e.getStackTrace()));
         }
     }
 
+    /**
+     * page header info.
+     *
+     * @param form        the form
+     * @param httpRequest the httpRequest
+     * @param fieldList   the fieldList
+     */
     private void packHeader(ThirdpartyForm form, HttpRequestBase httpRequest, List<Field> fieldList) {
         // 存在鉴权参数 开始封装
         for (Field field : fieldList) {
@@ -104,4 +128,5 @@ public interface RequestDelegate {
             }
         }
     }
+
 }
