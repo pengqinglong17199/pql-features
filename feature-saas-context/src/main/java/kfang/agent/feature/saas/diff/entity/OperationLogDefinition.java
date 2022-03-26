@@ -39,6 +39,12 @@ public class OperationLogDefinition {
     private boolean isJoinModuleName;
 
     /**
+     *
+     * 对象list是否每一个元素都要拼接模块名
+     */
+    private boolean isJoinModuleNameEveryone;
+
+    /**
      * 字段名
      */
     private String fieldName;

@@ -231,14 +231,30 @@ public class OperationDefaultHandle extends OperationHandle {
             });
 
 
+
+            // 获取当前listClass中存在有模块名拼接的字段 且保存快照
+            List<OperationLogDefinition> joinModuleNameList = classDefinitionList.stream().filter(OperationLogDefinition::isJoinModuleName).collect(Collectors.toList());
+            Map<OperationLogDefinition, Boolean> snapsHoot = ListUtil.optimize(joinModuleNameList).stream().collect(Collectors.toMap(o -> o, OperationLogDefinition::isJoinModuleName));
+
             // 处理数据
             StringBuilder sb = new StringBuilder();
             for (OperationLogEntity logEntity : logEntityList) {
+
+                // 处理
                 copy.setNowEntity(logEntity.getNowEntity());
                 copy.setHistoryEntity(logEntity.getHistoryEntity());
                 String content = this.joinContent(copy, classDefinitionList, logEntity);
                 sb.append(content);
+
+                // 处理完成后使用isJoinModuleNameEveryone更新isJoinModuleName字段
+                joinModuleNameList.forEach(o -> o.setJoinModuleName(o.isJoinModuleNameEveryone()));
             }
+
+            // 完成后将快照更新回定义中
+            for (OperationLogDefinition o : snapsHoot.keySet()) {
+                o.setJoinModuleName(snapsHoot.get(o));
+            }
+
             // 判断最终结果是否为空 不为空 拼接字段名
             String content = sb.toString();
             if (StringUtil.hasText(content)) {

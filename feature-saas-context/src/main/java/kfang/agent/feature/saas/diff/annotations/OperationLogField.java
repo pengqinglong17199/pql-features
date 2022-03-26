@@ -42,6 +42,12 @@ public @interface OperationLogField {
     boolean isJoinModuleName() default false;
 
     /**
+     *
+     * {@link #moduleName}对象list是否每一个元素都要拼接模块名
+     */
+    boolean isJoinModuleNameEveryone() default true;
+
+    /**
      * 字段名
      **/
     String fieldName();

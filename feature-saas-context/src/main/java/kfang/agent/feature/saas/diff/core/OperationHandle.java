@@ -303,6 +303,10 @@ public abstract class OperationHandle {
         boolean joinModuleName = operationLogField.isJoinModuleName();
         definition.setJoinModuleName(joinModuleName);
 
+        // 对象list是否每一个元素都要拼接模块名
+        boolean joinModuleNameEveryone = operationLogField.isJoinModuleNameEveryone();
+        definition.setJoinModuleNameEveryone(joinModuleNameEveryone);
+
         // 是否跳过
         boolean skip = operationLogField.skip();
         definition.setSkip(skip);
