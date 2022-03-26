@@ -38,7 +38,7 @@ public class OperationDefaultHandle extends OperationHandle {
      * @param definitionList 类字段定义集合
      * @param entity         数据对象 优先使用此数据对象获取数据 如果此对象为空 则从wrapper对象中的fieldEntityMapping中拿取数据
      */
-    private String joinContent(OperationLogDefinitionWrapper wrapper, List<OperationLogDefinition> definitionList, OperationLogEntity entity) throws Exception {
+    protected String joinContent(OperationLogDefinitionWrapper wrapper, List<OperationLogDefinition> definitionList, OperationLogEntity entity) throws Exception {
         StringBuilder content = new StringBuilder();
 
         // 已经处理过的合并definition
@@ -123,7 +123,7 @@ public class OperationDefaultHandle extends OperationHandle {
         return content.toString();
     }
 
-    private String handleJoinOtherFiled(List<OperationLogDefinition> definitionList, OperationLogDefinition definition, OperationLogEntity tempEntity, String fieldContent) {
+    protected String handleJoinOtherFiled(List<OperationLogDefinition> definitionList, OperationLogDefinition definition, OperationLogEntity tempEntity, String fieldContent) {
         if (definition.isJoinOtherFiled()) {
             List<OperationLogDefinition> collect = definitionList.stream()
                     .filter(otherFiled -> Objects.equals(otherFiled.getFieldRealName(), definition.getOtherFiledName()))
@@ -147,7 +147,7 @@ public class OperationDefaultHandle extends OperationHandle {
      * 处理leader
      * leader不为空 并且没有拼接上模块名 在这里重新拼接
      */
-    private OperationLogDefinition handleLeader(StringBuilder contentBuild, OperationLogDefinition leader, String content) {
+    protected OperationLogDefinition handleLeader(StringBuilder contentBuild, OperationLogDefinition leader, String content) {
         if (Objects.nonNull(leader) && StringUtil.hasText(content)
                 && !content.contains(leader.getModuleName()) && contentBuild.indexOf(leader.getModuleName()) == -1) {
             StringBuilder tempSb = new StringBuilder();
@@ -165,7 +165,7 @@ public class OperationDefaultHandle extends OperationHandle {
      * @param definition         字段定义
      * @param operationLogEntity 数据对象
      */
-    private String handleList(OperationLogDefinitionWrapper wrapper, OperationLogDefinition definition, OperationLogEntity operationLogEntity) throws Exception {
+    protected String handleList(OperationLogDefinitionWrapper wrapper, OperationLogDefinition definition, OperationLogEntity operationLogEntity) throws Exception {
         StringBuilder builder = new StringBuilder();
         Field field = definition.getField();
         // 判断字段是否是集合
@@ -273,7 +273,7 @@ public class OperationDefaultHandle extends OperationHandle {
      * @return String
      * @throws Exception Exception
      */
-    private String handleMerge(OperationLogDefinitionWrapper wrapper, OperationLogDefinition definition, List<OperationLogDefinition> mergeHandleList, OperationLogEntity operationLogEntity) throws Exception {
+    protected String handleMerge(OperationLogDefinitionWrapper wrapper, OperationLogDefinition definition, List<OperationLogDefinition> mergeHandleList, OperationLogEntity operationLogEntity) throws Exception {
         StringBuilder builder = new StringBuilder();
         // 判断是否需要合并
         boolean isMerge = definition.isMerge();
@@ -353,7 +353,7 @@ public class OperationDefaultHandle extends OperationHandle {
      * @param historyValue 历史值
      * @return String
      */
-    private String joinContent(OperationLogDefinition definition, boolean addOrEdit, Object nowValue, Object historyValue) throws Exception {
+    protected String joinContent(OperationLogDefinition definition, boolean addOrEdit, Object nowValue, Object historyValue) throws Exception {
 
         StringBuilder builder = new StringBuilder();
         // 上面过滤掉了对象集合的情况 所以这里的集合全是普通字段/枚举 直接循环处理
