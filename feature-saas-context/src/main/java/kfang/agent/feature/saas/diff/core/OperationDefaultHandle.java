@@ -13,10 +13,7 @@ import kfang.agent.feature.saas.diff.enums.OtherFiledLocationEnum;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -251,8 +248,9 @@ public class OperationDefaultHandle extends OperationHandle {
             }
 
             // 完成后将快照更新回定义中
-            for (OperationLogDefinition o : snapsHoot.keySet()) {
-                o.setJoinModuleName(snapsHoot.get(o));
+            for (Map.Entry<OperationLogDefinition, Boolean> entry : snapsHoot.entrySet()) {
+                OperationLogDefinition key = entry.getKey();
+                key.setJoinModuleName(entry.getValue());
             }
 
             // 判断最终结果是否为空 不为空 拼接字段名
