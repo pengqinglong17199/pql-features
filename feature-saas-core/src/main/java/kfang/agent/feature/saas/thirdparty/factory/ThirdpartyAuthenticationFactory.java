@@ -35,9 +35,6 @@ public class ThirdpartyAuthenticationFactory {
         String[] beanNamesForType = applicationContext.getBeanNamesForType(ThirdpartyAuthentication.class);
         for (String beanName : ListUtil.optimize(beanNamesForType)) {
             Object bean = applicationContext.getBean(beanName);
-            if (!(bean instanceof ThirdpartyAuthentication)) {
-                continue;
-            }
             ThirdpartyAuthentication<ThirdpartyConfig, ThirdpartyForm> authentication = ObjectUtil.cast(bean);
             Class<? extends ThirdpartyForm> authenticationClass = authentication.getAuthenticationClass();
 
