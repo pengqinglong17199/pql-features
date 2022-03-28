@@ -276,6 +276,11 @@ public abstract class OperationHandle {
      */
     private OperationLogDefinition packageDefinition(OperationLogFieldWrapper fieldWrapper, OperationLog operationLog, OperationLogField operationLogField) {
         OperationLogDefinition definition = new OperationLogDefinition();
+        // 获取字段所属类的class的注解 优先使用这个
+        OperationLog annotation = fieldWrapper.getField().getDeclaringClass().getAnnotation(OperationLog.class);
+        if(annotation != null){
+            operationLog = annotation;
+        }
 
         // 格式化字段名
         String[] stringFormats = operationLog.stringFormats();
