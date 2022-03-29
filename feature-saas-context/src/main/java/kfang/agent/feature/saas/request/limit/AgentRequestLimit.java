@@ -6,7 +6,7 @@ import kfang.agent.feature.saas.parse.time.constant.LimitTime;
 import java.lang.annotation.*;
 
 /**
- * 请求次数限制核心类
+ * 请求次数限制注解
  *
  * @author pengqinglong
  * @since 2022/2/15

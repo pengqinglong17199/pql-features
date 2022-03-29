@@ -29,17 +29,16 @@ import javax.annotation.Resource;
 @Component
 public class AgentRequestLimitCore {
 
-    @Pointcut("@annotation(AgentRequestLimit)")
-    private void pointCutMethodService() {
-    }
-
     BaseController baseController = new BaseController();
 
     @Resource(name = "agentCache")
     private KfangCache agentCache;
 
-    @Before("pointCutMethodService()")
-    public void before(JoinPoint joinPoint) {
+    @Pointcut("@annotation(AgentRequestLimit)")
+    private void pointCutAgentRequestLimit() { }
+
+    @Before("pointCutAgentRequestLimit()")
+    public void agentRequestLimit(JoinPoint joinPoint) {
 
         LoginDto currentPerson = baseController.getCurrentPerson();
 
@@ -47,6 +46,32 @@ public class AgentRequestLimitCore {
 
         AgentRequestLimit requestLimit = AnnotationUtil.getDeclaredAnnotation(joinPoint, AgentRequestLimit.class);
 
+        this.handle(id, requestLimit);
+    }
+
+
+    @Pointcut("@annotation(AgentRequestLimits)")
+    private void pointCutAgentRequestLimits() { }
+
+    @Before("pointCutAgentRequestLimits()")
+    public void before(JoinPoint joinPoint) {
+
+        LoginDto currentPerson = baseController.getCurrentPerson();
+
+        String id = currentPerson.getId();
+
+        AgentRequestLimits requestLimit = AnnotationUtil.getDeclaredAnnotation(joinPoint, AgentRequestLimits.class);
+
+        AgentRequestLimit[] value = requestLimit.value();
+        for (AgentRequestLimit agentRequestLimit : value) {
+            this.handle(id, agentRequestLimit);
+        }
+    }
+
+    /**
+     * 核心处理方法
+     */
+    private void handle(String id, AgentRequestLimit requestLimit) {
         try {
             // 当前计数
             String name = requestLimit.name();
@@ -67,13 +92,12 @@ public class AgentRequestLimitCore {
                 throw new RequestLimitException(requestLimit.message(), requestLimit.code());
             }
             agentCache.put(RequestCacheKey.LIMIT, String.format("%s:%s", id, name), count + 1, (int) ttl);
-        }finally {
+        } finally {
             // 清除需要清理的缓存
             String[] removes = requestLimit.removes();
             for(String removeName : removes){
                 agentCache.remove(RequestCacheKey.LIMIT, String.format("%s:%s", id, removeName));
             }
         }
-
     }
 }
