@@ -103,7 +103,7 @@ public class WebRequestCostLogFilter extends OncePerRequestFilter {
                 simpleDateFormat.format(responseTime),
                 request.getRequestURI(),
                 method,
-                "GET".equalsIgnoreCase(method) ? StringUtil.removeBlank(requestParams) : StringUtil.removeBlank(requestBody),
+                "GET".equalsIgnoreCase(method) ? StringUtil.removeAllSpace(requestParams) : StringUtil.removeAllSpace(requestBody),
                 ByteUtil.convert(responseBody.getBytes().length, ByteType.B),
                 Runtime.getRuntime().maxMemory() / 1024 / 1024,
                 Runtime.getRuntime().totalMemory() / 1024 / 1024,

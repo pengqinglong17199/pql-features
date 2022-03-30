@@ -125,7 +125,7 @@ public class WebRequestLogFilter extends OncePerRequestFilter {
             TerminalRequestSimpleModel terminalRequestSimpleModel = MapperUtil.copy(parameter, TerminalRequestSimpleModel.class);
             String requestBody = terminalRequestSimpleModel.getRequestBody();
             if (StringUtil.hasText(requestBody)) {
-                terminalRequestSimpleModel.setRequestBody(StringUtil.removeBlank(requestBody));
+                terminalRequestSimpleModel.setRequestBody(StringUtil.removeAllSpace(requestBody));
             }
 
             if (FeignConstants.isDeveloperLocalEnvironment(NetworkUtil.getLocalIpAddr())) {
