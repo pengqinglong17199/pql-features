@@ -34,6 +34,7 @@ public final class RequestBasicParamsProcessor {
     public static final String OPERATOR_SYSTEM = "operatorSystem";
     public static final String OPERATOR_TIME = "operatorTime";
     public static final String LOGIN_EXTEND_DTO = "loginExtendDto";
+    public static final String OMS_AGENT_SUPER_ADMIN = "OMS_AGENT_SUPER_ADMIN";
 
     public static void setBasicParams(Object object, HttpServletRequest request, LoginDto loginDto, String ip) {
         if (ObjectUtil.isNull(object)) {
@@ -68,6 +69,7 @@ public final class RequestBasicParamsProcessor {
     private static boolean basicParamsSetValue(Object object, HttpServletRequest request, LoginDto loginDto, String ip, String field) {
         if (object instanceof OperateExtendForm || object instanceof PageExtendForm) {
             LoginExtendDto dto = MapperUtil.copy(loginDto, LoginExtendDto.class);
+            dto.setSuperAdmin(SetUtil.optimize(loginDto.getMenuFunctionList()).contains(OMS_AGENT_SUPER_ADMIN));
             if (dto.getMenuFunctionList() == null) {
                 dto.setMenuFunctionList(SetUtil.newHashSet());
             }
