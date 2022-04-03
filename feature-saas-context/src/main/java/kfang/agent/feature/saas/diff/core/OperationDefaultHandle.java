@@ -392,6 +392,10 @@ public class OperationDefaultHandle extends OperationHandle {
             return builder.toString();
         }
 
+        // 日期处理
+        nowValue = super.handleDate(definition, nowValue);
+        historyValue = super.handleDate(definition, historyValue);
+
         // 枚举处理
         nowValue = super.handleEnum(nowValue);
         historyValue = super.handleEnum(historyValue);
