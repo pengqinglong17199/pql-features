@@ -2,6 +2,8 @@ package kfang.agent.feature.saas.diff.core;
 
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.collection.MapUtil;
+import cn.hyugatool.core.date.DateFormat;
+import cn.hyugatool.core.date.DateUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
 import cn.hyugatool.core.object.MapperUtil;
 import cn.hyugatool.core.string.SensitiveUtil;
@@ -15,6 +17,9 @@ import kfang.agent.feature.saas.diff.entity.OperationLogFieldWrapper;
 import kfang.agent.feature.saas.diff.enums.FieldTypeEnum;
 import kfang.agent.feature.saas.diff.enums.OtherFiledLocationEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -436,6 +441,26 @@ public abstract class OperationHandle {
         return value;
     }
 
+    /**
+     * date数据处理
+     *
+     * @param definition 操作日志定义
+     * @param value      value
+     * @return String
+     */
+    protected Object handleDate(OperationLogDefinition definition, Object value) {
+        if (!(value instanceof Date)) {
+            return value;
+        }
+
+        DateTimeFormat annotation = definition.getField().getAnnotation(DateTimeFormat.class);
+        if (annotation == null) {
+            return DateUtil.format(DateFormat.yyyy_MM_dd, (Date)value);
+        }
+
+
+        return DateFormatUtils.format((Date)value, annotation.pattern());
+    }
     /**
      * 根据新值旧值进行格式化
      *
