@@ -5,7 +5,7 @@
 > 
 > 1.更新`操作记录diff对比`组件
 >   支持对date字段进行格式化处理
->   默认使用YYYY-MM-DD格式化 支持使用 `@DateTuneFormat`注解自定义
+>   默认使用YYYY-MM-DD格式化 支持使用 `@DateTimeFormat`注解自定义
 
 # 2.3.2.1-SNAPSHOT
 
