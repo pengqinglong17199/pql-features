@@ -408,8 +408,18 @@ public class DataIsolationInterceptor implements Interceptor{
             if(e == Level.ALL){
                 continue;
             }
+
+            Level temp = e;
+
             // 小于等于当前隔离级别的都应该被隔离
-            if(level.ordinal() >= e.ordinal()){
+            while (level.getRank() >= temp.getRank()){
+                // 如果当前级别不是需要隔离的级别或子级 则递归拿到父再找 直到 temp的rank大于当前level 则说明e不归属于当前level的模块
+                if(level != temp && level != temp.getParent()){
+                    temp = temp.getParent();
+                    continue;
+                }
+
+                // 能进入直接代表当前级别是需要隔离的级别或子级 参与隔离
                 this.addSqlIsolationLevel(sqlUpperCase, annotation, sqlList, e);
 
                 // 是否需要拼接sql判断 如果需要拼接sql则需要实现对应的form
@@ -419,6 +429,7 @@ public class DataIsolationInterceptor implements Interceptor{
                         throw new DataIsolationException(" 参数未实现 DataIsolation 接口");
                     }
                 }
+                break;
             }
         }
 
