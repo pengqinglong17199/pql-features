@@ -411,8 +411,8 @@ public class DataIsolationInterceptor implements Interceptor{
 
             Level temp = e;
 
-            // 小于等于当前隔离级别的都应该被隔离
-            while (level.getRank() >= temp.getRank()){
+            // 大于等于当前隔离级别的都应该被隔离
+            while (level.getRank() <= temp.getRank()){
                 // 如果当前级别不是需要隔离的级别或子级 则递归拿到父再找 直到 temp的rank大于当前level 则说明e不归属于当前level的模块
                 if(level != temp && level != temp.getParent()){
                     temp = temp.getParent();
