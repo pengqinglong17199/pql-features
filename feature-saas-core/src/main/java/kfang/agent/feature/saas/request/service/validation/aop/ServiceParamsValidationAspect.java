@@ -1,5 +1,6 @@
 package kfang.agent.feature.saas.request.service.validation.aop;
 
+import cn.hyugatool.aop.aspectj.AspectAroundInject;
 import com.alibaba.fastjson.JSON;
 import kfang.infra.api.JsonCommonCodeEnum;
 import kfang.infra.api.RequestResult;
@@ -9,7 +10,6 @@ import kfang.infra.web.common.validation.HasSpringValidationContextKey;
 import kfang.infra.web.common.validation.ValidationResult;
 import kfang.infra.web.common.validation.pool.ValidationPoolBean;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
@@ -24,20 +24,22 @@ import java.util.Map;
  */
 @Aspect
 @Component
-public class ServiceParamsValidationAspect {
+public class ServiceParamsValidationAspect implements AspectAroundInject {
 
     @Resource
     protected ValidationPoolBean validationPoolBean;
 
     private final String mircoServiceReturnType = RequestResult.class.getSimpleName();
 
+    @Override
     @Pointcut("execution(* com.kfang.service..*.api..*.*(..))")
-    private void cutMethod() {
+    public void pointcut() {
+
     }
 
-    @Around("cutMethod()")
-    public Object validate(ProceedingJoinPoint joinPoint) throws Throwable {
-        return doValidate(joinPoint);
+    @Override
+    public Object around(ProceedingJoinPoint pjp) throws Throwable {
+        return doValidate(pjp);
     }
 
     private Object doValidate(ProceedingJoinPoint joinPoint) throws Throwable {

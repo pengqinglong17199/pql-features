@@ -1,5 +1,6 @@
 package kfang.agent.feature.saas.logger.core;
 
+import cn.hyugatool.aop.aspectj.AspectAroundInject;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.date.DateFormat;
 import cn.hyugatool.core.date.DateUtil;
@@ -13,7 +14,6 @@ import kfang.agent.feature.saas.logger.annotations.AgentLogger;
 import kfang.agent.feature.saas.logger.util.LogUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 import static kfang.agent.feature.saas.constants.SaasConstants.LOGIN_EXTEND_DTO;
 
 /**
- * Agent门面层请求响应日志切面
+ * Agent请求响应日志切面
  *
  * @author pengqinglong
  * Create on 2021-04-10
@@ -36,19 +36,16 @@ import static kfang.agent.feature.saas.constants.SaasConstants.LOGIN_EXTEND_DTO;
 @Slf4j
 @Aspect
 @Component
-public class AgentLoggerAspect {
+public class AgentLoggerAspect implements AspectAroundInject {
 
-
+    @Override
     @Pointcut("@annotation(kfang.agent.feature.saas.logger.annotations.AgentLogger)")
-    private void cutMethod() {
+    public void pointcut() {
 
     }
 
-    /**
-     * 环绕通知：灵活自由的在目标方法中切入代码
-     */
-    @Around("cutMethod()")
-    public Object before(ProceedingJoinPoint joinPoint) throws Throwable {
+    @Override
+    public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         final String snowflakeId = SnowflakeIdUtil.getSnowflakeIdStr();
 
         AgentLogger agentServiceLog = AopUtil.getDeclaredAnnotation(joinPoint, AgentLogger.class);

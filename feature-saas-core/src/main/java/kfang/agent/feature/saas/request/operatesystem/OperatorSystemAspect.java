@@ -1,5 +1,6 @@
 package kfang.agent.feature.saas.request.operatesystem;
 
+import cn.hyugatool.aop.aspectj.AspectInject;
 import cn.hyugatool.core.clazz.ClassUtil;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
@@ -8,7 +9,6 @@ import kfang.infra.api.validate.extend.OperateExtendForm;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
- * 请求参数格式化切面
+ * 操作系统来源赋值切面
  *
  * @author hyuga
  * @since 2021/12/20
@@ -25,19 +25,18 @@ import java.util.Objects;
 @Slf4j
 @Aspect
 @Component
-public class OperatorSystemAspect {
+public class OperatorSystemAspect implements AspectInject {
 
     private static final String OPERATOR_SYSTEM = "operatorSystem";
 
+    @Override
     @Pointcut("execution(* com.kfang.web..*.controller..*.*(..))")
-    private void cutMethod() {
+    public void pointcut() {
+
     }
 
-    /**
-     * 前置通知：在目标方法执行前调用
-     */
-    @Before("cutMethod()")
-    public void begin(JoinPoint joinPoint) {
+    @Override
+    public void before(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             if (arg instanceof OperateExtendForm) {
@@ -49,6 +48,21 @@ public class OperatorSystemAspect {
                 setOperateSystemValue(arg, operatorSystem, penetration);
             }
         }
+    }
+
+    @Override
+    public void afterReturning(JoinPoint joinPoint, Object result) {
+
+    }
+
+    @Override
+    public void after(JoinPoint joinPoint) {
+
+    }
+
+    @Override
+    public void afterThrowing(Throwable exception) {
+
     }
 
     private void setOperateSystemValue(Object arg, OperatorSystem operatorSystem, boolean penetration) {

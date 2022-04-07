@@ -1,14 +1,14 @@
 package kfang.agent.feature.saas.export;
 
-import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.extra.aop.AopUtil;
-import io.swagger.annotations.ApiModelProperty;
 import kfang.infra.common.cache.KfangCache;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
-import org.springframework.beans.factory.annotation.Value;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -32,20 +32,6 @@ public class AgentExportLimitAspect {
     }
 
     /**
-     * 前置通知：在目标方法执行前调用
-     */
-    @Before("cutMethod()")
-    public void begin() {
-    }
-
-    /**
-     * 后置通知：在目标方法执行后调用，若目标方法出现异常，则不执行
-     */
-    @AfterReturning("cutMethod()")
-    public void afterReturning() {
-    }
-
-    /**
      * 后置/最终通知：无论目标方法在执行过程中出现异常都会在它之后调用
      */
     @After("cutMethod()")
@@ -62,17 +48,8 @@ public class AgentExportLimitAspect {
         }
     }
 
-    /**
-     * 异常通知：目标方法抛出异常时执行
-     */
-    @AfterThrowing("cutMethod()")
-    public void afterThrowing() {
-    }
-
     @Around("cutMethod()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-
-
         AgentExportLimit annotation = AopUtil.getDeclaredAnnotation(joinPoint, AgentExportLimit.class);
         String key = annotation.key();
 
@@ -92,6 +69,5 @@ public class AgentExportLimitAspect {
         // 执行源方法
         return joinPoint.proceed();
     }
-
 
 }

@@ -1,5 +1,6 @@
 package kfang.agent.feature.saas.hidden.aspect;
 
+import cn.hyugatool.aop.aspectj.AspectInject;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
 import cn.hyugatool.core.object.ObjectUtil;
@@ -8,7 +9,7 @@ import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.hidden.anntations.HiddenFieldSensitiveInfo;
 import kfang.infra.common.model.Pagination;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
@@ -29,18 +30,24 @@ import java.util.stream.Collectors;
 @Slf4j
 @Aspect
 @Component
-public class HiddenResultAspect {
+public class HiddenResultAspect implements AspectInject {
 
+    @Override
     @Pointcut("@annotation(kfang.agent.feature.saas.hidden.anntations.HiddenResultSensitiveInfo)")
-    private void cutMethod() {
+    public void pointcut() {
 
     }
 
     private final List<Class<?>> BASE_TYPES
             = List.of(Date.class, Byte.class, Short.class, Integer.class, String.class, Long.class, Float.class, Double.class, Boolean.class, BigDecimal.class);
 
-    @AfterReturning(value = "cutMethod()", returning = "result")
-    public void afterReturning(Object result) throws Throwable {
+    @Override
+    public void before(JoinPoint joinPoint) {
+
+    }
+
+    @Override
+    public void afterReturning(JoinPoint joinPoint, Object result) throws Throwable {
         if (ObjectUtil.isNull(result)) {
             return;
         }
@@ -59,6 +66,16 @@ public class HiddenResultAspect {
 
         // 处理数据隐藏
         this.handleHidden(result, clazz);
+    }
+
+    @Override
+    public void after(JoinPoint joinPoint) {
+
+    }
+
+    @Override
+    public void afterThrowing(Throwable exception) {
+
     }
 
     /**
@@ -143,6 +160,7 @@ public class HiddenResultAspect {
         // 没有替换字符使用掩码
         return SensitiveUtil.encodeText(val, annotation.head(), annotation.tail(), annotation.mask(), annotation.maskSize());
     }
+
 }
 
 

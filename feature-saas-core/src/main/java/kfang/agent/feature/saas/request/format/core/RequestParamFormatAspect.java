@@ -1,5 +1,6 @@
 package kfang.agent.feature.saas.request.format.core;
 
+import cn.hyugatool.aop.aspectj.AspectInject;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
 import kfang.agent.feature.saas.request.format.anntations.StringFormat;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
@@ -27,32 +27,29 @@ import java.util.stream.Collectors;
 @Slf4j
 @Aspect
 @Component
-public class RequestParamFormatAspect {
-
-    @Pointcut("execution(* com.kfang.web..*.controller..*.*(..))")
-    private void cutMethod() {
-    }
+public class RequestParamFormatAspect implements AspectInject {
 
     /**
      * 看房的包头 用于排除非看房的类
      */
     public static final String KFANG_PACKAGE_NAME = "kfang";
-
     /**
      * 基础类的包名 找父类时跳过该包下的类 优化速度
      */
     private static final String BASIC_PACKAGE_NAME = "kfang.infra.api.validate";
-
     /**
      * 注解包名 用于兼容后续的注解处理
      */
     private static final String ANNOTATION_PACKAGE_NAME = "kfang.agent.feature.saas.request.format.anntations";
 
-    /**
-     * 前置通知：在目标方法执行前调用
-     */
-    @Before("cutMethod()")
-    public void begin(JoinPoint joinPoint) throws Throwable {
+    @Override
+    @Pointcut("execution(* com.kfang.web..*.controller..*.*(..))")
+    public void pointcut() {
+
+    }
+
+    @Override
+    public void before(JoinPoint joinPoint) throws Throwable {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
             Class<?> aClass = arg.getClass();
@@ -63,6 +60,21 @@ public class RequestParamFormatAspect {
             // 循环所有字段 找对应的策略处理自己
             this.handleFieldList(arg, fieldList);
         }
+    }
+
+    @Override
+    public void afterReturning(JoinPoint joinPoint, Object result) {
+
+    }
+
+    @Override
+    public void after(JoinPoint joinPoint) {
+
+    }
+
+    @Override
+    public void afterThrowing(Throwable exception) {
+
     }
 
     /**
