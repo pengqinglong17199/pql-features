@@ -1,12 +1,12 @@
 package kfang.agent.feature.saas.export;
 
+import cn.hyugatool.aop.aspectj.AspectAroundInject;
+import cn.hyugatool.aop.aspectj.AspectInject;
 import cn.hyugatool.extra.aop.AopUtil;
 import kfang.infra.common.cache.KfangCache;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
@@ -22,19 +22,28 @@ import javax.annotation.Resource;
 @Slf4j
 @Aspect
 @Component
-public class AgentExportLimitAspect {
+public class AgentExportLimitAspect implements AspectInject, AspectAroundInject {
 
     @Resource(name = "agentCache")
     private KfangCache agentCache;
 
+    @Override
     @Pointcut("@annotation(AgentExportLimit)")
-    private void cutMethod() {
+    public void pointcut() {
+
     }
 
-    /**
-     * 后置/最终通知：无论目标方法在执行过程中出现异常都会在它之后调用
-     */
-    @After("cutMethod()")
+    @Override
+    public void before(JoinPoint joinPoint) {
+
+    }
+
+    @Override
+    public void afterReturning(JoinPoint joinPoint, Object result) {
+
+    }
+
+    @Override
     public void after(JoinPoint joinPoint) throws Throwable {
         AgentExportLimit annotation = AopUtil.getDeclaredAnnotation(joinPoint, AgentExportLimit.class);
         String key = annotation.key();
@@ -48,7 +57,12 @@ public class AgentExportLimitAspect {
         }
     }
 
-    @Around("cutMethod()")
+    @Override
+    public void afterThrowing(Throwable exception) {
+
+    }
+
+    @Override
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         AgentExportLimit annotation = AopUtil.getDeclaredAnnotation(joinPoint, AgentExportLimit.class);
         String key = annotation.key();
@@ -65,7 +79,6 @@ public class AgentExportLimitAspect {
         } else {
             agentCache.incr(ExportCacheKey.LIMIT, key);
         }
-
         // 执行源方法
         return joinPoint.proceed();
     }
