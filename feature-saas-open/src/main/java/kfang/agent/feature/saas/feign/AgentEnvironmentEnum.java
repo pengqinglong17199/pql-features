@@ -25,6 +25,14 @@ public enum AgentEnvironmentEnum {
      * 开发个人环境
      */
     AGENT_DEV_PQL("pengqinglong-deiMac.local"),
+    AGENT_DEV_HZY_MAC("MacBook-Pro.local"),
+    AGENT_DEV_HZY_COMPANY("hyuga-iMac.local"),
+    AGENT_DEV_FJK("fjk"),
+    AGENT_DEV_ZY("zy"),
+    AGENT_DEV_LW("lw"),
+    AGENT_DEV_FW("fw"),
+    AGENT_DEV_ZCL("zcl"),
+    AGENT_DEV_CH("pkchenhao"),
     ;
 
     private final String suffix;
