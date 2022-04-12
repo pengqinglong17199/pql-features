@@ -53,9 +53,6 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
 
             ReflectionUtils.doWithLocalFields(targetClass, field -> {
                if (field.isAnnotationPresent(Resource.class)) {
-                    if (Modifier.isStatic(field.getModifiers())) {
-                        throw new IllegalStateException("@Resource annotation is not supported on static fields");
-                    }
                     currElements.add(new ResourceElement(field, field, null));
                 }
             });
