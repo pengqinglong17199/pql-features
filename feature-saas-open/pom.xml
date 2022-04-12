@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.kfang.agent</groupId>
+    <artifactId>feature-saas-open</artifactId>
+    <version>2.3.2.2-SNAPSHOT</version>
+    <name>feature-saas-open</name>
+    <description>SAAS组件上下文</description>
+
+    <parent>
+        <artifactId>cloud-dependencies</artifactId>
+        <groupId>com.kfang</groupId>
+        <version>2.3.2-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+        <!-- utils -->
+        <dependency>
+            <groupId>cn.hyugatool</groupId>
+            <artifactId>hyugatool-all</artifactId>
+            <version>1.0.4-SNAPSHOT</version>
+        </dependency>
+
+        <!-- kfang -->
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>infra-web-base</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kfang.agent</groupId>
+            <artifactId>feature-saas-context</artifactId>
+            <version>2.3.2.3-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>infra-common-base</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.springfox</groupId>
+                    <artifactId>springfox-swagger2</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>infra-api-base</artifactId>
+        </dependency>
+        <!-- swagger -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.8.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1</version>
+                <configuration>
+                    <attach>true</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
