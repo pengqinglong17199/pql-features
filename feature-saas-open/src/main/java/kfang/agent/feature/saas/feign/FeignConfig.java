@@ -3,7 +3,9 @@ package kfang.agent.feature.saas.feign;
 import java.lang.annotation.*;
 
 /**
- * fegin字段配置
+ * feign字段配置
+ *
+ * @author pengqinglong
  */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
@@ -11,4 +13,5 @@ import java.lang.annotation.*;
 public @interface FeignConfig {
 
     AgentEnvironmentEnum value();
+
 }

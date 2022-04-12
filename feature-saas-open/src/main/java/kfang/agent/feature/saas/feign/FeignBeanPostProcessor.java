@@ -14,13 +14,16 @@ import org.springframework.core.PriorityOrdered;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.*;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * FeignBeanPostProcessor
@@ -42,7 +45,6 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
         }
         return bean;
     }
-
 
     private InjectionMetadata buildResourceMetadata(final Class<?> clazz) {
         List<InjectionMetadata.InjectedElement> elements = new ArrayList<>();
@@ -118,4 +120,5 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
             }
         }
     }
+
 }

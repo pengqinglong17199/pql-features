@@ -14,9 +14,9 @@ import java.net.URL;
  */
 public class FeignProxy<T> extends Target.HardCodedTarget<T> {
 
-    private HardCodedTarget<T> target;
+    private final HardCodedTarget<T> target;
 
-    private String suffix;
+    private final String suffix;
 
     public FeignProxy(HardCodedTarget<T> target, String suffix) {
         super(target.type(), target.url());
@@ -25,10 +25,10 @@ public class FeignProxy<T> extends Target.HardCodedTarget<T> {
     }
 
     @Override
-    public String url(){
+    public String url() {
         String urlStr = target.url();
-        if(StringUtil.hasText(urlStr)){
-            System.out.println("------------FeignDaili-----------urlStr:"+urlStr);
+        if (StringUtil.hasText(urlStr)) {
+            System.out.println("------------FeignDail-----------urlStr:" + urlStr);
             final URL url = URLUtil.url(urlStr);
             final String uri = URLUtil.getHost(url).toString();
             final String path = url.getPath();
@@ -36,4 +36,5 @@ public class FeignProxy<T> extends Target.HardCodedTarget<T> {
         }
         return urlStr;
     }
+
 }
