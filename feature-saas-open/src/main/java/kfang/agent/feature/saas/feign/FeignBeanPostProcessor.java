@@ -107,7 +107,9 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
             if(!(hardCodedTarget instanceof Target.HardCodedTarget)){
                 return;
             }
-
+            if(hardCodedTarget instanceof FeignProxy){
+                return;
+            }
             Target.HardCodedTarget agentFeignTarget = (Target.HardCodedTarget) hardCodedTarget;
             FeignProxy feignProxy = new FeignProxy<>(agentFeignTarget, annotation.value().getSuffix());
             ReflectionUtil.setFieldValue(feignSource, "target", feignProxy);
