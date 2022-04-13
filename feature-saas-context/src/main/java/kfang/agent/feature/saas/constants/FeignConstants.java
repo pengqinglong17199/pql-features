@@ -92,6 +92,7 @@ public interface FeignConstants {
         add(new IpIsolation("10.210.13.9", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// liuwei
         add(new IpIsolation("10.210.13.231", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));//chenhao
         add(new IpIsolation("10.210.13.32", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// fanwei
+        add(new IpIsolation("10.210.13.37", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// zhangchenglong
     }};
 
 }
