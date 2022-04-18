@@ -27,8 +27,12 @@ public class FeignProxy<T> extends Target.HardCodedTarget<T> {
     @Override
     public String url() {
         String urlStr = target.url();
+
+        if (StringUtil.isEmpty(suffix)) {
+            return urlStr;
+        }
+
         if (StringUtil.hasText(urlStr)) {
-            System.out.println("------------FeignDail-----------urlStr:" + urlStr);
             final URL url = URLUtil.url(urlStr);
             final String uri = URLUtil.getHost(url).toString();
             final String path = url.getPath();

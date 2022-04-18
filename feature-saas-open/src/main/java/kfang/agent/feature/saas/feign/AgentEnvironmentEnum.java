@@ -17,9 +17,10 @@ public enum AgentEnvironmentEnum {
     /**
      * 测试环境
      */
+    AGENT_UAT_54(""),
     AGENT_UAT_60("60"),
     AGENT_UAT_63("63"),
-    AGENT_UAT_64("64"),
+    AGENT_UAT_85("85"),
 
     /**
      * 开发个人环境
