@@ -38,7 +38,7 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
     @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         try {
-            InjectionMetadata resourceMetadata = buildResourceMetadata(bean.getClass());
+            InjectionMetadata resourceMetadata = this.buildResourceMetadata(bean.getClass());
             resourceMetadata.inject(bean, beanName, null);
         } catch (Throwable throwable) {
             throwable.printStackTrace();
@@ -85,21 +85,20 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
             Field field = (Field) this.member;
 
             ReflectionUtils.makeAccessible(field);
+
+            // 获取注解
             FeignConfig annotation = field.getAnnotation(FeignConfig.class);
             if(annotation == null){
                 return;
             }
 
+            // 获取spring代理类
             Object springObj = field.get(target);
             if(springObj == null){
                 return;
             }
-            String packageName = springObj.getClass().getInterfaces()[0].getPackageName();
 
-            if (!(packageName.contains("agent") && packageName.contains("restful"))) {
-                return;
-            }
-
+            // 解刨代理类 找到最终的源hardCodedTarget
             Object springProxy = ReflectionUtil.getFieldValue(springObj, "h");
             Object advised = ReflectionUtil.getFieldValue(springProxy, "advised");
             Object targetSource = ReflectionUtil.getFieldValue(advised, "targetSource");
@@ -112,10 +111,13 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
             if(hardCodedTarget instanceof FeignProxy){
                 return;
             }
+
+            // 代理hardCodedTarget
             Target.HardCodedTarget agentFeignTarget = (Target.HardCodedTarget) hardCodedTarget;
             FeignProxy feignProxy = new FeignProxy<>(agentFeignTarget, annotation.value().getSuffix());
             ReflectionUtil.setFieldValue(feignSource, "target", feignProxy);
 
+            // 代理每个方法实现
             Map<Method, InvocationHandlerFactory.MethodHandler> dispatch = (Map)ReflectionUtil.getFieldValue(feignSource, "dispatch");
             for (InvocationHandlerFactory.MethodHandler handler : dispatch.values()) {
                 ReflectionUtil.setFieldValue(handler, "target", feignProxy);
