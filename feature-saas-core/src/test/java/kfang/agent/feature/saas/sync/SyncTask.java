@@ -35,15 +35,30 @@ public class SyncTask<T> {
         this.task = new Task<>(source);
     }
 
+    /**
+     * 初始化数据源
+     * @return 对Task内部类进行包装 禁止外部访问
+     */
     public static <T> SyncTask<T> data(List<T> source){
         return new SyncTask<>(source);
     }
 
+    /**
+     * 添加单任务
+     * @param event 事件
+     * @param task  任务
+     */
     public SyncTask<T> addTask(TaskEvent event, SingleTask<T> task){
         this.task.addTask(event, task);
         return this;
     }
 
+    /**
+     * 添加多任务
+     * @param event 事件
+     * @param task 任务
+     * @param comparable 对比器 用于对比任务获取到的result与source
+     */
     public SyncTask<T> addTask(TaskEvent event, AllTask<T> task, Comparable<T, Result> comparable){
         this.task.addTask(event, task, comparable);
         return this;
