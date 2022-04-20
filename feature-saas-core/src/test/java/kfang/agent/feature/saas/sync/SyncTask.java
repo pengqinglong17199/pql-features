@@ -25,6 +25,13 @@ public class SyncTask<T> {
     private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS,
             new LinkedBlockingDeque<>(10), new HyugaRejectedExecutionHandler());
 
+    /**
+     * 服务停止时关闭线程池
+     */
+    public static void shutdown(){
+        pool.shutdown();
+    }
+
 
     private final Task<T> task;
 
