@@ -1,5 +1,6 @@
 package kfang.agent.feature.saas.thirdparty.delegate;
 
+import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
 import kfang.agent.feature.saas.thirdparty.factory.SerializeHandle;
@@ -46,13 +47,13 @@ public class JsonRequestDelegate implements RequestDelegate {
 
     @Override
     public String get(String url, ThirdpartyForm form) {
-
-
         // 封装请求参数
-        String param = this.packGetParam(form);
+        // String param = this.packGetParam(form);
+
+        String param = ObjectUtil.toUrlParams(form);
 
         // 创建request
-        HttpGet httpGet = (HttpGet) this.buildHttpRequest(url + param, form);
+        HttpGet httpGet = (HttpGet) this.buildHttpRequest(url + "?" + param, form);
 
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -70,8 +71,8 @@ public class JsonRequestDelegate implements RequestDelegate {
         for (Field field : form.getClass().getDeclaredFields()) {
             field.setAccessible(true);
             try {
-                Object o = field.get(field);
-                if(o != null){
+                Object o = field.get(form);
+                if (o != null) {
                     sb.append(field.getName());
                     sb.append("=");
                     sb.append(o);
@@ -81,8 +82,7 @@ public class JsonRequestDelegate implements RequestDelegate {
                 e.printStackTrace();
             }
         }
-        String param = StringUtil.removeEnd(sb.toString(), "&");
-        return param;
+        return StringUtil.removeEnd(sb.toString(), "&");
     }
 
 }
