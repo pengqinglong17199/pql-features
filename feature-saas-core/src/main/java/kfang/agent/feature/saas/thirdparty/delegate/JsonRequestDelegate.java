@@ -1,9 +1,11 @@
 package kfang.agent.feature.saas.thirdparty.delegate;
 
+import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
 import kfang.agent.feature.saas.thirdparty.factory.SerializeHandle;
 import org.apache.http.Consts;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -12,6 +14,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 
 /**
  * json序列化参数进行请求
@@ -43,7 +46,43 @@ public class JsonRequestDelegate implements RequestDelegate {
 
     @Override
     public String get(String url, ThirdpartyForm form) {
+
+
+        // 封装请求参数
+        String param = this.packGetParam(form);
+
+        // 创建request
+        HttpGet httpGet = (HttpGet) this.buildHttpRequest(url + param, form);
+
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+            byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+            return new String(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return null;
+    }
+
+    private String packGetParam(ThirdpartyForm form) {
+        StringBuilder sb = new StringBuilder("?");
+        for (Field field : form.getClass().getDeclaredFields()) {
+            field.setAccessible(true);
+            try {
+                Object o = field.get(field);
+                if(o != null){
+                    sb.append(field.getName());
+                    sb.append("=");
+                    sb.append(o);
+                    sb.append("&");
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        String param = StringUtil.removeEnd(sb.toString(), "&");
+        return param;
     }
 
 }
