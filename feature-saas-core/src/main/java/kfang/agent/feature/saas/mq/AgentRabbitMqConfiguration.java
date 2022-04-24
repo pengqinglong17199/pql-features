@@ -6,7 +6,6 @@ import cn.hyugatool.system.SystemUtil;
 import kfang.agent.feature.saas.constants.FeignConstants;
 import kfang.agent.feature.saas.constants.SaasConstants;
 import kfang.infra.common.KfangInfraCommonProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -34,10 +33,19 @@ public class AgentRabbitMqConfiguration {
     public Map<String, String> rabbitConfig() {
         String deploy = kfangInfraCommonProperties.getEnv().getDeploy();
         Map<String, String> configMap = new HashMap<>(2);
-        if (SaasConstants.DEV.equals(deploy) && FeignConstants.isDeveloperLocalEnvironment(NetworkUtil.getLocalIpAddr())) {
+
+        final boolean isDevEnv = SaasConstants.DEV.equals(deploy);
+        final boolean isPreEnv = SaasConstants.PRE.equals(deploy);
+        final boolean isDeveloperLocalEnvironment = FeignConstants.isDeveloperLocalEnvironment(NetworkUtil.getLocalIpAddr());
+
+        if (isDevEnv && isDeveloperLocalEnvironment) {
             String tag = SystemUtil.getLocalHostName();
             // 用于隔离测试环境多节点MQ调用
             configMap.put(SERVER_NAME, "_" + tag);
+            configMap.put(AUTO_DELETE, String.valueOf(true));
+        } else if (isPreEnv) {
+            // 隔离预发布于生产环境节点
+            configMap.put(SERVER_NAME, "_pre");
             configMap.put(AUTO_DELETE, String.valueOf(true));
         } else {
             configMap.put(SERVER_NAME, StringUtil.EMPTY);
