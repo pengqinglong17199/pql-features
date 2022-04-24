@@ -23,14 +23,19 @@ public class SyncTask<T> {
     /**
      * 异步任务内部线程池
      */
-    private static final ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS,
-            new LinkedBlockingDeque<>(10), new HyugaRejectedExecutionHandler());
+    private static final ThreadPoolExecutor SYNC_TASK_POOL;
+
+    static {
+        HyugaRejectedExecutionHandler handler = new HyugaRejectedExecutionHandler();
+        LinkedBlockingDeque<Runnable> workQueue = new LinkedBlockingDeque<>(10);
+        SYNC_TASK_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, handler);
+    }
 
     /**
      * 服务停止时关闭线程池
      */
-    public static void shutdown(){
-        pool.shutdown();
+    public static void shutdown() {
+        SYNC_TASK_POOL.shutdown();
     }
 
 
@@ -39,35 +44,38 @@ public class SyncTask<T> {
     /**
      * 私有构造方法
      */
-    private SyncTask(List<T> source){
-        this.task = new Task<>(source);
+    private SyncTask(List<T> sources) {
+        this.task = new Task<>(sources);
     }
 
     /**
      * 初始化数据源
+     *
      * @return 对Task内部类进行包装 禁止外部访问
      */
-    public static <T> SyncTask<T> data(List<T> source){
-        return new SyncTask<>(source);
+    public static <T> SyncTask<T> data(List<T> sources) {
+        return new SyncTask<>(sources);
     }
 
     /**
      * 添加单任务
+     *
      * @param event 事件
      * @param task  任务
      */
-    public SyncTask<T> addTask(TaskEvent event, SingleTask<T> task){
+    public SyncTask<T> addTask(TaskEvent event, TaskSingle<T> task) {
         this.task.addTask(event, task);
         return this;
     }
 
     /**
      * 添加多任务
-     * @param event 事件
-     * @param task 任务
+     *
+     * @param event      事件
+     * @param task       任务
      * @param comparable 对比器 用于对比任务获取到的result与source
      */
-    public SyncTask<T> addTask(TaskEvent event, AllTask<T> task, Comparable<T, Result> comparable){
+    public SyncTask<T> addTask(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
         this.task.addTask(event, task, comparable);
         return this;
     }
@@ -78,9 +86,10 @@ public class SyncTask<T> {
 
     /**
      * 内部类 整个任务链的封装
+     *
      * @param <T>
      */
-    private static class Task<T>{
+    private static class Task<T> {
 
         /**
          * 任务结果队列
@@ -90,7 +99,7 @@ public class SyncTask<T> {
         /**
          * 源数据list
          */
-        private final List<T> source;
+        private final List<T> sources;
 
         /**
          * 任务栈
@@ -107,8 +116,8 @@ public class SyncTask<T> {
          */
         private Thread main;
 
-        public Task(List<T> list){
-            this.source = list;
+        public Task(List<T> list) {
+            this.sources = list;
             this.queue = new LinkedBlockingDeque<>();
             this.size = new AtomicInteger(0);
         }
@@ -116,17 +125,15 @@ public class SyncTask<T> {
         /**
          * 添加all任务
          */
-        public Task<T> addTask(TaskEvent event, AllTask<T> task, Comparable<T, Result> comparable){
-            this.pushTask(this.createAllTask(event, task, comparable));
-            return this;
+        public void addTask(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
+            this.pushTask(this.createTaskMultiple(event, task, comparable));
         }
 
         /**
          * 添加single任务
          */
-        public Task<T> addTask(TaskEvent event, SingleTask<T> task){
-            this.pushTask(this.createSingleTask(event, task));
-            return this;
+        public void addTask(TaskEvent event, TaskSingle<T> task) {
+            this.pushTask(this.createTaskSingle(event, task));
         }
 
         /**
@@ -138,16 +145,16 @@ public class SyncTask<T> {
         }
 
         /**
-         * 创建all任务
+         * 创建多任务Runnable
          */
-        public Runnable createAllTask(TaskEvent event, AllTask<T> task, Comparable<T, Result> comparable) {
+        public Runnable createTaskMultiple(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
             return () -> {
                 try {
-                    List<? extends Result> call = task.call(ObjectUtil.cast(source));
-                    for (Result result : call) {
-                        for (T t : source) {
-                            if (comparable.comparable(t, result)) {
-                                queue.offer(new QueueResult<>(event, t, result));
+                    List<? extends Result> results = task.call(ObjectUtil.cast(sources));
+                    for (Result result : results) {
+                        for (T source : sources) {
+                            if (comparable.comparable(source, result)) {
+                                queue.offer(new QueueResult<>(event, source, result));
                                 break;
                             }
                         }
@@ -162,13 +169,12 @@ public class SyncTask<T> {
         /**
          * 创建单个任务
          */
-        private Runnable createSingleTask(TaskEvent event, SingleTask<T> task){
+        private Runnable createTaskSingle(TaskEvent event, TaskSingle<T> task) {
             return () -> {
                 try {
-                    source.forEach(t -> {
-
-                        Result result = task.call(ObjectUtil.cast(t));
-                        queue.offer(new QueueResult<>(event, t, result));
+                    sources.forEach(source -> {
+                        Result result = task.call(ObjectUtil.cast(source));
+                        queue.offer(new QueueResult<>(event, source, result));
                     });
                 } finally {
                     // 任何情况下 必须执行任务结束
@@ -184,8 +190,7 @@ public class SyncTask<T> {
             int i = this.size.decrementAndGet();
 
             // decrementAndGet 保证了原子性 无需加锁
-            if(i == 0){
-
+            if (i == 0) {
                 // 打断线程阻塞 保证在异常情况下 main线程未结束
                 main.interrupt();
             }
@@ -193,7 +198,8 @@ public class SyncTask<T> {
 
         /**
          * 任务结果处理
-         * @param consumer  结果消费处理
+         *
+         * @param consumer 结果消费处理
          */
         public void exec(TaskConsumer<T> consumer) throws Exception {
 
@@ -237,8 +243,8 @@ public class SyncTask<T> {
 
             // 提交任务
             Node task;
-            while ((task = stack.getNext()) != null){
-                futureList.add(pool.submit(task.getTask()));
+            while ((task = stack.getNext()) != null) {
+                futureList.add(SYNC_TASK_POOL.submit(task.getTask()));
             }
 
             // 运行main任务 （run中不处理异常 当main任务异常时直接抛出）
@@ -253,7 +259,7 @@ public class SyncTask<T> {
         private void runMain(List<Future<?>> futureList, Node main) {
             try {
                 main.getTask().run();
-            }catch (Exception e){
+            } catch (Exception e) {
                 // 异常 任务全部中断掉
                 futureList.forEach(future -> future.cancel(true));
             }
@@ -263,10 +269,10 @@ public class SyncTask<T> {
          * 结果处理
          */
         private void handleResult(List<Future<?>> futureList, TaskConsumer<T> consumer) throws ExecutionException, InterruptedException {
-            try{
+            try {
 
                 // 阻塞等待任务结果
-                while (true){
+                while (true) {
                     QueueResult<T> queueResult = queue.take();
 
                     // 消费
@@ -274,13 +280,13 @@ public class SyncTask<T> {
 
                     // 单线程计算等待任务执行完成
                     int i = this.size.get();
-                    if(i == 0){
+                    if (i == 0) {
                         return;
                     }
                 }
-            }catch (InterruptedException e){
+            } catch (InterruptedException e) {
                 log.warn("异常原因-线程打断", e);
-            }finally {
+            } finally {
 
                 // 任务执行完成后判断是否有异常
                 for (Future<?> future : futureList) {
@@ -294,7 +300,7 @@ public class SyncTask<T> {
          */
         @AllArgsConstructor
         @Data
-        private class Node{
+        private static class Node {
 
             @ApiModelProperty("持有任务")
             private Runnable task;
@@ -305,11 +311,12 @@ public class SyncTask<T> {
 
         /**
          * 队列结果
+         *
          * @param <T>
          */
         @Data
         @AllArgsConstructor
-        public static class QueueResult<T>{
+        public static class QueueResult<T> {
             private TaskEvent event;
             private T source;
             private Result result;
@@ -319,22 +326,24 @@ public class SyncTask<T> {
 
     /**
      * 任务结果消费
+     *
      * @param <T>
      */
-    public interface TaskConsumer<T>{
+    public interface TaskConsumer<T> {
 
         void consumer(TaskEvent event, T source, Result result);
     }
 
     /**
      * 比较函数 用于比较两个对象是否是同一个
+     *
      * @param <T>
-     * @param <R>
      */
-    public interface Comparable<T, R>{
+    public interface Comparable<T> {
 
         boolean comparable(T source, Result result);
     }
+
 }
 
 

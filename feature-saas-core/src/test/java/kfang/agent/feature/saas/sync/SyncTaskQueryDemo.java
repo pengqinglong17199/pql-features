@@ -77,65 +77,65 @@ public class SyncTaskQueryDemo {
         return list;
     }
 
-    public static BaoBiaoResult selectHouseSumSingle(HouseCount houseCount){
+    public static ReportResult selectHouseSumSingle(HouseCount houseCount) {
 
         // 查询耗时
         sleep(200);
 
         System.out.println("查询总数 - select orgId, count(1) from t_sum where org_id = orgId and ... group by orgId");
-        return new BaoBiaoResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
+        return new ReportResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
     }
 
-    public static BaoBiaoResult selectHouseAddSingle(HouseCount houseCount){
+    public static ReportResult selectHouseAddSingle(HouseCount houseCount) {
 
         // 查询耗时 毫秒
         sleep(100);
 
         System.out.println("查询新增量 - select orgId, count(1) from t_add where org_id = orgId and ... group by orgId");
-        return new BaoBiaoResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
+        return new ReportResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
     }
 
-    public static BaoBiaoResult selectHouseDay7CountSingle(HouseCount houseCount){
+    public static ReportResult selectHouseDay7CountSingle(HouseCount houseCount) {
 
         // 查询耗时  毫秒
         sleep(300);
 
         System.out.println("查询7日新增量 - select orgId, count(1) from t_day_7 where org_id = orgId and ... group by orgId");
-        return new BaoBiaoResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
+        return new ReportResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
     }
 
-    public static List<BaoBiaoResult> selectHouseSumList(List<HouseCount> list){
+    public static List<ReportResult> selectHouseSumList(List<HouseCount> list) {
         // 查询耗时  毫秒
         sleep(5000);
 
         System.out.println("查询总数 - select orgId, count(1) from t_sum where org_id = orgId and ... group by orgId");
-        List<BaoBiaoResult> results = ListUtil.newArrayList();
+        List<ReportResult> results = ListUtil.newArrayList();
         for (int i = 0; i < list.size(); i++) {
-            results.add(new BaoBiaoResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
+            results.add(new ReportResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
         }
         return results;
     }
 
-    public static List<BaoBiaoResult> selectHouseAddList(List<HouseCount> list){
+    public static List<ReportResult> selectHouseAddList(List<HouseCount> list) {
         // 查询耗时  毫秒
         sleep(1000);
 
         System.out.println("查询新增量 - select orgId, count(1) from t_add where org_id = orgId and ... group by orgId");
-        List<BaoBiaoResult> results = ListUtil.newArrayList();
+        List<ReportResult> results = ListUtil.newArrayList();
         for (int i = 0; i < list.size(); i++) {
-            results.add(new BaoBiaoResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
+            results.add(new ReportResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
         }
         return results;
     }
 
-    public static List<BaoBiaoResult> selectHouseDay7List(List<HouseCount> list){
+    public static List<ReportResult> selectHouseDay7List(List<HouseCount> list) {
         // 查询耗时  毫秒
         sleep(3000);
 
         System.out.println("查询7日新增量 - select orgId, count(1) from t_day_7 where org_id = orgId and ... group by orgId");
-        List<BaoBiaoResult> results = ListUtil.newArrayList();
+        List<ReportResult> results = ListUtil.newArrayList();
         for (int i = 0; i < list.size(); i++) {
-            results.add(new BaoBiaoResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
+            results.add(new ReportResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
         }
         return results;
     }
@@ -196,7 +196,7 @@ class HouseCount{
 
 @Data
 @AllArgsConstructor
-class BaoBiaoResult implements Result{
+class ReportResult implements Result {
 
     private String orgId;
 

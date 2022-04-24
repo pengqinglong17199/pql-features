@@ -6,7 +6,8 @@ import java.util.List;
  * 多个source任务函数
  */
 @FunctionalInterface
-public interface AllTask<T> {
+public interface TaskMultiple<T> {
 
     List<? extends Result> call(List<T> source);
+
 }

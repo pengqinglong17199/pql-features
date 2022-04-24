@@ -3,7 +3,7 @@ package kfang.agent.feature.saas.sync;
 /**
  * 返回结果
  */
-public interface Result{
+public interface Result {
 
     /**
      * 主键
@@ -14,4 +14,5 @@ public interface Result{
      * 计算结果
      */
     Object getResult();
+
 }
