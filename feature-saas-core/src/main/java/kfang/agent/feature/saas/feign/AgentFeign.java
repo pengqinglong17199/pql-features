@@ -27,4 +27,9 @@ public @interface AgentFeign {
      */
     ServiceSignEnum serviceSign() default ServiceSignEnum.AGENT;
 
+    /**
+     * vpn等场景 测试环境允许跳过192.168.3.*
+     */
+    boolean skipSpecialIpAddressSegment() default false;
+
 }
