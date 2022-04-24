@@ -38,12 +38,14 @@ public class AgentRabbitMqConfiguration {
         final boolean isPreEnv = SaasConstants.PRE.equals(deploy);
         final boolean isDeveloperLocalEnvironment = FeignConstants.isDeveloperLocalEnvironment(NetworkUtil.getLocalIpAddr());
 
-        final boolean meetIsolationConditions = (isDevEnv && isDeveloperLocalEnvironment) || isPreEnv;
-
-        if (meetIsolationConditions) {
+        if (isDevEnv && isDeveloperLocalEnvironment) {
             String tag = SystemUtil.getLocalHostName();
-            // 用于隔离测试环境多节点MQ调用 和隔离预发布于生产环境节点
+            // 用于隔离测试环境多节点MQ调用
             configMap.put(SERVER_NAME, "_" + tag);
+            configMap.put(AUTO_DELETE, String.valueOf(true));
+        } else if (isPreEnv) {
+            // 隔离预发布于生产环境节点
+            configMap.put(SERVER_NAME, "_pre");
             configMap.put(AUTO_DELETE, String.valueOf(true));
         } else {
             configMap.put(SERVER_NAME, StringUtil.EMPTY);
