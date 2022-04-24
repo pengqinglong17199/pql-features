@@ -2,6 +2,7 @@ package kfang.agent.feature.saas.sync;
 
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.object.ObjectUtil;
+import io.swagger.annotations.ApiModelProperty;
 import kfang.agent.feature.saas.HyugaRejectedExecutionHandler;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -75,37 +76,70 @@ public class SyncTask<T> {
         this.task.exec(consumer);
     }
 
+    /**
+     * 内部类 整个任务链的封装
+     * @param <T>
+     */
     private static class Task<T>{
 
+        /**
+         * 任务结果队列
+         */
         private final BlockingDeque<QueueResult<T>> queue;
 
+        /**
+         * 源数据list
+         */
         private final List<T> source;
 
-        private final List<Runnable> taskList;
+        /**
+         * 任务栈
+         */
+        private Node stack;
 
-        private final AtomicInteger taskCount;
+        /**
+         * 任务栈的数量
+         */
+        private final AtomicInteger size;
 
+        /**
+         * 最终执行的主线程
+         */
         private Thread main;
 
         public Task(List<T> list){
             this.source = list;
             this.queue = new LinkedBlockingDeque<>();
-            this.taskList = ListUtil.newArrayList();
-            this.taskCount = new AtomicInteger(0);
+            this.size = new AtomicInteger(0);
         }
 
+        /**
+         * 添加all任务
+         */
         public Task<T> addTask(TaskEvent event, AllTask<T> task, Comparable<T, Result> comparable){
-            taskList.add(this.createAllTask(event, task, comparable));
-            this.taskCount.incrementAndGet();
+            this.pushTask(this.createAllTask(event, task, comparable));
             return this;
         }
 
+        /**
+         * 添加single任务
+         */
         public Task<T> addTask(TaskEvent event, SingleTask<T> task){
-            taskList.add(this.createSingleTask(event, task));
-            this.taskCount.incrementAndGet();
+            this.pushTask(this.createSingleTask(event, task));
             return this;
         }
 
+        /**
+         * 压栈
+         */
+        private void pushTask(Runnable runnable) {
+            stack = new Node(runnable, stack);
+            this.size.incrementAndGet();
+        }
+
+        /**
+         * 创建all任务
+         */
         public Runnable createAllTask(TaskEvent event, AllTask<T> task, Comparable<T, Result> comparable) {
             return () -> {
                 try {
@@ -113,7 +147,7 @@ public class SyncTask<T> {
                     for (Result result : call) {
                         for (T t : source) {
                             if (comparable.comparable(t, result)) {
-                                queue.offer(new SyncTask.QueueResult<>(event, t, result));
+                                queue.offer(new QueueResult<>(event, t, result));
                                 break;
                             }
                         }
@@ -125,13 +159,16 @@ public class SyncTask<T> {
             };
         }
 
+        /**
+         * 创建单个任务
+         */
         private Runnable createSingleTask(TaskEvent event, SingleTask<T> task){
             return () -> {
                 try {
                     source.forEach(t -> {
 
                         Result result = task.call(ObjectUtil.cast(t));
-                        queue.offer(new SyncTask.QueueResult<>(event, t, result));
+                        queue.offer(new QueueResult<>(event, t, result));
                     });
                 } finally {
                     // 任何情况下 必须执行任务结束
@@ -144,7 +181,7 @@ public class SyncTask<T> {
          * 任务完成后的线程回调
          */
         private void taskComplete() {
-            int i = this.taskCount.decrementAndGet();
+            int i = this.size.decrementAndGet();
 
             // decrementAndGet 保证了原子性 无需加锁
             if(i == 0){
@@ -154,23 +191,78 @@ public class SyncTask<T> {
             }
         }
 
+        /**
+         * 任务结果处理
+         * @param consumer  结果消费处理
+         */
         public void exec(TaskConsumer<T> consumer) throws Exception {
 
             // 最终调用exec的线程作为main线程
             this.main = Thread.currentThread();
 
-            // 保存任务future
-            List<Future<?>> futureList = ListUtil.newArrayList(taskList.size());
-
-            // 提交任务
-            taskList.forEach(task -> futureList.add(pool.submit(task)));
+            // 执行加入的任务
+            List<Future<?>> futureList = this.execTask();
 
             // 处理任务结果
-            this.handle(futureList, consumer);
-
+            this.handleResult(futureList, consumer);
         }
 
-        private void handle(List<Future<?>> futureList, TaskConsumer<T> consumer) throws ExecutionException, InterruptedException {
+        /**
+         * 无结果回调处理 将结果处理直接写在任务中的方式
+         * （不建议使用 更建议所有处理结果汇总 方便他人接手进行问题排查）
+         */
+        public void exec() throws Exception {
+
+            // 最终调用exec的线程作为main线程
+            this.main = Thread.currentThread();
+
+            // 执行任务
+            List<Future<?>> futureList = this.execTask();
+
+            // 任务执行完成后判断是否有异常
+            for (Future<?> future : futureList) {
+                future.get();
+            }
+        }
+
+        /**
+         * 执行任务
+         */
+        private List<Future<?>> execTask() {
+            // 保存任务future
+            List<Future<?>> futureList = ListUtil.newArrayList(size.get());
+
+            // 栈顶任务由主线程执行
+            Node main = stack;
+
+            // 提交任务
+            Node task;
+            while ((task = stack.getNext()) != null){
+                futureList.add(pool.submit(task.getTask()));
+            }
+
+            // 运行main任务 （run中不处理异常 当main任务异常时直接抛出）
+            this.runMain(futureList, main);
+
+            return futureList;
+        }
+
+        /**
+         * 执行main任务
+         */
+        private void runMain(List<Future<?>> futureList, Node main) {
+            try {
+                main.getTask().run();
+            }catch (Exception e){
+                // 异常 任务全部中断掉
+                futureList.forEach(future -> future.cancel(true));
+            }
+        }
+
+        /**
+         * 结果处理
+         */
+        private void handleResult(List<Future<?>> futureList, TaskConsumer<T> consumer) throws ExecutionException, InterruptedException {
             try{
 
                 // 阻塞等待任务结果
@@ -181,7 +273,7 @@ public class SyncTask<T> {
                     consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
 
                     // 单线程计算等待任务执行完成
-                    int i = this.taskCount.get();
+                    int i = this.size.get();
                     if(i == 0){
                         return;
                     }
@@ -196,15 +288,33 @@ public class SyncTask<T> {
                 }
             }
         }
-    }
 
-    @Data
-    @AllArgsConstructor
-    public static class QueueResult<T>{
-        private TaskEvent event;
-        private T source;
-        private Result result;
+        /**
+         * 栈节点
+         */
+        @AllArgsConstructor
+        @Data
+        private class Node{
 
+            @ApiModelProperty("持有任务")
+            private Runnable task;
+
+            @ApiModelProperty(value = "下一位指针")
+            private Node next;
+        }
+
+        /**
+         * 队列结果
+         * @param <T>
+         */
+        @Data
+        @AllArgsConstructor
+        public static class QueueResult<T>{
+            private TaskEvent event;
+            private T source;
+            private Result result;
+
+        }
     }
 
     /**
