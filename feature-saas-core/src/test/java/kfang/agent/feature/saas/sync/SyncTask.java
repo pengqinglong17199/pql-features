@@ -239,26 +239,29 @@ public class SyncTask<T> {
             List<Future<?>> futureList = ListUtil.newArrayList(size.get());
 
             // 栈顶任务由主线程执行
-            Node main = stack;
+            Node mainNode = stack;
 
             // 提交任务
-            Node task;
-            while ((task = stack.getNext()) != null) {
+            Node task = stack.getNext();
+            while (task != null) {
+                // 任务提交线程池
                 futureList.add(SYNC_TASK_POOL.submit(task.getTask()));
+                task = task.getNext();
             }
 
-            // 运行main任务 （run中不处理异常 当main任务异常时直接抛出）
-            this.runMain(futureList, main);
+            // 运行mainNode任务 （run中不处理异常 当main任务异常时直接抛出）
+            this.runMainNode(mainNode, futureList);
 
             return futureList;
         }
 
         /**
-         * 执行main任务
+         * 执行mainNode任务
+         * 主栈任务异常 则取消所有子栈任务
          */
-        private void runMain(List<Future<?>> futureList, Node main) {
+        private void runMainNode(Node mainNode, List<Future<?>> futureList) {
             try {
-                main.getTask().run();
+                mainNode.getTask().run();
             } catch (Exception e) {
                 // 异常 任务全部中断掉
                 futureList.forEach(future -> future.cancel(true));
@@ -267,6 +270,8 @@ public class SyncTask<T> {
 
         /**
          * 结果处理
+         * 主线程阻塞等待当前批次线程池内任务消费处理完成
+         * 任务执行完成后判断是否有异常
          */
         private void handleResult(List<Future<?>> futureList, TaskConsumer<T> consumer) throws ExecutionException, InterruptedException {
             try {
