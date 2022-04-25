@@ -26,8 +26,6 @@ public class SyncTaskQueryDemo {
 
     public static void main(String[] args) throws Exception {
 
-        print();
-
         new Thread(() -> {
             try {
                 // list集合中 整个list一条sql的聚合查询
@@ -37,21 +35,20 @@ public class SyncTaskQueryDemo {
             }
         }).start();
 
-        TimeUnit.MILLISECONDS.sleep(500);
+        new Thread(() -> {
+            try {
+                // list集合中 每个数据 一条sql的查询
+                querySingle();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
 
-        print();
-
-
-        // list集合中 每个数据 一条sql的查询
-        querySingle();
-
-        SyncTask.shutdown();
-        while (true) {
+        for (int i = 0; i < 10; i++) {
             print();
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(1);
         }
-
-
+        SyncTask.shutdown();
     }
 
     private static void print() {
