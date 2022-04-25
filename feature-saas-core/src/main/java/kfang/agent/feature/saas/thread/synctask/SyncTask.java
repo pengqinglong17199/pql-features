@@ -219,7 +219,7 @@ public class SyncTask<T> {
             int current = CURRENT.getAndDecrement();
 
             // cas更新最大并发数
-            for (int max = MAX.get(); max < current && MAX.compareAndSet(max, current); ){ }
+            for (int max = MAX.get(); max < current && !MAX.compareAndSet(max, current); ){ }
 
             // decrementAndGet 保证了原子性 无需加锁
             int i = this.size.decrementAndGet();

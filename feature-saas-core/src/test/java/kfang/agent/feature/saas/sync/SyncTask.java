@@ -211,7 +211,7 @@ public class SyncTask<T> {
             COMPLETED_TASKS.incrementAndGet();
             int current = CURRENT.getAndDecrement();
 
-            for (int max = MAX.get(); max < current && MAX.compareAndSet(max, current); ){ }
+            for (int max = MAX.get(); max < current && !MAX.compareAndSet(max, current); ){ }
 
 
             int i = this.size.decrementAndGet();
