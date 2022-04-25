@@ -44,7 +44,7 @@ public class SyncTask<T> {
 
     static {
         HyugaRejectedExecutionHandler handler = new HyugaRejectedExecutionHandler();
-        LinkedBlockingDeque<Runnable> workQueue = new LinkedBlockingDeque<>(10);
+        LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(10);
         SYNC_TASK_THREAD_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, handler);
 
         COMPLETED_TASK_NUMBER = new AtomicLong();
@@ -124,7 +124,7 @@ public class SyncTask<T> {
         /**
          * 任务结果队列
          */
-        private final BlockingDeque<QueueResult<T>> queue;
+        private final BlockingQueue<QueueResult<T>> queue;
 
         /**
          * 源数据list
@@ -148,7 +148,7 @@ public class SyncTask<T> {
 
         public Task(List<T> list) {
             this.sources = list;
-            this.queue = new LinkedBlockingDeque<>();
+            this.queue = new LinkedBlockingQueue<>();
             this.size = new AtomicInteger(0);
         }
 
@@ -223,6 +223,7 @@ public class SyncTask<T> {
             int current = CURRENT_CONCURRENT_TASK_NUMBER.incrementAndGet();
             // cas更新最大并发数
             for (int max = MAX_CONCURRENT_PEAK_NUMBER.get(); max < current && !MAX_CONCURRENT_PEAK_NUMBER.compareAndSet(max, current); ) {
+                max = MAX_CONCURRENT_PEAK_NUMBER.get();
             }
         }
 
@@ -239,7 +240,8 @@ public class SyncTask<T> {
             // decrementAndGet 保证了原子性 无需加锁
             int i = this.size.decrementAndGet();
             if (i == 0) {
-                // 打断线程阻塞 保证在异常情况下 main线程未结束
+
+                // 最后一个任务线程确保main线程进入结束阶段
                 main.interrupt();
             }
         }
@@ -281,6 +283,7 @@ public class SyncTask<T> {
          * 执行任务
          */
         private List<Future<?>> execTask() {
+
             // 保存任务future
             List<Future<?>> futureList = ListUtil.newArrayList(size.get());
 
@@ -321,26 +324,38 @@ public class SyncTask<T> {
             try {
                 // 阻塞等待任务结果
                 while (true) {
-                    QueueResult<T> queueResult = queue.take();
 
-                    // 消费
-                    consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
+                    try {
+                        QueueResult<T> queueResult = queue.take();
+
+                        // 消费
+                        consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
+                    } catch (InterruptedException e) {
+                        // 如果是take打断唤醒的情况下 再次检查queue中是否存在结果
+                        if (queue.size() > 0) {
+                            for (int i = 0; i < queue.size(); i++) {
+                                QueueResult<T> queueResult = queue.take();
+                                // 消费
+                                consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
+                            }
+                        }
+                    }
 
                     // 单线程计算等待任务执行完成
                     int i = this.size.get();
                     if (i == 0) {
-                        // 清除最后一个任务设置的中断标志位
-                        boolean interrupted = Thread.interrupted();
-                        log.info("Thread.interrupted() status [{}]", interrupted);
                         return;
                     }
+
                 }
-            } catch (InterruptedException e) {
-                log.warn("异常原因-线程打断", e);
-            } finally {
+            }finally {
                 // 任务执行完成后判断是否有异常
-                for (Future<?> future : futureList) {
-                    future.get();
+                while (ListUtil.hasItem(futureList)){
+                    Future<?> future = futureList.get(0);
+                    if (future.isDone()) {
+                        future.get();
+                        futureList.remove(future);
+                    }
                 }
             }
         }

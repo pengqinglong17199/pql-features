@@ -13,6 +13,7 @@ import lombok.Getter;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static kfang.agent.feature.saas.sync.BaoBiaoEnum.*;
 
@@ -25,26 +26,34 @@ import static kfang.agent.feature.saas.sync.BaoBiaoEnum.*;
 public class SyncTaskQueryDemo {
 
     public static void main(String[] args) throws Exception {
+        AtomicInteger count = new AtomicInteger();
+        for (int i = 0; i < 50; i++) {
 
-        new Thread(() -> {
-            try {
-                // list集合中 整个list一条sql的聚合查询
-                queryList();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+            new Thread(() -> {
+                count.incrementAndGet();
+                try {
+                    // list集合中 每个数据 一条sql的查询
+                    queryList();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                count.decrementAndGet();
+            }).start();
 
-        new Thread(() -> {
-            try {
-                // list集合中 每个数据 一条sql的查询
-                querySingle();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
+            new Thread(() -> {
+                count.incrementAndGet();
+                try {
+                    // list集合中 每个数据 一条sql的查询
+                    querySingle();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                count.decrementAndGet();
+            }).start();
+        }
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 40; i++) {
+            System.out.println(count.get());
             print();
             TimeUnit.SECONDS.sleep(1);
         }
@@ -72,7 +81,7 @@ public class SyncTaskQueryDemo {
                 // 执行
                 .exec(SyncTaskQueryDemo::consumer);
 
-        System.out.println(houseCounts);
+        //System.out.println(houseCounts);
     }
 
     private static void querySingle() throws Exception {
@@ -89,7 +98,7 @@ public class SyncTaskQueryDemo {
                 .exec(SyncTaskQueryDemo::consumer);
 
 
-        System.out.println(houseCounts);
+        //System.out.println(houseCounts);
     }
 
     private static boolean comparable(HouseCount source, Result result){
@@ -110,7 +119,7 @@ public class SyncTaskQueryDemo {
         // 查询耗时
         sleep(200);
 
-        System.out.println("查询总数 - select orgId, count(1) from t_sum where org_id = orgId and ... group by orgId");
+        //System.out.println("查询总数 - select orgId, count(1) from t_sum where org_id = orgId and ... group by orgId");
         return new ReportResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
     }
 
@@ -119,7 +128,7 @@ public class SyncTaskQueryDemo {
         // 查询耗时 毫秒
         sleep(100);
 
-        System.out.println("查询新增量 - select orgId, count(1) from t_add where org_id = orgId and ... group by orgId");
+        //System.out.println("查询新增量 - select orgId, count(1) from t_add where org_id = orgId and ... group by orgId");
         return new ReportResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
     }
 
@@ -128,7 +137,7 @@ public class SyncTaskQueryDemo {
         // 查询耗时  毫秒
         sleep(300);
 
-        System.out.println("查询7日新增量 - select orgId, count(1) from t_day_7 where org_id = orgId and ... group by orgId");
+        //System.out.println("查询7日新增量 - select orgId, count(1) from t_day_7 where org_id = orgId and ... group by orgId");
         return new ReportResult(houseCount.getOrgId(), RandomUtil.randomInt(1, 1000));
     }
 
@@ -136,7 +145,7 @@ public class SyncTaskQueryDemo {
         // 查询耗时  毫秒
         sleep(5000);
 
-        System.out.println("查询总数 - select orgId, count(1) from t_sum where org_id = orgId and ... group by orgId");
+        //System.out.println("查询总数 - select orgId, count(1) from t_sum where org_id = orgId and ... group by orgId");
         List<ReportResult> results = ListUtil.newArrayList();
         for (int i = 0; i < list.size(); i++) {
             results.add(new ReportResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
@@ -148,7 +157,7 @@ public class SyncTaskQueryDemo {
         // 查询耗时  毫秒
         sleep(1000);
 
-        System.out.println("查询新增量 - select orgId, count(1) from t_add where org_id = orgId and ... group by orgId");
+        //System.out.println("查询新增量 - select orgId, count(1) from t_add where org_id = orgId and ... group by orgId");
         List<ReportResult> results = ListUtil.newArrayList();
         for (int i = 0; i < list.size(); i++) {
             results.add(new ReportResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
@@ -160,7 +169,7 @@ public class SyncTaskQueryDemo {
         // 查询耗时  毫秒
         sleep(3000);
 
-        System.out.println("查询7日新增量 - select orgId, count(1) from t_day_7 where org_id = orgId and ... group by orgId");
+        //System.out.println("查询7日新增量 - select orgId, count(1) from t_day_7 where org_id = orgId and ... group by orgId");
         List<ReportResult> results = ListUtil.newArrayList();
         for (int i = 0; i < list.size(); i++) {
             results.add(new ReportResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
