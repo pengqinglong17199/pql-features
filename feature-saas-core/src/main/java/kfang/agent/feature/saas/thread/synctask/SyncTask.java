@@ -178,9 +178,8 @@ public class SyncTask<T> {
          * 创建多任务Runnable
          */
         public Runnable createTaskMultiple(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
+            taskBefore();
             return () -> {
-
-                taskBefore();
 
                 try {
                     List<? extends Result> results = task.call(ObjectUtil.cast(sources));
@@ -203,9 +202,8 @@ public class SyncTask<T> {
          * 创建单个任务
          */
         private Runnable createTaskSingle(TaskEvent event, TaskSingle<T> task) {
+            taskBefore();
             return () -> {
-
-                taskBefore();
 
                 try {
                     sources.forEach(source -> {
