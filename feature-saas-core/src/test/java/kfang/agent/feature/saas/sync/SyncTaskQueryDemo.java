@@ -3,6 +3,9 @@ package kfang.agent.feature.saas.sync;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.random.RandomUtil;
 import com.alibaba.nacos.common.utils.UuidUtils;
+import kfang.agent.feature.saas.thread.synctask.Result;
+import kfang.agent.feature.saas.thread.synctask.SyncTask;
+import kfang.agent.feature.saas.thread.synctask.TaskEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -23,11 +26,39 @@ public class SyncTaskQueryDemo {
 
     public static void main(String[] args) throws Exception {
 
-        // list集合中 每个数据 一条sql的查询
-        // querySingle();
+        print();
 
-        // list集合中 整个list一条sql的聚合查询
-        queryList();
+        new Thread(() -> {
+            try {
+                // list集合中 整个list一条sql的聚合查询
+                queryList();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
+
+        TimeUnit.MILLISECONDS.sleep(500);
+
+        print();
+
+
+        // list集合中 每个数据 一条sql的查询
+        querySingle();
+
+        SyncTask.shutdown();
+        while (true) {
+            print();
+            TimeUnit.SECONDS.sleep(5);
+        }
+
+
+    }
+
+    private static void print() {
+        SyncTask.TaskInfo taskInfo = SyncTask.getTaskInfo();
+        System.out.println("已完成" + taskInfo.getCompletedTasks());
+        System.out.println("当前" + taskInfo.getCurrent());
+        System.out.println("峰值" + taskInfo.getMax());
     }
 
     private static void queryList() throws Exception {

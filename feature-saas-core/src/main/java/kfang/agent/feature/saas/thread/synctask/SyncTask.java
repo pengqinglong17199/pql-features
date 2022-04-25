@@ -179,7 +179,8 @@ public class SyncTask<T> {
          */
         public Runnable createTaskMultiple(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
             return () -> {
-                CURRENT.incrementAndGet();
+
+                taskBefore();
 
                 try {
                     List<? extends Result> results = task.call(ObjectUtil.cast(sources));
@@ -203,7 +204,8 @@ public class SyncTask<T> {
          */
         private Runnable createTaskSingle(TaskEvent event, TaskSingle<T> task) {
             return () -> {
-                CURRENT.incrementAndGet();
+
+                taskBefore();
 
                 try {
                     sources.forEach(source -> {
@@ -218,6 +220,15 @@ public class SyncTask<T> {
         }
 
         /**
+         * 任务前置处理
+         */
+        private void taskBefore() {
+            int current = CURRENT.incrementAndGet();
+            // cas更新最大并发数
+            for (int max = MAX.get(); max < current && !MAX.compareAndSet(max, current); ){ }
+        }
+
+        /**
          * 任务完成后的线程回调
          */
         private void taskComplete() {
@@ -225,11 +236,8 @@ public class SyncTask<T> {
             // 完成任务+1
             COMPLETED_TASKS.incrementAndGet();
 
-            // 当前任务数 get后-1
-            int current = CURRENT.getAndDecrement();
-
-            // cas更新最大并发数
-            for (int max = MAX.get(); max < current && !MAX.compareAndSet(max, current); ){ }
+            // 当前任务数-1
+            CURRENT.decrementAndGet();
 
             // decrementAndGet 保证了原子性 无需加锁
             int i = this.size.decrementAndGet();
@@ -324,6 +332,8 @@ public class SyncTask<T> {
                     // 单线程计算等待任务执行完成
                     int i = this.size.get();
                     if (i == 0) {
+                        // 清除最后一个任务设置的中断标志位
+                        Thread.interrupted();
                         return;
                     }
                 }
@@ -358,7 +368,7 @@ public class SyncTask<T> {
          */
         @Data
         @AllArgsConstructor
-        public static class QueueResult<T> {
+        private static class QueueResult<T> {
             private TaskEvent event;
             private T source;
             private Result result;
@@ -367,7 +377,7 @@ public class SyncTask<T> {
 
     @Data
     @AllArgsConstructor
-    private static class TaskInfo{
+    public static class TaskInfo{
 
         @ApiModelProperty(value = "已完成任务数")
         private long completedTasks;
