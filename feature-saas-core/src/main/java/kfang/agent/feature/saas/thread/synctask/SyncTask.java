@@ -21,49 +21,49 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 @Slf4j
 public class SyncTask<T> {
+
     /**
      * 异步任务内部线程池
      */
-    private static final ThreadPoolExecutor SYNC_TASK_POOL;
+    private static final ThreadPoolExecutor SYNC_TASK_THREAD_POOL;
 
     /**
      * 完成任务总数
      */
-    private static final AtomicLong COMPLETED_TASKS;
+    private static final AtomicLong COMPLETED_TASK_NUMBER;
 
     /**
      * 当前正在并发的任务数
      */
-    private static final AtomicInteger CURRENT;
+    private static final AtomicInteger CURRENT_CONCURRENT_TASK_NUMBER;
 
     /**
      * 峰值并发
      */
-    private static final AtomicInteger MAX;
+    private static final AtomicInteger MAX_CONCURRENT_PEAK_NUMBER;
 
     static {
         HyugaRejectedExecutionHandler handler = new HyugaRejectedExecutionHandler();
         LinkedBlockingDeque<Runnable> workQueue = new LinkedBlockingDeque<>(10);
-        SYNC_TASK_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, handler);
+        SYNC_TASK_THREAD_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, handler);
 
-        COMPLETED_TASKS = new AtomicLong();
-        CURRENT = new AtomicInteger();
-        MAX = new AtomicInteger();
+        COMPLETED_TASK_NUMBER = new AtomicLong();
+        CURRENT_CONCURRENT_TASK_NUMBER = new AtomicInteger();
+        MAX_CONCURRENT_PEAK_NUMBER = new AtomicInteger();
     }
 
     /**
      * 获取当前任务执行的情况
      */
-    public static TaskInfo getTaskInfo(){
-        return new TaskInfo(COMPLETED_TASKS.get(), CURRENT.get(), MAX.get());
+    public static ConcurrentTaskInfo getTaskInfo() {
+        return new ConcurrentTaskInfo(COMPLETED_TASK_NUMBER.get(), CURRENT_CONCURRENT_TASK_NUMBER.get(), MAX_CONCURRENT_PEAK_NUMBER.get());
     }
-
 
     /**
      * 服务停止时关闭线程池
      */
     public static void shutdown() {
-        SYNC_TASK_POOL.shutdown();
+        SYNC_TASK_THREAD_POOL.shutdown();
     }
 
     /**
@@ -180,7 +180,6 @@ public class SyncTask<T> {
         public Runnable createTaskMultiple(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
             taskBefore();
             return () -> {
-
                 try {
                     List<? extends Result> results = task.call(ObjectUtil.cast(sources));
                     for (Result result : results) {
@@ -204,7 +203,6 @@ public class SyncTask<T> {
         private Runnable createTaskSingle(TaskEvent event, TaskSingle<T> task) {
             taskBefore();
             return () -> {
-
                 try {
                     sources.forEach(source -> {
                         Result result = task.call(ObjectUtil.cast(source));
@@ -220,22 +218,23 @@ public class SyncTask<T> {
         /**
          * 任务前置处理
          */
+        @SuppressWarnings("all")
         private void taskBefore() {
-            int current = CURRENT.incrementAndGet();
+            int current = CURRENT_CONCURRENT_TASK_NUMBER.incrementAndGet();
             // cas更新最大并发数
-            for (int max = MAX.get(); max < current && !MAX.compareAndSet(max, current); ){ }
+            for (int max = MAX_CONCURRENT_PEAK_NUMBER.get(); max < current && !MAX_CONCURRENT_PEAK_NUMBER.compareAndSet(max, current); ) {
+            }
         }
 
         /**
          * 任务完成后的线程回调
          */
         private void taskComplete() {
-
             // 完成任务+1
-            COMPLETED_TASKS.incrementAndGet();
+            COMPLETED_TASK_NUMBER.incrementAndGet();
 
             // 当前任务数-1
-            CURRENT.decrementAndGet();
+            CURRENT_CONCURRENT_TASK_NUMBER.decrementAndGet();
 
             // decrementAndGet 保证了原子性 无需加锁
             int i = this.size.decrementAndGet();
@@ -291,7 +290,7 @@ public class SyncTask<T> {
             // 提交任务 弹栈帮助gc
             while ((stack = stack.getNext()) != null) {
                 // 任务提交线程池
-                futureList.add(SYNC_TASK_POOL.submit(stack.getTask()));
+                futureList.add(SYNC_TASK_THREAD_POOL.submit(stack.getTask()));
             }
 
             // 运行mainNode任务 （run中不处理异常 当main任务异常时直接抛出）
@@ -331,7 +330,8 @@ public class SyncTask<T> {
                     int i = this.size.get();
                     if (i == 0) {
                         // 清除最后一个任务设置的中断标志位
-                        Thread.interrupted();
+                        boolean interrupted = Thread.interrupted();
+                        log.info("Thread.interrupted() status [{}]", interrupted);
                         return;
                     }
                 }
@@ -351,10 +351,8 @@ public class SyncTask<T> {
         @AllArgsConstructor
         @Data
         private static class Node {
-
             @ApiModelProperty("持有任务")
             private Runnable task;
-
             @ApiModelProperty(value = "下一位指针")
             private Node next;
         }
@@ -367,26 +365,26 @@ public class SyncTask<T> {
         @Data
         @AllArgsConstructor
         private static class QueueResult<T> {
+            @ApiModelProperty(value = "任务事件")
             private TaskEvent event;
+            @ApiModelProperty(value = "源数据")
             private T source;
+            @ApiModelProperty(value = "结果")
             private Result result;
         }
     }
 
     @Data
     @AllArgsConstructor
-    public static class TaskInfo{
-
+    public static class ConcurrentTaskInfo {
         @ApiModelProperty(value = "已完成任务数")
-        private long completedTasks;
-
+        private long completed;
         @ApiModelProperty(value = "当前在执行的任务数")
         private int current;
-
         @ApiModelProperty(value = "最大峰值的并发任务数")
-        private int max;
-
+        private int maxPeak;
     }
+
 }
 
 

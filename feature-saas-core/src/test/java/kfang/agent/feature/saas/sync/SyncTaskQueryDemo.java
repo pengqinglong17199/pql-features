@@ -52,10 +52,10 @@ public class SyncTaskQueryDemo {
     }
 
     private static void print() {
-        SyncTask.TaskInfo taskInfo = SyncTask.getTaskInfo();
-        System.out.println("已完成" + taskInfo.getCompletedTasks());
-        System.out.println("当前" + taskInfo.getCurrent());
-        System.out.println("峰值" + taskInfo.getMax());
+        SyncTask.ConcurrentTaskInfo concurrentTaskInfo = SyncTask.getTaskInfo();
+        System.out.println("已完成" + concurrentTaskInfo.getCompleted());
+        System.out.println("当前" + concurrentTaskInfo.getCurrent());
+        System.out.println("峰值" + concurrentTaskInfo.getMaxPeak());
     }
 
     private static void queryList() throws Exception {
