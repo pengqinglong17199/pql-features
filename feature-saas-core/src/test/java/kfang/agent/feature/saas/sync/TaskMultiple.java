@@ -8,6 +8,6 @@ import java.util.List;
 @FunctionalInterface
 public interface TaskMultiple<T> {
 
-    List<? extends Result> call(List<T> source);
+    List<? extends Result> call(List<T> sources);
 
 }
