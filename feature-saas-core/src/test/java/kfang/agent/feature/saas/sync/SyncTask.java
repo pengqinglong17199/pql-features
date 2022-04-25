@@ -29,17 +29,17 @@ public class SyncTask<T> {
     /**
      * 完成任务总数
      */
-    private static AtomicLong COMPLETED_TASKS;
+    private static final AtomicLong COMPLETED_TASKS;
 
     /**
      * 当前正在并发的任务数
      */
-    private static AtomicInteger CURRENT;
+    private static final AtomicInteger CURRENT;
 
     /**
      * 峰值并发
      */
-    private static AtomicInteger MAX;
+    private static final AtomicInteger MAX;
 
     static {
         HyugaRejectedExecutionHandler handler = new HyugaRejectedExecutionHandler();
@@ -47,7 +47,15 @@ public class SyncTask<T> {
         SYNC_TASK_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, handler);
 
         COMPLETED_TASKS = new AtomicLong();
+        CURRENT = new AtomicInteger();
         MAX = new AtomicInteger();
+    }
+
+    /**
+     * 获取当前任务执行的情况
+     */
+    public static TaskInfo getTaskInfo(){
+        return new TaskInfo(COMPLETED_TASKS.get(), CURRENT.get(), MAX.get());
     }
 
     /**
@@ -351,6 +359,21 @@ public class SyncTask<T> {
             private Result result;
 
         }
+    }
+
+    @Data
+    @AllArgsConstructor
+    private static class TaskInfo{
+
+        @ApiModelProperty(value = "已完成任务数")
+        private long completedTasks;
+
+        @ApiModelProperty(value = "当前在执行的任务数")
+        private int current;
+
+        @ApiModelProperty(value = "最大峰值的并发任务数")
+        private int max;
+
     }
 
     /**

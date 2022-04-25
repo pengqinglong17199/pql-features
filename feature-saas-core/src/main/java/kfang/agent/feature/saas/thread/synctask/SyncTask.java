@@ -52,13 +52,23 @@ public class SyncTask<T> {
     }
 
     /**
+     * 获取当前任务执行的情况
+     */
+    public static TaskInfo getTaskInfo(){
+        return new TaskInfo(COMPLETED_TASKS.get(), CURRENT.get(), MAX.get());
+    }
+
+
+    /**
      * 服务停止时关闭线程池
      */
     public static void shutdown() {
         SYNC_TASK_POOL.shutdown();
     }
 
-
+    /**
+     * 对异步任务对象进行包装 防止外部获取到进行改动
+     */
     private final Task<T> task;
 
     /**
@@ -355,38 +365,20 @@ public class SyncTask<T> {
         }
     }
 
-    /**
-     * 任务结果消费
-     *
-     * @param <T>
-     */
-    public interface TaskConsumer<T> {
-        /**
-         * 任务消费
-         *
-         * @param event  任务事件
-         * @param source 源数据
-         * @param result 结果
-         */
-        void consumer(TaskEvent event, T source, Result result);
-    }
+    @Data
+    @AllArgsConstructor
+    private static class TaskInfo{
 
-    /**
-     * 比较函数 用于比较两个对象是否是同一个
-     *
-     * @param <T>
-     */
-    public interface Comparable<T> {
-        /**
-         * 主键对比
-         *
-         * @param source 源数据
-         * @param result 结果
-         * @return boolean
-         */
-        boolean comparable(T source, Result result);
-    }
+        @ApiModelProperty(value = "已完成任务数")
+        private long completedTasks;
 
+        @ApiModelProperty(value = "当前在执行的任务数")
+        private int current;
+
+        @ApiModelProperty(value = "最大峰值的并发任务数")
+        private int max;
+
+    }
 }
 
 
