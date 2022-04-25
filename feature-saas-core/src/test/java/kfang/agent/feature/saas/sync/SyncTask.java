@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * SyncTask
@@ -25,10 +26,28 @@ public class SyncTask<T> {
      */
     private static final ThreadPoolExecutor SYNC_TASK_POOL;
 
+    /**
+     * 完成任务总数
+     */
+    private static AtomicLong COMPLETED_TASKS;
+
+    /**
+     * 当前正在并发的任务数
+     */
+    private static AtomicInteger CURRENT;
+
+    /**
+     * 峰值并发
+     */
+    private static AtomicInteger MAX;
+
     static {
         HyugaRejectedExecutionHandler handler = new HyugaRejectedExecutionHandler();
         LinkedBlockingDeque<Runnable> workQueue = new LinkedBlockingDeque<>(10);
         SYNC_TASK_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, handler);
+
+        COMPLETED_TASKS = new AtomicLong();
+        MAX = new AtomicInteger();
     }
 
     /**
@@ -172,6 +191,7 @@ public class SyncTask<T> {
         private Runnable createTaskSingle(TaskEvent event, TaskSingle<T> task) {
             return () -> {
                 try {
+                    CURRENT.incrementAndGet();
                     sources.forEach(source -> {
                         Result result = task.call(ObjectUtil.cast(source));
                         queue.offer(new QueueResult<>(event, source, result));
@@ -187,8 +207,14 @@ public class SyncTask<T> {
          * 任务完成后的线程回调
          */
         private void taskComplete() {
-            int i = this.size.decrementAndGet();
 
+            COMPLETED_TASKS.incrementAndGet();
+            int current = CURRENT.getAndDecrement();
+
+            for (int max = MAX.get(); max < current && MAX.compareAndSet(max, current); ){ }
+
+
+            int i = this.size.decrementAndGet();
             // decrementAndGet 保证了原子性 无需加锁
             if (i == 0) {
                 // 打断线程阻塞 保证在异常情况下 main线程未结束
@@ -241,12 +267,10 @@ public class SyncTask<T> {
             // 栈顶任务由主线程执行
             Node mainNode = stack;
 
-            // 提交任务
-            Node task = stack.getNext();
-            while (task != null) {
+            // 提交任务 弹栈帮助gc
+            while ((stack = stack.getNext()) != null) {
                 // 任务提交线程池
-                futureList.add(SYNC_TASK_POOL.submit(task.getTask()));
-                task = task.getNext();
+                futureList.add(SYNC_TASK_POOL.submit(stack.getTask()));
             }
 
             // 运行mainNode任务 （run中不处理异常 当main任务异常时直接抛出）

@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * SyncTask
@@ -25,10 +26,29 @@ public class SyncTask<T> {
      */
     private static final ThreadPoolExecutor SYNC_TASK_POOL;
 
+    /**
+     * 完成任务总数
+     */
+    private static final AtomicLong COMPLETED_TASKS;
+
+    /**
+     * 当前正在并发的任务数
+     */
+    private static final AtomicInteger CURRENT;
+
+    /**
+     * 峰值并发
+     */
+    private static final AtomicInteger MAX;
+
     static {
         HyugaRejectedExecutionHandler handler = new HyugaRejectedExecutionHandler();
         LinkedBlockingDeque<Runnable> workQueue = new LinkedBlockingDeque<>(10);
         SYNC_TASK_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, handler);
+
+        COMPLETED_TASKS = new AtomicLong();
+        CURRENT = new AtomicInteger();
+        MAX = new AtomicInteger();
     }
 
     /**
@@ -149,6 +169,8 @@ public class SyncTask<T> {
          */
         public Runnable createTaskMultiple(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
             return () -> {
+                CURRENT.incrementAndGet();
+
                 try {
                     List<? extends Result> results = task.call(ObjectUtil.cast(sources));
                     for (Result result : results) {
@@ -171,6 +193,8 @@ public class SyncTask<T> {
          */
         private Runnable createTaskSingle(TaskEvent event, TaskSingle<T> task) {
             return () -> {
+                CURRENT.incrementAndGet();
+
                 try {
                     sources.forEach(source -> {
                         Result result = task.call(ObjectUtil.cast(source));
@@ -187,9 +211,18 @@ public class SyncTask<T> {
          * 任务完成后的线程回调
          */
         private void taskComplete() {
-            int i = this.size.decrementAndGet();
+
+            // 完成任务+1
+            COMPLETED_TASKS.incrementAndGet();
+
+            // 当前任务数 get后-1
+            int current = CURRENT.getAndDecrement();
+
+            // cas更新最大并发数
+            for (int max = MAX.get(); max < current && MAX.compareAndSet(max, current); ){ }
 
             // decrementAndGet 保证了原子性 无需加锁
+            int i = this.size.decrementAndGet();
             if (i == 0) {
                 // 打断线程阻塞 保证在异常情况下 main线程未结束
                 main.interrupt();
@@ -239,12 +272,10 @@ public class SyncTask<T> {
             // 栈顶任务由主线程执行
             Node mainNode = stack;
 
-            // 提交任务
-            Node task = stack.getNext();
-            while (task != null) {
+            // 提交任务 弹栈帮助gc
+            while ((stack = stack.getNext()) != null) {
                 // 任务提交线程池
-                futureList.add(SYNC_TASK_POOL.submit(task.getTask()));
-                task = task.getNext();
+                futureList.add(SYNC_TASK_POOL.submit(stack.getTask()));
             }
 
             // 运行mainNode任务 （run中不处理异常 当main任务异常时直接抛出）
