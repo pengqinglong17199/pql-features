@@ -1,5 +1,7 @@
 package kfang.agent.feature.saas.feign;
 
+import com.netflix.hystrix.HystrixCommand;
+import kfang.agent.feature.saas.constants.SaasConstants;
 import kfang.agent.feature.saas.feign.enums.ServiceSignEnum;
 import org.springframework.context.annotation.Import;
 
@@ -31,5 +33,17 @@ public @interface AgentFeign {
      * vpn等场景 测试环境允许跳过192.168.3.*
      */
     boolean skipSpecialIpAddressSegment() default false;
+
+    /**
+     * web层服务调用service服务异常捕获处理
+     * service层禁止使用 可能导致业务无法正常抛出异常
+     * {@link HystrixCommand}使用HystrixCommand注解的接口不会生效
+     */
+    boolean webCallExceptionCapture() default false;
+
+    /**
+     * web层服务调用service服务异常捕获处理 默认dev环境下生效
+     */
+    String[] webEnv() default {SaasConstants.DEV};
 
 }

@@ -31,6 +31,8 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
     private static boolean ISOLATION;
     private static ServiceSignEnum SERVICE_SIGN;
     private static boolean SKIP_SPECIAL_IP_ADDRESS_SEGMENT;
+    private static boolean WEB_CALL_EXCEPTION_CAPTURE;
+    private static String[] WEB_ENV;
 
     public static boolean isIsolation() {
         return ISOLATION;
@@ -44,16 +46,20 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
         return SKIP_SPECIAL_IP_ADDRESS_SEGMENT;
     }
 
+    public static boolean webCallExceptionCapture() {
+        return WEB_CALL_EXCEPTION_CAPTURE;
+    }
+
+    public static String[] webEnv() {
+        return WEB_ENV;
+    }
+
     @Override
     public void registerBeanDefinitions(@Nonnull AnnotationMetadata metadata, @Nonnull BeanDefinitionRegistry registry) {
         DefaultListableBeanFactory beanFactory = (DefaultListableBeanFactory) registry;
         ConfigurableEnvironment environment = (ConfigurableEnvironment) beanFactory.getBean(ConfigurableApplicationContext.ENVIRONMENT_BEAN_NAME);
         String property = environment.getProperty("kfang.infra.common.env.deploy");
         boolean isDevEnv = StringUtil.equalsIgnoreCase(property, SaasConstants.DEV);
-
-        if (!isDevEnv) {
-            return;
-        }
 
         Map<String, Object> defaultAttrs = metadata.getAnnotationAttributes(AgentFeign.class.getName());
         if (defaultAttrs == null) {
@@ -64,6 +70,13 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
         ISOLATION = (boolean) defaultAttrs.get("isolation");
         SERVICE_SIGN = ServiceSignEnum.valueOf(String.valueOf(defaultAttrs.get("serviceSign")));
         SKIP_SPECIAL_IP_ADDRESS_SEGMENT = (boolean) defaultAttrs.get("skipSpecialIpAddressSegment");
+        WEB_CALL_EXCEPTION_CAPTURE = (boolean) defaultAttrs.get("webCallExceptionCapture");
+        WEB_ENV = (String[]) defaultAttrs.get("webEnv");
+
+        if (!isDevEnv) {
+            // agentFeign隔离部分仅对测试环境生效
+            return;
+        }
 
         if (ISOLATION) {
             feignIsolation();
