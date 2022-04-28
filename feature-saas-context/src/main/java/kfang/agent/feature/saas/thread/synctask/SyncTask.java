@@ -88,13 +88,33 @@ public class SyncTask<T> {
     }
 
     /**
+     * 设置整个任务链默认的异常处理 可对任务进行单独的异常处理
+     * 优先级为 任务单独的 -> 任务链默认的
+     */
+    public SyncTask<T> addErrorHandle(ErrorHandle errorHandle) {
+        this.task.setErrorHandle(errorHandle);
+        return this;
+    }
+
+    /**
      * 添加单任务
      *
      * @param event 事件
      * @param task  任务
      */
-    public SyncTask<T> addTask(TaskEvent event, TaskSingle<T> task) {
-        this.task.addTask(event, task);
+    public SyncTask<T> addTask(TaskEvent event, TaskSingleFunction<T> task) {
+        this.task.addTask(event, task, null);
+        return this;
+    }
+
+    /**
+     * 添加单任务
+     *
+     * @param event 事件
+     * @param task  任务
+     */
+    public SyncTask<T> addTask(TaskEvent event, TaskSingleFunction<T> task, ErrorHandle errorHandle) {
+        this.task.addTask(event, task, errorHandle);
         return this;
     }
 
@@ -105,13 +125,36 @@ public class SyncTask<T> {
      * @param task       任务
      * @param comparable 对比器 用于对比任务获取到的result与source
      */
-    public SyncTask<T> addTask(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
-        this.task.addTask(event, task, comparable);
+    public SyncTask<T> addTask(TaskEvent event, TaskMultipleFunction<T> task, Comparable<T> comparable) {
+        this.task.addTask(event, task, comparable, null);
         return this;
     }
 
-    public void exec(TaskConsumer<T> consumer) throws Exception {
-        this.task.exec(consumer);
+    /**
+     * 添加多任务
+     *
+     * @param event      事件
+     * @param task       任务
+     * @param comparable 对比器 用于对比任务获取到的result与source
+     */
+    public SyncTask<T> addTask(TaskEvent event, TaskMultipleFunction<T> task, Comparable<T> comparable, ErrorHandle errorHandle) {
+        this.task.addTask(event, task, comparable, errorHandle);
+        return this;
+    }
+
+    /**
+     * 带结果回调处理
+     */
+    public List<ErrorTask<T>> exec(TaskConsumer<T> consumer) throws Exception {
+        return this.task.exec(consumer);
+    }
+
+    /**
+     * 无结果回调处理 将结果处理直接写在任务中的方式
+     * （不建议使用 更建议所有处理结果汇总 方便他人接手进行问题排查）
+     */
+    public List<ErrorTask<T>> exec() throws Exception {
+        return this.task.exec(null);
     }
 
     /**
@@ -132,6 +175,16 @@ public class SyncTask<T> {
         private final List<T> sources;
 
         /**
+         * 默认的异常处理
+         */
+        private ErrorHandle errorHandle;
+
+        /**
+         * 异常的source
+         */
+        private final List<ErrorTask<T>> errorTasks;
+
+        /**
          * 任务栈
          */
         private Node stack;
@@ -150,20 +203,33 @@ public class SyncTask<T> {
             this.sources = list;
             this.queue = new LinkedBlockingQueue<>();
             this.size = new AtomicInteger(0);
+            this.errorTasks = ListUtil.newArrayList(sources.size());
+        }
+
+        public ErrorHandle getErrorHandle(){
+            return this.errorHandle;
+        }
+
+        public void setErrorHandle(ErrorHandle errorHandle){
+            this.errorHandle = errorHandle;
+        }
+
+        public void addErrorSource(ErrorTask<T> task){
+            errorTasks.add(task);
         }
 
         /**
          * 添加all任务
          */
-        public void addTask(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
-            this.pushTask(this.createTaskMultiple(event, task, comparable));
+        public void addTask(TaskEvent event, TaskMultipleFunction<T> task, Comparable<T> comparable, ErrorHandle errorHandle) {
+            this.pushTask(this.createTaskMultiple(event, task, comparable, errorHandle));
         }
 
         /**
-         * 添加single任务
+         * 添加single任务 自定义异常处理
          */
-        public void addTask(TaskEvent event, TaskSingle<T> task) {
-            this.pushTask(this.createTaskSingle(event, task));
+        public void addTask(TaskEvent event, TaskSingleFunction<T> task, ErrorHandle errorHandle) {
+            this.pushTask(this.createTaskSingle(event, task, errorHandle));
         }
 
         /**
@@ -177,42 +243,17 @@ public class SyncTask<T> {
         /**
          * 创建多任务Runnable
          */
-        public Runnable createTaskMultiple(TaskEvent event, TaskMultiple<T> task, Comparable<T> comparable) {
+        public Runnable createTaskMultiple(TaskEvent event, TaskMultipleFunction<T> task, Comparable<T> comparable, ErrorHandle errorHandle) {
             taskBefore();
-            return () -> {
-                try {
-                    List<? extends Result> results = task.call(ObjectUtil.cast(sources));
-                    for (Result result : results) {
-                        for (T source : sources) {
-                            if (comparable.comparable(source, result)) {
-                                queue.offer(new QueueResult<>(event, source, result));
-                                break;
-                            }
-                        }
-                    }
-                } finally {
-                    // 任何情况下 必须执行任务结束
-                    this.taskComplete();
-                }
-            };
+            return new TaskMultiple(this, event, task, comparable, errorHandle);
         }
 
         /**
          * 创建单个任务
          */
-        private Runnable createTaskSingle(TaskEvent event, TaskSingle<T> task) {
+        private Runnable createTaskSingle(TaskEvent event, TaskSingleFunction<T> task, ErrorHandle errorHandle) {
             taskBefore();
-            return () -> {
-                try {
-                    sources.forEach(source -> {
-                        Result result = task.call(ObjectUtil.cast(source));
-                        queue.offer(new QueueResult<>(event, source, result));
-                    });
-                } finally {
-                    // 任何情况下 必须执行任务结束
-                    this.taskComplete();
-                }
-            };
+            return new TaskSingle(this, event, task, errorHandle);
         }
 
         /**
@@ -251,7 +292,7 @@ public class SyncTask<T> {
          *
          * @param consumer 结果消费处理
          */
-        public void exec(TaskConsumer<T> consumer) throws Exception {
+        public List<ErrorTask<T>> exec(TaskConsumer<T> consumer) throws Exception {
             // 最终调用exec的线程作为main线程
             this.main = Thread.currentThread();
 
@@ -259,23 +300,28 @@ public class SyncTask<T> {
             List<Future<?>> futureList = this.execTask();
 
             // 处理任务结果
-            this.handleResult(futureList, consumer);
+            if(consumer != null) {
+                this.handleResult(consumer);
+            }
+            // 处理完成 或者无需处理时 对队列进行清空 帮助gc
+            queue.clear();
+
+            // 任务执行完成后判断是否有异常
+            this.checkFutureList(futureList);
+
+            return errorTasks;
         }
 
         /**
-         * 无结果回调处理 将结果处理直接写在任务中的方式
-         * （不建议使用 更建议所有处理结果汇总 方便他人接手进行问题排查）
+         * 任务执行完成后判断是否有异常
          */
-        public void exec() throws Exception {
-            // 最终调用exec的线程作为main线程
-            this.main = Thread.currentThread();
-
-            // 执行任务
-            List<Future<?>> futureList = this.execTask();
-
-            // 任务执行完成后判断是否有异常
-            for (Future<?> future : futureList) {
-                future.get();
+        private void checkFutureList(List<Future<?>> futureList) throws InterruptedException, ExecutionException {
+            while (ListUtil.hasItem(futureList)){
+                Future<?> future = futureList.get(0);
+                if (future.isDone()) {
+                    future.get();
+                    futureList.remove(future);
+                }
             }
         }
 
@@ -320,45 +366,193 @@ public class SyncTask<T> {
          * 主线程阻塞等待当前批次线程池内任务消费处理完成
          * 任务执行完成后判断是否有异常
          */
-        private void handleResult(List<Future<?>> futureList, TaskConsumer<T> consumer) throws ExecutionException, InterruptedException {
-            try {
-                // 阻塞等待任务结果
-                while (true) {
+        private void handleResult(TaskConsumer<T> consumer) throws InterruptedException {
 
-                    try {
-                        QueueResult<T> queueResult = queue.take();
+            // 阻塞等待任务结果
+            while (true) {
 
-                        // 消费
-                        consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
-                    } catch (InterruptedException e) {
-                        // 如果是take打断唤醒的情况下 再次检查queue中是否存在结果
-                        if (queue.size() > 0) {
-                            for (int i = 0; i < queue.size(); i++) {
-                                QueueResult<T> queueResult = queue.take();
-                                // 消费
-                                consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
-                            }
+                try {
+                    QueueResult<T> queueResult = queue.take();
+
+                    // 消费
+                    consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
+                } catch (InterruptedException e) {
+                    // 如果是take打断唤醒的情况下 再次检查queue中是否存在结果
+                    if (queue.size() > 0) {
+                        for (int i = 0; i < queue.size(); i++) {
+                            QueueResult<T> queueResult = queue.take();
+                            // 消费
+                            consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
                         }
                     }
-
-                    // 单线程计算等待任务执行完成
-                    int i = this.size.get();
-                    if (i == 0) {
-                        return;
-                    }
-
                 }
-            }finally {
-                // 任务执行完成后判断是否有异常
-                while (ListUtil.hasItem(futureList)){
-                    Future<?> future = futureList.get(0);
-                    if (future.isDone()) {
-                        future.get();
-                        futureList.remove(future);
-                    }
+
+                // 单线程计算等待任务执行完成
+                int i = this.size.get();
+                if (i == 0) {
+                    return;
                 }
             }
         }
+
+        /**
+         * 线程任务
+         */
+        @Data
+        private abstract class TaskRunnable<T> implements Runnable{
+
+            /**
+             * 任务异常处理
+             */
+            protected ErrorHandle errorHandle;
+
+            /**
+             * 任务事件
+             */
+            protected TaskEvent event;
+
+            /**
+             * 当前任务链对象
+             */
+            protected Task<T> task;
+
+            protected void errorHandle(Exception e, T source){
+
+                // 自定义处理
+                if(errorHandle != null){
+                    errorHandle.handle(e, event, source);
+                    task.addErrorSource(new ErrorTask<>(event, source, e));
+                    return;
+                }
+
+                // 任务链通用异常处理
+                if(task.errorHandle != null){
+                    task.errorHandle.handle(e, event, source);
+                    task.addErrorSource(new ErrorTask<>(event, source, e));
+                    return;
+                }
+
+                // 默认处理
+                task.addErrorSource(new ErrorTask<>(event, source, e));
+            }
+        }
+
+        /**
+         * 单体任务
+         */
+        private class TaskSingle extends TaskRunnable<T>{
+
+            /**
+             * 任务执行函数
+             */
+            private final TaskSingleFunction<T> function;
+
+            public TaskSingle(Task<T> task, TaskEvent event, TaskSingleFunction<T> function){
+                this.task = task;
+                this.event = event;
+                this.function = function;
+            }
+
+            public TaskSingle(Task<T> task, TaskEvent event, TaskSingleFunction<T> function, ErrorHandle errorHandle){
+                this.task = task;
+                this.event = event;
+                this.function = function;
+                this.errorHandle = errorHandle;
+            }
+
+
+            @Override
+            public void run() {
+                try {
+                    for (T source : ListUtil.optimize(sources)) {
+                        try {
+                            Result result = function.call(ObjectUtil.cast(source));
+                            queue.offer(new QueueResult<>(event, source, result));
+                        } catch (Exception e) {
+                            super.errorHandle(e, source);
+                        }
+                    }
+                }finally {
+                    // 任何情况下 必须执行任务结束
+                    task.taskComplete();
+                }
+            }
+        }
+
+        /**
+         * 集体任务
+         */
+        private class TaskMultiple extends TaskRunnable<T>{
+
+            /**
+             * 任务执行函数
+             */
+            private final TaskMultipleFunction<T> function;
+
+            /**
+             * 元素比较器
+             */
+            private Comparable<T> comparable;
+
+            public TaskMultiple(Task<T> task, TaskEvent event, TaskMultipleFunction<T> function, Comparable<T> comparable){
+                this.task = task;
+                this.event = event;
+                this.function = function;
+                this.comparable = comparable;
+            }
+
+            public TaskMultiple(Task<T> task, TaskEvent event, TaskMultipleFunction<T> function, Comparable<T> comparable, ErrorHandle errorHandle){
+                this.task = task;
+                this.event = event;
+                this.function = function;
+                this.errorHandle = errorHandle;
+                this.comparable = comparable;
+            }
+
+            @Override
+            public void run() {
+                try {
+                    List<? extends Result> results = function.call(ObjectUtil.cast(sources));
+                    for (Result result : results) {
+                        for (T source : sources) {
+                            if (comparable.comparable(source, result)) {
+                                queue.offer(new QueueResult<>(event, source, result));
+                                break;
+                            }
+                        }
+                    }
+                }catch (Exception e){
+                    errorHandleMultiple(e, sources);
+                }finally {
+                    // 任何情况下 必须执行任务结束
+                    task.taskComplete();
+                }
+            }
+
+            /**
+             * 异常处理
+             */
+            protected void errorHandleMultiple(Exception e, List<T> sources){
+
+                if(errorHandle != null){
+
+                    // 自定义处理
+                    errorHandle.handle(e, event, sources);
+
+                }else if(task.errorHandle != null){
+
+                    // 任务链通用异常处理
+                    task.errorHandle.handle(e, event, sources);
+                }
+
+                for (T source : ListUtil.optimize(sources)) {
+                    // 默认处理
+                    task.addErrorSource(new ErrorTask<>(event, source, e));
+                }
+
+            }
+        }
+
 
         /**
          * 栈节点

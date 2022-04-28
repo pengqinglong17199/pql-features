@@ -6,7 +6,7 @@ package kfang.agent.feature.saas.thread.synctask;
  * @author pengqinglong
  */
 @FunctionalInterface
-public interface TaskSingle<T> {
+public interface TaskSingleFunction<T> {
 
     /**
      * 多任务调用

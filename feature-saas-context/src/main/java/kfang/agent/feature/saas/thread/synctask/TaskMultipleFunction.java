@@ -8,7 +8,7 @@ import java.util.List;
  * @author pengqinglong
  */
 @FunctionalInterface
-public interface TaskMultiple<T> {
+public interface TaskMultipleFunction<T> {
 
     /**
      * 多任务调用
