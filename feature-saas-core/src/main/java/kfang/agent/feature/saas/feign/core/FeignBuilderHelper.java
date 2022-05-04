@@ -48,11 +48,16 @@ public class FeignBuilderHelper extends Feign.Builder {
 
                 String localIpAddr = NetworkUtil.getLocalIpAddr();
 
-                boolean ipWhetherNeedIsolation = FeignConstants.ipWhetherNeedIsolation(localIpAddr);
-
-                if (!ipWhetherNeedIsolation) {
-                    // 请求IP不需要隔离
-                    return super.url();
+                boolean skipSpecialIpAddressSegment = AgentFeignConfiguration.skipSpecialIpAddressSegment();
+                boolean isSpecialIp = skipSpecialIpAddressSegment && AgentFeignConfiguration.isSpecialIpAddressSegment(localIpAddr);
+                if (isSpecialIp) {
+                    log.info("当前服务IP属于特殊IP网段192.168.3.*，允许启动，且强制服务隔离");
+                } else {
+                    boolean ipWhetherNeedIsolation = FeignConstants.ipWhetherNeedIsolation(localIpAddr);
+                    if (!ipWhetherNeedIsolation) {
+                        // 请求IP不需要隔离
+                        return super.url();
+                    }
                 }
 
                 ServiceSignEnum serviceSignEnum = AgentFeignConfiguration.serviceSign();
