@@ -378,8 +378,9 @@ public class SyncTask<T> {
                     consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
                 } catch (InterruptedException e) {
                     // 如果是take打断唤醒的情况下 再次检查queue中是否存在结果
-                    if (queue.size() > 0) {
-                        for (int i = 0; i < queue.size(); i++) {
+                    int size = queue.size();
+                    if (size > 0) {
+                        for (int i = 0; i < size; i++) {
                             QueueResult<T> queueResult = queue.take();
                             // 消费
                             consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
@@ -492,7 +493,7 @@ public class SyncTask<T> {
             /**
              * 元素比较器
              */
-            private Comparable<T> comparable;
+            private final Comparable<T> comparable;
 
             public TaskMultiple(Task<T> task, TaskEvent event, TaskMultipleFunction<T> function, Comparable<T> comparable){
                 this.task = task;
@@ -513,7 +514,7 @@ public class SyncTask<T> {
             public void run() {
                 try {
                     List<? extends Result> results = function.call(ObjectUtil.cast(sources));
-                    for (Result result : results) {
+                    for (Result result : ListUtil.optimize(results)) {
                         for (T source : sources) {
                             if (comparable.comparable(source, result)) {
                                 queue.offer(new QueueResult<>(event, source, result));

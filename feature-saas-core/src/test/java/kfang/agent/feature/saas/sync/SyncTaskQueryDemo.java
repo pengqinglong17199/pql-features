@@ -56,7 +56,7 @@ public class SyncTaskQueryDemo {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                count.decrementAndGet();
+                count.decrementAndGet();  `FDATA_SOURCES` varchar(20) DEFAULT NULL COMMENT '数据来源',
             }).start();
 
             new Thread(() -> {
@@ -186,12 +186,7 @@ public class SyncTaskQueryDemo {
         // 查询耗时  毫秒
         sleep(3000);
 
-        //System.out.println("查询7日新增量 - select orgId, count(1) from t_day_7 where org_id = orgId and ... group by orgId");
-        List<ReportResult> results = ListUtil.newArrayList();
-        for (int i = 0; i < list.size(); i++) {
-            results.add(new ReportResult(list.get(i).getOrgId(), RandomUtil.randomInt(1, 1000)));
-        }
-        return results;
+        throw new RuntimeException("异常");
     }
 
     private static void sleep(int time) {
