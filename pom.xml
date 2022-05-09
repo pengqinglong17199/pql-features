@@ -16,6 +16,7 @@
         <module>feature-saas-core</module>
         <module>feature-saas-open</module>
         <module>feature-dingtalk</module>
+        <module>feature-lombok</module>
     </modules>
 
 </project>

@@ -38,6 +38,13 @@
             <artifactId>hyugatool-all</artifactId>
             <version>2.0.0-SNAPSHOT</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.kfang</groupId>
+            <artifactId>feature-lombok</artifactId>
+            <version>2.3.2.4-SNAPSHOT</version>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
