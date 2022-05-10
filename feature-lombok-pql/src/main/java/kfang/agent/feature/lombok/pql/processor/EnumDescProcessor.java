@@ -200,4 +200,5 @@ public class EnumDescProcessor extends AgentProcessor {
         annotationTypes.add("kfang.agent.feature.lombok.pql.annotations.EnumDesc");
         return annotationTypes;
     }
+
 }
