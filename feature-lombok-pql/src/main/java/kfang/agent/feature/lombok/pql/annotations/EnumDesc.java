@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Documented
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.SOURCE)
-//@Repeatable(EnumDescs.class)
+//@Repeatable(EnumDesc.class)
 public @interface EnumDesc {
 
     String[] filed() default {"desc"};

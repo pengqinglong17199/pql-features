@@ -10,4 +10,5 @@ public interface EnumConstants {
 
     String DESC = "desc";
     String NAME = "name";
+
 }

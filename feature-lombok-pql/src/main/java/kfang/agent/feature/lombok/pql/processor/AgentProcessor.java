@@ -6,7 +6,6 @@ import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.Names;
-import kfang.agent.feature.lombok.pql.annotations.EnumDesc;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
@@ -33,19 +32,18 @@ public abstract class AgentProcessor extends AbstractProcessor {
         super.init(processingEnv);
         this.trees = JavacTrees.instance(processingEnv);
         Method[] declaredMethods = processingEnv.getClass().getDeclaredMethods();
-        Context context  = null;
+
         for (Method declaredMethod : declaredMethods) {
             if ("getContext".equals(declaredMethod.getName())) {
                 try {
-                    context = (Context) declaredMethod.invoke(processingEnv, null);
+                    Context context = (Context) declaredMethod.invoke(processingEnv, (Object[]) null);
+                    this.treeMaker = TreeMaker.instance(context);
+                    this.names = Names.instance(context);
                 } catch (IllegalAccessException | InvocationTargetException e) {
                     e.printStackTrace();
                 }
             }
         }
-
-        this.treeMaker = TreeMaker.instance(context);
-        this.names = Names.instance(context);
     }
 
     /**
@@ -66,12 +64,15 @@ public abstract class AgentProcessor extends AbstractProcessor {
 
     /**
      * 需要处理的注解集合
+     *
+     * @return Set
      */
     protected abstract Set<String> getAnnotationTypes();
 
     /**
      * 注解类型比对
      */
+    @SuppressWarnings("all")
     protected boolean jcEquals(JCTree.JCAnnotation annotation, Class<?> clazz) {
         return annotation.type.toString().equals(clazz.getCanonicalName());
     }
@@ -79,8 +80,9 @@ public abstract class AgentProcessor extends AbstractProcessor {
     /**
      * 字段类型比对
      */
-    protected boolean typeEquals(JCTree.JCVariableDecl it, Class<?> clazz){
-        Type.ClassType classType= (Type.ClassType)it.getType().type;
+    @SuppressWarnings("all")
+    protected boolean typeEquals(JCTree.JCVariableDecl it, Class<?> clazz) {
+        Type.ClassType classType = (Type.ClassType) it.getType().type;
         return classType.supertype_field.baseType().tsym.toString().equals(clazz.getCanonicalName());
     }
 
@@ -90,7 +92,7 @@ public abstract class AgentProcessor extends AbstractProcessor {
     protected String upperCase(String str) {
         String suffix;
         byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
-        bytes[0] = (byte)(bytes[0] - 32);
+        bytes[0] = (byte) (bytes[0] - 32);
         suffix = new String(bytes);
         return suffix;
     }

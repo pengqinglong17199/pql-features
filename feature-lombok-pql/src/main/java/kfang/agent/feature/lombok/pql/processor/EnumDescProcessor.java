@@ -5,14 +5,15 @@ import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeTranslator;
-import com.sun.tools.javac.util.*;
+import com.sun.tools.javac.util.List;
+import com.sun.tools.javac.util.ListBuffer;
+import com.sun.tools.javac.util.Name;
 import kfang.agent.feature.lombok.pql.annotations.EnumDesc;
 
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
-import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -117,7 +118,7 @@ public class EnumDescProcessor extends AgentProcessor {
         Set<String> nameSet = new HashSet<>();
 
         // 默认值
-        if(args == null || args.size() == 0){
+        if (args == null || args.size() == 0) {
             nameSet.add(super.upperCase(DESC));
             return nameSet;
         }
@@ -189,10 +190,14 @@ public class EnumDescProcessor extends AgentProcessor {
      * 创建get方法名
      */
     private Name createGetMethodName(Name variableName, String suffix) {
-        return names.fromString(String.format("get%s%s", super.upperCase(variableName.toString()), suffix));
+        String getMethodName = String.format("get%s%s", super.upperCase(variableName.toString()), suffix);
+        return names.fromString(getMethodName);
     }
+
     @Override
     protected Set<String> getAnnotationTypes() {
-        return Set.of("kfang.agent.feature.lombok.pql.annotations.EnumDesc", "kfang.agent.feature.lombok.pql.annotations.EnumDescs");
+        Set<String> annotationTypes = new HashSet<>();
+        annotationTypes.add("kfang.agent.feature.lombok.pql.annotations.EnumDesc");
+        return annotationTypes;
     }
 }
