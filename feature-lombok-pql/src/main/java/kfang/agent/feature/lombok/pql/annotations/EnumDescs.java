@@ -1,4 +1,4 @@
-package kfang.agent.feature.lombok.annotations;
+package kfang.agent.feature.lombok.pql.annotations;
 
 import java.lang.annotation.*;
 

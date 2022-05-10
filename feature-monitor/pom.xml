@@ -41,7 +41,7 @@
 
         <dependency>
             <groupId>com.kfang</groupId>
-            <artifactId>feature-lombok</artifactId>
+            <artifactId>feature-lombok-pql</artifactId>
             <version>2.3.2.4-SNAPSHOT</version>
         </dependency>
 

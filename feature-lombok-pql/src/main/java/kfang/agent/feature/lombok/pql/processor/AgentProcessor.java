@@ -1,17 +1,19 @@
-package kfang.agent.feature.lombok.processor;
+package kfang.agent.feature.lombok.pql.processor;
 
 import com.sun.tools.javac.api.JavacTrees;
+import com.sun.tools.javac.code.Type;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.Names;
-import kfang.agent.feature.lombok.annotations.EnumDesc;
+import kfang.agent.feature.lombok.pql.annotations.EnumDesc;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.SourceVersion;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 /**
@@ -67,7 +69,30 @@ public abstract class AgentProcessor extends AbstractProcessor {
      */
     protected abstract Set<String> getAnnotationTypes();
 
+    /**
+     * 注解类型比对
+     */
     protected boolean jcEquals(JCTree.JCAnnotation annotation, Class<?> clazz) {
         return annotation.type.toString().equals(clazz.getCanonicalName());
     }
+
+    /**
+     * 字段类型比对
+     */
+    protected boolean typeEquals(JCTree.JCVariableDecl it, Class<?> clazz){
+        Type.ClassType classType= (Type.ClassType)it.getType().type;
+        return classType.supertype_field.baseType().tsym.toString().equals(clazz.getCanonicalName());
+    }
+
+    /**
+     * 字符串首字母大写
+     */
+    protected String upperCase(String str) {
+        String suffix;
+        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+        bytes[0] = (byte)(bytes[0] - 32);
+        suffix = new String(bytes);
+        return suffix;
+    }
+
 }

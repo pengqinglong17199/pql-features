@@ -1,4 +1,4 @@
-package kfang.agent.feature.lombok.annotations;
+package kfang.agent.feature.lombok.pql.annotations;
 
 import java.lang.annotation.*;
 
@@ -11,8 +11,8 @@ import java.lang.annotation.*;
 @Documented
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.SOURCE)
-@Repeatable(EnumDescs.class)
+//@Repeatable(EnumDescs.class)
 public @interface EnumDesc {
 
-    String filed() default "desc";
+    String[] filed() default {"desc"};
 }

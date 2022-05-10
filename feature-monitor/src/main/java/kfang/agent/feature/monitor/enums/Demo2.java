@@ -1,6 +1,6 @@
 package kfang.agent.feature.monitor.enums;
 
-import kfang.agent.feature.lombok.annotations.EnumDesc;
+import kfang.agent.feature.lombok.pql.annotations.EnumDesc;
 
 /**
  * Demo2
@@ -8,12 +8,15 @@ import kfang.agent.feature.lombok.annotations.EnumDesc;
  * @author pengqinglong
  * @since 2022/5/9
  */
+@EnumDesc
 public class Demo2 {
 
-    @EnumDesc(filed = "projName")
+    @EnumDesc(filed = {"projName", "desc"})
     private ProjectEnum project1;
 
     @EnumDesc
-    @EnumDesc(filed = "projName")
     private ProjectEnum project2;
+
+    private ProjectEnum project3;
+
 }
