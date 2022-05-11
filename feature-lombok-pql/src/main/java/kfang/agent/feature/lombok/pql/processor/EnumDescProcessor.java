@@ -69,7 +69,7 @@ public class EnumDescProcessor extends AgentProcessor {
                             List<JCTree.JCAnnotation> list = it.getModifiers().getAnnotations();
                             return !(list != null && list.stream().anyMatch(jc -> jcEquals(jc, EnumDesc.class)));
                         })
-                        .forEach(it -> jcClassDecl.defs = jcClassDecl.defs.append(fieldGetterMethod(upperCase(DESC), it)));
+                        .forEach(it ->  appendMethod(jcClassDecl, (fieldGetterMethod(upperCase(DESC), it))));
 
                 super.visitClassDef(jcClassDecl);
             }
@@ -98,8 +98,8 @@ public class EnumDescProcessor extends AgentProcessor {
                     if (jcEquals(annotation, EnumDesc.class)) {
                         Set<String> nameSet = getMethodNameSuffixSet(annotation);
                         for (String name : nameSet) {
-                            JCTree jcTree = fieldGetterMethod(name, tree);
-                            ((JCTree.JCClassDecl) clazzTree).defs = ((JCTree.JCClassDecl) clazzTree).defs.append(jcTree);
+                            JCTree.JCMethodDecl jcTree = fieldGetterMethod(name, tree);
+                            appendMethod((JCTree.JCClassDecl) clazzTree, jcTree);
                         }
                         break;
                     }
@@ -107,6 +107,22 @@ public class EnumDescProcessor extends AgentProcessor {
                 super.visitVarDef(tree);
             }
         });
+    }
+
+    /**
+     * 添加方法进入语法树
+     */
+    private void appendMethod(JCTree.JCClassDecl clazzTree, JCTree.JCMethodDecl jcTree) {
+        // 校验方法是否存在 如果存在 则不处理
+        boolean isExist = clazzTree.defs
+                                   .stream()
+                                   .filter(def -> Objects.equals(Tree.Kind.METHOD, def.getKind()))
+                                   .map(def -> (JCTree.JCMethodDecl) def)
+                                   .anyMatch(def -> def.name.toString().equals(jcTree.name.toString()));
+        if(isExist){
+            return;
+        }
+        clazzTree.defs = clazzTree.defs.append(jcTree);
     }
 
     /**
@@ -137,7 +153,7 @@ public class EnumDescProcessor extends AgentProcessor {
     /**
      * 字段生成方法
      */
-    private JCTree fieldGetterMethod(String suffix, JCTree.JCVariableDecl tree) {
+    private JCTree.JCMethodDecl fieldGetterMethod(String suffix, JCTree.JCVariableDecl tree) {
 
         // 生成return语句
         JCTree.JCReturn returnStatement = treeMaker.Return(
