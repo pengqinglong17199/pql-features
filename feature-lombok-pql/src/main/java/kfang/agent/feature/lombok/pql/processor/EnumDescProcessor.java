@@ -57,6 +57,8 @@ public class EnumDescProcessor extends AgentProcessor {
         tree.accept(new TreeTranslator() {
             @Override
             public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
+                Set<JCTree.JCMethodDecl> methodDeclSet = new HashSet<>();
+
                 jcClassDecl.defs.stream()
                         // 只处理所有的变量
                         .filter(it -> it.getKind().equals(Tree.Kind.VARIABLE))
@@ -69,8 +71,13 @@ public class EnumDescProcessor extends AgentProcessor {
                             List<JCTree.JCAnnotation> list = it.getModifiers().getAnnotations();
                             return !(list != null && list.stream().anyMatch(jc -> jcEquals(jc, EnumDesc.class)));
                         })
-                        .forEach(it ->  appendMethod(jcClassDecl, (fieldGetterMethod(upperCase(DESC), it))));
-
+                        .forEach(it -> {
+                            JCTree.JCMethodDecl jcMethodDecl = fieldGetterMethod(upperCase(DESC), it);
+                            methodDeclSet.add(jcMethodDecl);
+                        });
+                for (JCTree.JCMethodDecl jcMethodDecl : methodDeclSet) {
+                    appendMethod(jcClassDecl, jcMethodDecl);
+                }
                 super.visitClassDef(jcClassDecl);
             }
         });

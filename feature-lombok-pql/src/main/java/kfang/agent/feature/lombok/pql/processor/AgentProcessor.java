@@ -82,7 +82,16 @@ public abstract class AgentProcessor extends AbstractProcessor {
      */
     @SuppressWarnings("all")
     protected boolean typeEquals(JCTree.JCVariableDecl it, Class<?> clazz) {
+        Type type = it.getType().type;
+        if(!(type instanceof Type.ClassType)){
+            return false;
+        }
         Type.ClassType classType = (Type.ClassType) it.getType().type;
+        classType = (Type.ClassType) classType.baseType();
+
+        if(classType.supertype_field == null){
+            return false;
+        }
         return classType.supertype_field.baseType().tsym.toString().equals(clazz.getCanonicalName());
     }
 
