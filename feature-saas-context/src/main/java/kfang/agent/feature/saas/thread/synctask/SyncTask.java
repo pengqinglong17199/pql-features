@@ -278,13 +278,8 @@ public class SyncTask<T> {
             // 当前任务数-1
             CURRENT_CONCURRENT_TASK_NUMBER.decrementAndGet();
 
-            // decrementAndGet 保证了原子性 无需加锁
-            int i = this.size.decrementAndGet();
-            if (i == 0) {
-
-                // 最后一个任务线程确保main线程进入结束阶段
-                main.interrupt();
-            }
+            // 当前任务链表size - 1
+            this.size.decrementAndGet();
         }
 
         /**
@@ -372,10 +367,12 @@ public class SyncTask<T> {
             while (true) {
 
                 try {
-                    QueueResult<T> queueResult = queue.take();
+                    QueueResult<T> queueResult = queue.poll(100, TimeUnit.MILLISECONDS);
 
                     // 消费
-                    consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
+                    if(queueResult != null) {
+                        consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
+                    }
                 } catch (InterruptedException e) {
                     // 如果是take打断唤醒的情况下 再次检查queue中是否存在结果
                     int size = queue.size();
