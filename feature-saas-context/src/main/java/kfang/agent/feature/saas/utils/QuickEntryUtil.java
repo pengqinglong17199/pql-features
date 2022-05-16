@@ -20,7 +20,7 @@ import javax.management.MalformedObjectNameException;
 public final class QuickEntryUtil {
 
     public static void print(String operatorSystem) throws MalformedObjectNameException {
-        /*operatorSystem = operatorSystem.replaceAll("_", "-").toLowerCase();
+        operatorSystem = operatorSystem.replaceAll("_", "-").toLowerCase();
         String deploy = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getDeploy();
         if (!SaasConstants.DEV.equals(deploy)) {
             return;
@@ -38,7 +38,7 @@ public final class QuickEntryUtil {
         ConsoleAnsi.init()
                 .color(Ansi.Color.YELLOW).append("KO TIME:").color(Ansi.Color.BLUE)
                 .append(StringUtil.format("http://{}:{}/{}/koTime", localIpAddr, localPort, operatorSystem)).print();
-        Console.greenLog(separator);*/
+        Console.greenLog(separator);
     }
 
 }
