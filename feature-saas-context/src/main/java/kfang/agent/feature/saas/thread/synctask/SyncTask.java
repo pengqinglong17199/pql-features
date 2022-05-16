@@ -3,6 +3,7 @@ package kfang.agent.feature.saas.thread.synctask;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.concurrent.HyugaRejectedExecutionHandler;
 import cn.hyugatool.core.object.ObjectUtil;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,7 +46,8 @@ public class SyncTask<T> {
     static {
         HyugaRejectedExecutionHandler handler = new HyugaRejectedExecutionHandler();
         LinkedBlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(10);
-        SYNC_TASK_THREAD_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, handler);
+        ThreadFactory factory = new ThreadFactoryBuilder().setNameFormat("syncTask-thread-%d").build();
+        SYNC_TASK_THREAD_POOL = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, workQueue, factory, handler);
 
         COMPLETED_TASK_NUMBER = new AtomicLong();
         CURRENT_CONCURRENT_TASK_NUMBER = new AtomicInteger();
@@ -365,29 +367,32 @@ public class SyncTask<T> {
 
             // 阻塞等待任务结果
             while (true) {
-
+                QueueResult<T> queueResult = null;
                 try {
-                    QueueResult<T> queueResult = queue.poll(100, TimeUnit.MILLISECONDS);
+                    queueResult = queue.poll(100, TimeUnit.MILLISECONDS);
 
                     // 消费
                     if(queueResult != null) {
                         consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
                     }
                 } catch (InterruptedException e) {
-                    // 如果是take打断唤醒的情况下 再次检查queue中是否存在结果
-                    int size = queue.size();
-                    if (size > 0) {
-                        for (int i = 0; i < size; i++) {
-                            QueueResult<T> queueResult = queue.take();
-                            // 消费
-                            consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
-                        }
+                    // 吞掉中断
+                } catch (Exception e){
+                    if(queueResult != null) {
+                        this.addErrorSource(new ErrorTask<>(queueResult.event, queueResult.source, queueResult.result, e));
                     }
                 }
 
                 // 单线程计算等待任务执行完成
                 int i = this.size.get();
                 if (i == 0) {
+                    int size = queue.size();
+                    for (int j = 0; j < size; j++) {
+                        queueResult = queue.poll();
+                        if(queueResult != null){
+                            consumer.consumer(queueResult.event, queueResult.source, queueResult.result);
+                        }
+                    }
                     return;
                 }
             }
