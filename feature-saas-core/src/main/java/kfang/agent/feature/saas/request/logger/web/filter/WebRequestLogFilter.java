@@ -129,9 +129,9 @@ public class WebRequestLogFilter extends OncePerRequestFilter {
             }
 
             if (FeignConstants.isDeveloperLocalEnvironment(NetworkUtil.getLocalIpAddr())) {
-                Console.cyanLog(StringUtil.repeatedlyAdded("=====", 100));
+                Console.cyanLog(StringUtil.repeat("=====", 100));
                 Console.blueLog(StringUtil.formatString(terminalRequestSimpleModel));
-                Console.cyanLog(StringUtil.repeatedlyAdded("=====", 100));
+                Console.cyanLog(StringUtil.repeat("=====", 100));
             } else {
                 log.info(StringUtil.formatString(terminalRequestSimpleModel));
             }
