@@ -27,7 +27,7 @@ public final class QuickEntryUtil {
         }
         final String localIpAddr = NetworkUtil.getLocalIpAddr();
         final int localPort = NetworkUtil.getLocalPort();
-        final StringBuilder separator = StringUtil.repeatedlyAdded("=", 200);
+        final String separator = StringUtil.repeat("=", 200);
 
         Console.greenLog(separator);
         // swagger
