@@ -1,5 +1,6 @@
 package kfang.agent.feature.saas.logger.core;
 
+import cn.hyugatool.aop.annotation.AnnotationUtil;
 import cn.hyugatool.aop.aspectj.AspectAroundInject;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.date.DateFormat;
@@ -8,7 +9,6 @@ import cn.hyugatool.core.date.interval.TimeInterval;
 import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.core.string.snow.SnowflakeIdUtil;
-import cn.hyugatool.extra.aop.AopUtil;
 import cn.hyugatool.json.JsonUtil;
 import kfang.agent.feature.saas.logger.annotations.AgentLogger;
 import kfang.agent.feature.saas.logger.util.LogUtil;
@@ -48,7 +48,7 @@ public class AgentLoggerAspect implements AspectAroundInject {
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
         final String snowflakeId = SnowflakeIdUtil.getSnowflakeIdStr();
 
-        AgentLogger agentServiceLog = AopUtil.getDeclaredAnnotation(joinPoint, AgentLogger.class);
+        AgentLogger agentServiceLog = AnnotationUtil.getDeclaredAnnotation(joinPoint, AgentLogger.class);
         String module = agentServiceLog.logModule();
         Class<?> clazz = agentServiceLog.clazz();
 

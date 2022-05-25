@@ -1,7 +1,7 @@
 package kfang.agent.feature.dingtalk.core;
 
+import cn.hyugatool.aop.annotation.AnnotationUtil;
 import cn.hyugatool.core.collection.ListUtil;
-import cn.hyugatool.extra.aop.AopUtil;
 import cn.hyugatool.system.NetworkUtil;
 import kfang.agent.feature.dingtalk.annotations.AgentDingTalk;
 import kfang.agent.feature.dingtalk.config.DingTalkConfiguration;
@@ -62,7 +62,7 @@ public class AgentDingTalkCore {
             threadLocal.set(true);
 
             // 获取方法上的注解
-            AgentDingTalk annotation = AopUtil.getDeclaredAnnotation(joinPoint, AgentDingTalk.class);
+            AgentDingTalk annotation = AnnotationUtil.getDeclaredAnnotation(joinPoint, AgentDingTalk.class);
 
             // 拿到方法作者
             Author[] authors = annotation.authors();

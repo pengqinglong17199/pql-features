@@ -6,7 +6,7 @@ import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.extra.web.CommonWebUtil;
 import cn.hyugatool.json.JsonUtil;
 import cn.hyugatool.json.JsonValidateUtil;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import kfang.agent.feature.saas.constants.SaasConstants;
 import kfang.agent.feature.saas.logger.util.LogUtil;
 import kfang.infra.common.model.LoginDto;
@@ -62,7 +62,7 @@ public class AgentServiceRequestSleuthLogFilter extends OncePerRequestFilter {
             return;
         }
         final String requestUrl = wrapperRequest.getRequestURL().toString();
-        if (JsonValidateUtil.isBadJson(jsonParams)) {
+        if (!JsonValidateUtil.isValid(jsonParams)) {
             LogUtil.error(log, OPERATOR_INFO, "POST入参异常", String.format("requestURL:%s,params:%s", requestUrl, jsonParams));
             return;
         }

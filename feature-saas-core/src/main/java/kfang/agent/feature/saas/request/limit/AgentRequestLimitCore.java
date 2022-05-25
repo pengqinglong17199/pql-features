@@ -1,12 +1,10 @@
 package kfang.agent.feature.saas.request.limit;
 
-import cn.hyugatool.extra.aop.AnnotationUtil;
+import cn.hyugatool.aop.annotation.AnnotationUtil;
 import kfang.agent.feature.saas.parse.time.TimeParseFactory;
 import kfang.agent.feature.saas.parse.time.core.TimeParse;
 import kfang.agent.feature.saas.request.RequestCacheKey;
-import kfang.agent.feature.saas.request.operatesystem.OperatorSystem;
 import kfang.infra.common.cache.KfangCache;
-import kfang.infra.common.cache.cachekey.CacheKeyType;
 import kfang.infra.common.model.LoginDto;
 import kfang.infra.web.controller.BaseController;
 import org.aspectj.lang.JoinPoint;
@@ -35,7 +33,8 @@ public class AgentRequestLimitCore {
     private KfangCache agentCache;
 
     @Pointcut("@annotation(AgentRequestLimit)")
-    private void pointCutAgentRequestLimit() { }
+    private void pointCutAgentRequestLimit() {
+    }
 
     @Before("pointCutAgentRequestLimit()")
     public void agentRequestLimit(JoinPoint joinPoint) {
@@ -51,7 +50,8 @@ public class AgentRequestLimitCore {
 
 
     @Pointcut("@annotation(AgentRequestLimits)")
-    private void pointCutAgentRequestLimits() { }
+    private void pointCutAgentRequestLimits() {
+    }
 
     @Before("pointCutAgentRequestLimits()")
     public void before(JoinPoint joinPoint) {
@@ -78,7 +78,8 @@ public class AgentRequestLimitCore {
             long ttl = agentCache.ttl(RequestCacheKey.LIMIT, String.format("%s:%s", id, name));
 
             // 如果没有 解析time获取缓存时间 存入缓存次数1
-            if (ttl == -2) {
+            int i = -2;
+            if (ttl == i) {
                 TimeParse timeParse = TimeParseFactory.create(requestLimit.time());
                 Long parse = timeParse.parse(requestLimit.time());
                 agentCache.put(RequestCacheKey.LIMIT, String.format("%s:%s", id, name), 1, parse.intValue());
@@ -95,9 +96,10 @@ public class AgentRequestLimitCore {
         } finally {
             // 清除需要清理的缓存
             String[] removes = requestLimit.removes();
-            for(String removeName : removes){
+            for (String removeName : removes) {
                 agentCache.remove(RequestCacheKey.LIMIT, String.format("%s:%s", id, removeName));
             }
         }
     }
+
 }

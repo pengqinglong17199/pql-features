@@ -1,10 +1,10 @@
 package kfang.agent.feature.saas.request.operatesystem;
 
+import cn.hyugatool.aop.annotation.AnnotationUtil;
 import cn.hyugatool.aop.aspectj.AspectInject;
 import cn.hyugatool.core.clazz.ClassUtil;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.instance.ReflectionUtil;
-import cn.hyugatool.extra.aop.AnnotationUtil;
 import kfang.infra.api.validate.extend.OperateExtendForm;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;

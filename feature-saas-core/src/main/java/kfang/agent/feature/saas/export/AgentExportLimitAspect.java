@@ -1,8 +1,8 @@
 package kfang.agent.feature.saas.export;
 
+import cn.hyugatool.aop.annotation.AnnotationUtil;
 import cn.hyugatool.aop.aspectj.AspectAroundInject;
 import cn.hyugatool.aop.aspectj.AspectInject;
-import cn.hyugatool.extra.aop.AopUtil;
 import kfang.infra.common.cache.KfangCache;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -44,11 +44,12 @@ public class AgentExportLimitAspect implements AspectInject, AspectAroundInject 
     }
 
     @Override
-    public void after(JoinPoint joinPoint) throws Throwable {
-        AgentExportLimit annotation = AopUtil.getDeclaredAnnotation(joinPoint, AgentExportLimit.class);
+    public void after(JoinPoint joinPoint) {
+        AgentExportLimit annotation = AnnotationUtil.getDeclaredAnnotation(joinPoint, AgentExportLimit.class);
         String key = annotation.key();
         long ttl = agentCache.ttl(ExportCacheKey.LIMIT, key);
-        if (-2 != ttl) {
+        int i = -2;
+        if (i != ttl) {
             if (ttl < 0) {
                 agentCache.remove(ExportCacheKey.LIMIT, key);
             } else {
@@ -64,7 +65,7 @@ public class AgentExportLimitAspect implements AspectInject, AspectAroundInject 
 
     @Override
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
-        AgentExportLimit annotation = AopUtil.getDeclaredAnnotation(joinPoint, AgentExportLimit.class);
+        AgentExportLimit annotation = AnnotationUtil.getDeclaredAnnotation(joinPoint, AgentExportLimit.class);
         String key = annotation.key();
 
         int exportCount = annotation.exportCount();

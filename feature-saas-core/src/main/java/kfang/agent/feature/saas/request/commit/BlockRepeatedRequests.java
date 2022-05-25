@@ -1,8 +1,8 @@
 package kfang.agent.feature.saas.request.commit;
 
+import cn.hyugatool.aop.annotation.AnnotationUtil;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.crypto.MD5Util;
-import cn.hyugatool.extra.aop.AopUtil;
 import com.alibaba.fastjson.JSONObject;
 import kfang.agent.feature.saas.request.commit.annotations.RepeatedRequests;
 import kfang.infra.api.RequestResultException;
@@ -48,7 +48,7 @@ public class BlockRepeatedRequests {
     @Around("cutMethod()")
     public Object around(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        RepeatedRequests repeatedRequests = AopUtil.getDeclaredAnnotation(joinPoint, RepeatedRequests.class);
+        RepeatedRequests repeatedRequests = AnnotationUtil.getDeclaredAnnotation(joinPoint, RepeatedRequests.class);
 
         // 无注解
         if (repeatedRequests == null) {
