@@ -26,6 +26,12 @@ public @interface RequestEntity {
     String path();
 
     /**
+     * 请求超时时间 单位:毫秒 默认10s
+     * @return
+     */
+    int timeout() default 10000;
+
+    /**
      * 请求方式 目前暂时支持 post和get 默认post
      */
     RequestMode mode() default RequestMode.POST;

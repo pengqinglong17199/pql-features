@@ -68,7 +68,13 @@ public interface RequestDelegate {
                 httpRequest = new HttpPost(builder.build());
             }
 
-            httpRequest.setConfig(RequestConfig.custom().setConnectionRequestTimeout(10000).setConnectTimeout(10000).setSocketTimeout(10000).build());
+            // 设置请求超时时间
+            int timeout = annotation.timeout();
+            httpRequest.setConfig(RequestConfig.custom()
+                    .setConnectionRequestTimeout(timeout)
+                    .setConnectTimeout(timeout)
+                    .setSocketTimeout(timeout)
+                    .build());
 
             // body跟随序列化直接进入body了 不用处理
             AuthenticationMode authenticationMode = annotation.authMode();
