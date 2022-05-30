@@ -63,7 +63,7 @@ public class AgentLoggerAspect implements AspectAroundInject {
         if (agentServiceLog.loginDto()) {
             params = JsonUtil.toJsonString(canSerializableArgs);
         } else {
-            params = JsonUtil.toJsonString(canSerializableArgs, LOGIN_EXTEND_DTO);
+            params = JsonUtil.toJsonString(canSerializableArgs/*, LOGIN_EXTEND_DTO*/);
         }
 
         String startTime = DateUtil.format(DateFormat.yyyy_MM_dd_HH_mm_ss_SSS, DateUtil.now());
