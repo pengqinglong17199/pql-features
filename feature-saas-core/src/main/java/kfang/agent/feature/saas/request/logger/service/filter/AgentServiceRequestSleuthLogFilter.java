@@ -84,7 +84,7 @@ public class AgentServiceRequestSleuthLogFilter extends OncePerRequestFilter {
             return;
         }
 
-        LoginDto loginDto = JsonUtil.toJavaObject(JsonUtil.toJsonString(loginExtendDtoStr), LoginDto.class);
+        LoginDto loginDto = JsonUtil.toJavaObject(loginExtendDtoStr, LoginDto.class);
 
         MDC.put(LOG_PLATFORM_ORG_ID, loginDto.getPlatformOrgId());
         MDC.put(LOG_OPERATOR_ID, loginDto.getId());
