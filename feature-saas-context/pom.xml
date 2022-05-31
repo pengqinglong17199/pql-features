@@ -11,7 +11,7 @@
     <parent>
         <artifactId>cloud-dependencies</artifactId>
         <groupId>com.kfang</groupId>
-        <version>agnet-pql-2.3.2-SNAPSHOT</version>
+        <version>2.3.2-SNAPSHOT</version>
     </parent>
 
     <dependencies>
