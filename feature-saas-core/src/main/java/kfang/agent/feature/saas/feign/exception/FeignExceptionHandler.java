@@ -1,6 +1,5 @@
 package kfang.agent.feature.saas.feign.exception;
 
-import com.netflix.client.ClientException;
 import feign.RetryableException;
 import kfang.infra.api.JsonCommonCodeEnum;
 import kfang.infra.common.KfangInfraCommonProperties;
@@ -68,10 +67,10 @@ public class FeignExceptionHandler extends BaseController {
      * @return string
      * @throws Exception Exception
      */
-    @ExceptionHandler(value = ClientException.class)
+/*    @ExceptionHandler(value = ClientException.class)
     public String clientException(Exception e) throws Exception {
         log.error("web层调用service层错误异常 错误信息:" + e.getMessage(), e);
-
+<version>agnet-pql-2.3.2-SNAPSHOT</version>
         final String msg = e.getMessage();
 
         checkContainsAgentServiceSign(e, msg);
@@ -84,7 +83,7 @@ public class FeignExceptionHandler extends BaseController {
         String tip = FeignCallExceptionConstants.appendClientExceptionTip(env, serviceType);
 
         return withCustomMessage(tip, JsonCommonCodeEnum.E0005);
-    }
+    }*/
 
     public void addAccessErrMsg(String errMsg) {
         accessLogHandler.setProcessErrMsg(errMsg);

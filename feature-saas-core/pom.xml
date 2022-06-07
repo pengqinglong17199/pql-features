@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kfang.agent</groupId>
     <artifactId>feature-saas-core</artifactId>
-    <version>2.4.0-SNAPSHOT</version>
+    <version>2.5.0-SNAPSHOT</version>
     <name>feature-saas-core</name>
     <description>SAAS组件核心</description>
 
@@ -33,7 +33,7 @@
         <dependency>
             <groupId>com.kfang.agent</groupId>
             <artifactId>feature-saas-context</artifactId>
-            <version>2.4.0-SNAPSHOT</version>
+            <version>2.5.0-SNAPSHOT</version>
         </dependency>
         <!-- ua -->
         <dependency>
