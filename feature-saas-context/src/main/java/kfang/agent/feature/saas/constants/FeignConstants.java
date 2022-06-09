@@ -85,11 +85,10 @@ public interface FeignConstants {
         // 开发本地IP
         add(new IpIsolation("10.210.13.13", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// huangzeyuan
         add(new IpIsolation("10.210.200.200", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// huangzeyuan
-        add(new IpIsolation("10.210.13.99", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// fangjinkun
         add(new IpIsolation("10.210.13.66", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// pengqinglong
         add(new IpIsolation("10.210.13.8", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// chenyi
-        add(new IpIsolation("10.210.13.77", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// zhongyuan
         add(new IpIsolation("10.210.13.9", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// liuwei
+        add(new IpIsolation("10.210.13.77", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// zhongyuan
         add(new IpIsolation("10.210.13.231", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));//chenhao
         add(new IpIsolation("10.210.13.32", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// fanwei
         add(new IpIsolation("10.210.13.37", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// zhangchenglong
