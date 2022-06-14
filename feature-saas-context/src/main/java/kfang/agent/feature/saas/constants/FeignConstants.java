@@ -88,6 +88,7 @@ public interface FeignConstants {
         add(new IpIsolation("10.210.13.66", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// pengqinglong
         add(new IpIsolation("10.210.13.8", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// chenyi
         add(new IpIsolation("10.210.13.9", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// liuwei
+        add(new IpIsolation("10.210.13.96", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// chentianyan
         add(new IpIsolation("10.210.13.77", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// zhongyuan
         add(new IpIsolation("10.210.13.231", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));//chenhao
         add(new IpIsolation("10.210.13.32", EnvEnum.DEV_ENV, ServiceIsolationEnum.ISOLATION));// fanwei
