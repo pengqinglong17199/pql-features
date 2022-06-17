@@ -19,6 +19,7 @@ public enum ServiceSignEnum {
     AGENT("-agent-", "盘客"),
     TUOKEBEN("-tuokeben-", "拓客本"),
     TUOFANGBAO("-tuofangbao-", "拓房宝"),
+    INFRA("-infra-", "盘客基础"),
     ;
 
     private final String sign;
