@@ -4,6 +4,7 @@ import cn.hyugatool.core.constants.HyugaConstants;
 import cn.hyugatool.core.enums.ByteType;
 import cn.hyugatool.core.io.unit.ByteUtil;
 import cn.hyugatool.core.lang.Console;
+import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
 import cn.hyugatool.extra.spring.AccessObjectUtil;
 import cn.hyugatool.system.NetworkUtil;
@@ -104,7 +105,7 @@ public class WebRequestCostLogFilter extends OncePerRequestFilter {
                 request.getRequestURI(),
                 method,
                 "GET".equalsIgnoreCase(method) ? StringUtil.removeAllSpace(requestParams) : StringUtil.removeAllSpace(requestBody),
-                ByteUtil.convert(responseBody.getBytes().length, ByteType.B),
+                ObjectUtil.nonNull(responseBody) ? ByteUtil.convert(responseBody.getBytes().length, ByteType.B) : null,
                 Runtime.getRuntime().maxMemory() / 1024 / 1024,
                 Runtime.getRuntime().totalMemory() / 1024 / 1024,
                 Runtime.getRuntime().freeMemory() / 1024 / 1024,
