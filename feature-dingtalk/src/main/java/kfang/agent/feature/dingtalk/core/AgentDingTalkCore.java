@@ -1,6 +1,6 @@
 package kfang.agent.feature.dingtalk.core;
 
-import cn.hyugatool.aop.annotation.AnnotationUtil;
+import cn.hyugatool.aop.AnnotationUtil;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.system.NetworkUtil;
 import kfang.agent.feature.dingtalk.annotations.AgentDingTalk;

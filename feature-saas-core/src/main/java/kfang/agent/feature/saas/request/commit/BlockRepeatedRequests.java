@@ -1,6 +1,6 @@
 package kfang.agent.feature.saas.request.commit;
 
-import cn.hyugatool.aop.annotation.AnnotationUtil;
+import cn.hyugatool.aop.AnnotationUtil;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.crypto.MD5Util;
 import com.alibaba.fastjson.JSONObject;

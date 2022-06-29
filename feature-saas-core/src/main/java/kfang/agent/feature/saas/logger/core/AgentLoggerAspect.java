@@ -1,6 +1,6 @@
 package kfang.agent.feature.saas.logger.core;
 
-import cn.hyugatool.aop.annotation.AnnotationUtil;
+import cn.hyugatool.aop.AnnotationUtil;
 import cn.hyugatool.aop.aspectj.AspectAroundInject;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.date.DateFormat;
@@ -24,8 +24,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static kfang.agent.feature.saas.constants.SaasConstants.LOGIN_EXTEND_DTO;
 
 /**
  * Agent请求响应日志切面
@@ -63,6 +61,7 @@ public class AgentLoggerAspect implements AspectAroundInject {
         if (agentServiceLog.loginDto()) {
             params = JsonUtil.toJsonString(canSerializableArgs);
         } else {
+            // FIXME: 2022/6/29 修复该方法
             params = JsonUtil.toJsonString(canSerializableArgs/*, LOGIN_EXTEND_DTO*/);
         }
 
