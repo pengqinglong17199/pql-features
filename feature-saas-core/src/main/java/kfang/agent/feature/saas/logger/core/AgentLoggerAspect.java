@@ -25,6 +25,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static kfang.agent.feature.saas.constants.SaasConstants.LOGIN_EXTEND_DTO;
+
 /**
  * Agent请求响应日志切面
  *
@@ -61,8 +63,7 @@ public class AgentLoggerAspect implements AspectAroundInject {
         if (agentServiceLog.loginDto()) {
             params = JsonUtil.toJsonString(canSerializableArgs);
         } else {
-            // FIXME: 2022/6/29 修复该方法
-            params = JsonUtil.toJsonString(canSerializableArgs/*, LOGIN_EXTEND_DTO*/);
+            params = JsonUtil.toJsonString(canSerializableArgs, LOGIN_EXTEND_DTO);
         }
 
         String startTime = DateUtil.format(DateFormat.yyyy_MM_dd_HH_mm_ss_SSS, DateUtil.now());
