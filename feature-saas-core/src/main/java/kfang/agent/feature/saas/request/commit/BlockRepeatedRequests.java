@@ -3,7 +3,7 @@ package kfang.agent.feature.saas.request.commit;
 import cn.hyugatool.aop.AnnotationUtil;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.crypto.MD5Util;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson2.JSONObject;
 import kfang.agent.feature.saas.request.commit.annotations.RepeatedRequests;
 import kfang.infra.api.RequestResultException;
 import kfang.infra.api.validate.extend.OperateExtendForm;

@@ -1,7 +1,7 @@
 package kfang.agent.feature.saas.request.service.validation.aop;
 
 import cn.hyugatool.aop.aspectj.AspectAroundInject;
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import kfang.infra.api.JsonCommonCodeEnum;
 import kfang.infra.api.RequestResult;
 import kfang.infra.api.ValidationForm;
