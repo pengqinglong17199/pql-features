@@ -40,9 +40,8 @@ public class FeignProxy<T> extends Target.HardCodedTarget<T> {
 
         if (StringUtil.hasText(urlStr)) {
             final URL url = URLUtil.url(urlStr);
-            final String uri = URLUtil.getHost(url).toString();
             final String path = url.getPath();
-            return String.format("%s-%s%s", uri, suffix, path);
+            return String.format("http://%s-%s%s", target.name(), suffix, path);
         }
         return urlStr;
     }
