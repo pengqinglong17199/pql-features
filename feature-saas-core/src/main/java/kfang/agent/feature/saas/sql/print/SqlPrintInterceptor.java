@@ -92,12 +92,15 @@ public class SqlPrintInterceptor implements Interceptor {
         String sql = getSql(boundSql, parameterObject, configuration);
 
         if (logger.isInfoEnabled()) {
-            String theStringLine = StringUtil.repeatAndJoin("=", 150, "");
-            Console.magentaLog(theStringLine);
-            Console.greenLog("【SQL】执行耗时: {}", timeInterval.intervalPretty());
-            Console.yellowLog("【SQL】执行方法：{}", statementId);
-            Console.blueLog("【SQL】执行语句：{}", sql);
-            Console.magentaLog(theStringLine);
+            // 测试环境才注入 可以忽略性能影响
+            synchronized (this) {
+                String theStringLine = StringUtil.repeatAndJoin("=", 150, "");
+                Console.magentaLog(theStringLine);
+                Console.greenLog("【SQL】执行耗时: {}", timeInterval.intervalPretty());
+                Console.yellowLog("【SQL】执行方法：{}", statementId);
+                Console.blueLog("【SQL】执行语句：{}", sql);
+                Console.magentaLog(theStringLine);
+            }
         }
         return result;
     }
