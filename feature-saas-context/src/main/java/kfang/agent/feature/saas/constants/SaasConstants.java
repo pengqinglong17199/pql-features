@@ -14,4 +14,8 @@ public interface SaasConstants {
 
     String LOGIN_EXTEND_DTO = "loginExtendDto";
 
+    String ANDROID = "ANDROID";
+
+    String IOS = "IOS";
+
 }
