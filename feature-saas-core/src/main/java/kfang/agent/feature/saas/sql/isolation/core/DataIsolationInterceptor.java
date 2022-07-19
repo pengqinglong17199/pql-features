@@ -272,9 +272,12 @@ public class DataIsolationInterceptor implements Interceptor{
                                 .javaType(String.class)
                                 .build();
                         paramMappings.put(next, param);
-                        // 初始化进去
-                        this.addParam(mappedStatement.getSqlCommandType(), boundSql, parameterMappings, whereIndex, next);
-
+                        synchronized (parameterMappings){
+                            if(!parameterMappings.contains(param)){
+                                // 初始化进去
+                                this.addParam(mappedStatement.getSqlCommandType(), boundSql, parameterMappings, whereIndex, next);
+                            }
+                        }
                     }
                 }
             }else{
