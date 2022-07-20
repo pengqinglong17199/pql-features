@@ -1,6 +1,7 @@
 package kfang.agent.feature.saas.thirdparty.delegate;
 
 import cn.hyugatool.core.collection.ListUtil;
+import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.thirdparty.annotations.AuthParam;
 import kfang.agent.feature.saas.thirdparty.annotations.RequestEntity;
@@ -9,11 +10,16 @@ import kfang.agent.feature.saas.thirdparty.enums.AuthenticationMode;
 import kfang.agent.feature.saas.thirdparty.enums.RequestMode;
 import kfang.agent.feature.saas.thirdparty.exception.ThirdpartyRequestException;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +51,24 @@ public interface RequestDelegate {
      * @param form the form
      * @return the string
      */
-    String get(String url, ThirdpartyForm form);
+    default String get(String url, ThirdpartyForm form){
+
+        // 封装请求参数
+        String param = ObjectUtil.toUrlParams(form);
+
+        // 创建request
+        HttpGet httpGet = (HttpGet) this.buildHttpRequest(url + "?" + param, form);
+
+        try {
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            CloseableHttpResponse response = httpClient.execute(httpGet);
+            byte[] bytes = EntityUtils.toByteArray(response.getEntity());
+            return new String(bytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * Build http request http request base.
