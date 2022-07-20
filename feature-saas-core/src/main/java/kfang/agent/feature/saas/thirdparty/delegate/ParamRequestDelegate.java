@@ -6,6 +6,7 @@ import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.http.NameValuePairUtil;
 import cn.hyugatool.json.JsonUtil;
 import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
+import kfang.agent.feature.saas.thirdparty.factory.SerializeHandle;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -38,7 +39,8 @@ public class ParamRequestDelegate implements RequestDelegate {
         httpPost.setHeader(CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.toString());
 
         // 处理参数
-        httpPost.setEntity(new UrlEncodedFormEntity(NameValuePairUtil.ofObject(form), StandardCharsets.UTF_8));
+        List<NameValuePair> param = SerializeHandle.serialize(form);
+        httpPost.setEntity(new UrlEncodedFormEntity(param, StandardCharsets.UTF_8));
 
         try {
             CloseableHttpClient httpClient = HttpClients.createDefault();
