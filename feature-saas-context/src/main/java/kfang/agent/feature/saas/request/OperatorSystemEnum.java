@@ -19,8 +19,8 @@ public enum OperatorSystemEnum {
      */
     WEB_AGENT_BUSINESS_PC( "PC", "业务系统PC"),
     WEB_AGENT_BUSINESS_APP( "APP", "业务系统APP"),
-    WEB_AGENT_BUSINESS_APP_IOS( "APP_IOS", "IOS"),
-    WEB_AGENT_BUSINESS_APP_ANDROID( "APP_ANDROID", "安卓"),
+    WEB_AGENT_BUSINESS_APP_IOS( "APP_IOS", "业务系统IOS"),
+    WEB_AGENT_BUSINESS_APP_ANDROID( "APP_ANDROID", "业务系统Android"),
     WEB_AGENT_OMS( "OMS", "运营系统PC"),
     WEB_AGENT_APPLET("APPLET", "小程序"),
     WEB_AGENT_THIRDPARTY("THIRD_PARTY", "第三方"),

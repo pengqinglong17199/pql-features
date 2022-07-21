@@ -100,10 +100,10 @@ public final class RequestBasicParamsProcessor {
 
            // 如果是app 对ios和安卓进行判断
            if (OperatorSystemEnum.isBusinessApp(operatorSystem)) {
-               String terminalType = loginDto.getTerminalType().toUpperCase(Locale.ROOT);
-               if (terminalType.contains(IOS)) {
+               String type = request.getHeader("x-platform");
+               if (type.contains(IOS)) {
                    operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_IOS.name();
-               }else if(terminalType.contains(ANDROID)){
+               }else if(type.contains(ANDROID)){
                    operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_ANDROID.name();
                }
            }
