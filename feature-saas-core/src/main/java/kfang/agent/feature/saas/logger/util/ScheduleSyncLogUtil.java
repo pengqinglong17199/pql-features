@@ -79,6 +79,9 @@ public class ScheduleSyncLogUtil {
         if (StringUtil.isEmpty(taskId)) {
             return false;
         }
+
+        initCache();
+
         String key = SERVICE_AGENT_JMS + KEY_PREFIX + taskId;
         agentCache.<RedisAction>doCustomAction(CacheOpeType.SAVE, redis -> {
             Long result = redis.opsForList().leftPush(key, logMessage);
