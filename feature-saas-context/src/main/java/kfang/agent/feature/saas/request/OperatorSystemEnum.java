@@ -48,7 +48,9 @@ public enum OperatorSystemEnum {
     }
 
     public static boolean isBusinessApp(String applicationName) {
-        return WEB_AGENT_BUSINESS_APP.name().equals(applicationName);
+        return WEB_AGENT_BUSINESS_APP.name().equals(applicationName)
+            || WEB_AGENT_BUSINESS_APP_IOS.name().equals(applicationName)
+            || WEB_AGENT_BUSINESS_APP_ANDROID.name().equals(applicationName);
     }
 
     public static boolean isBusinessApplet(String applicationName) {
