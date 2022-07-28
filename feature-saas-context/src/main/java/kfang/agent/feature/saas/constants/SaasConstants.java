@@ -18,4 +18,6 @@ public interface SaasConstants {
 
     String IOS = "IOS";
 
+    String PLATFORM = "x-platform";
+
 }

@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
-import static kfang.agent.feature.saas.constants.SaasConstants.ANDROID;
-import static kfang.agent.feature.saas.constants.SaasConstants.IOS;
+import static kfang.agent.feature.saas.constants.SaasConstants.*;
 
 
 /**
@@ -100,7 +99,7 @@ public final class RequestBasicParamsProcessor {
 
            // 如果是app 对ios和安卓进行判断
            if (OperatorSystemEnum.isBusinessApp(operatorSystem)) {
-               String type = request.getHeader("x-platform");
+               String type = request.getHeader(PLATFORM);
                if (type.contains(IOS)) {
                    operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_IOS.name();
                }else if(type.contains(ANDROID)){
