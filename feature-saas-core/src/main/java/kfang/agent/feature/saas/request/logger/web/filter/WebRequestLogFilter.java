@@ -1,8 +1,7 @@
 package kfang.agent.feature.saas.request.logger.web.filter;
 
 import cn.hyugatool.core.constants.HyugaConstants;
-import cn.hyugatool.core.enums.ByteType;
-import cn.hyugatool.core.io.unit.ByteUtil;
+import cn.hyugatool.core.io.bytes.ByteSizeConvert;
 import cn.hyugatool.core.lang.Console;
 import cn.hyugatool.core.object.MapperUtil;
 import cn.hyugatool.core.string.StringUtil;
@@ -110,7 +109,7 @@ public class WebRequestLogFilter extends OncePerRequestFilter {
         terminalRequestModel.setRequestBody(AccessObjectUtil.getRequestBody(wrapperRequest));
         terminalRequestModel.setResponseBody(responseBody);
         if (responseBody != null) {
-            terminalRequestModel.setResponseContextSize(ByteUtil.convert(responseBody.getBytes().length, ByteType.B));
+            terminalRequestModel.setResponseContextSize(ByteSizeConvert.model().format(responseBody.getBytes().length));
         }
 
         log(terminalRequestModel);

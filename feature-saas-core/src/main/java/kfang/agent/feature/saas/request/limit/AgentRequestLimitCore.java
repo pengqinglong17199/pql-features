@@ -1,6 +1,6 @@
 package kfang.agent.feature.saas.request.limit;
 
-import cn.hyugatool.aop.annotation.AnnotationUtil;
+import cn.hyugatool.aop.AnnotationUtil;
 import kfang.agent.feature.saas.parse.time.TimeParseFactory;
 import kfang.agent.feature.saas.parse.time.core.TimeParse;
 import kfang.agent.feature.saas.request.RequestCacheKey;

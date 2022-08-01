@@ -34,6 +34,7 @@ public enum AgentEnvironmentEnum {
     AGENT_DEV_FW("fw"),
     AGENT_DEV_ZCL("zcl"),
     AGENT_DEV_CH("pkchenhao"),
+    AGENT_DEV_CTY("cty"),
     ;
 
     private final String suffix;

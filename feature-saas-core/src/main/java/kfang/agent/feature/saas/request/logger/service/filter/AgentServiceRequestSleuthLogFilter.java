@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static kfang.agent.feature.saas.constants.SaasConstants.PLATFORM;
 import static kfang.agent.feature.saas.logger.util.OperatorInfoUtil.*;
 
 /**
@@ -81,10 +82,11 @@ public class AgentServiceRequestSleuthLogFilter extends OncePerRequestFilter {
             MDC.put(LOG_OPERATOR_IS_MAJOR, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_IP, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_TERMINAL_TYPE, StringUtil.EMPTY);
+            MDC.put(LOG_OPERATOR_PLATFORM, StringUtil.EMPTY);
             return;
         }
 
-        LoginDto loginDto = JsonUtil.toJavaObject(JsonUtil.toJsonString(loginExtendDtoStr), LoginDto.class);
+        LoginDto loginDto = JsonUtil.toJavaObject(loginExtendDtoStr, LoginDto.class);
 
         MDC.put(LOG_PLATFORM_ORG_ID, loginDto.getPlatformOrgId());
         MDC.put(LOG_OPERATOR_ID, loginDto.getId());
@@ -98,6 +100,7 @@ public class AgentServiceRequestSleuthLogFilter extends OncePerRequestFilter {
         MDC.put(LOG_OPERATOR_IS_MAJOR, loginDto.getIsMajor());
         MDC.put(LOG_OPERATOR_IP, jsonObject.getString(OPERATOR_IP));
         MDC.put(LOG_OPERATOR_TERMINAL_TYPE, jsonObject.getString(OPERATOR_SYSTEM));
+        MDC.put(LOG_OPERATOR_PLATFORM, wrapperRequest.getHeader(PLATFORM));
     }
 
 }

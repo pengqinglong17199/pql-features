@@ -9,6 +9,7 @@ import cn.hyugatool.core.object.MapperUtil;
 import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.request.AgentRequestConfiguration;
+import kfang.agent.feature.saas.request.OperatorSystemEnum;
 import kfang.infra.api.validate.extend.LoginExtendDto;
 import kfang.infra.api.validate.extend.OperateExtendForm;
 import kfang.infra.api.validate.extend.PageExtendForm;
@@ -19,6 +20,10 @@ import nl.bitwalker.useragentutils.UserAgent;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+import static kfang.agent.feature.saas.constants.SaasConstants.*;
 
 
 /**
@@ -90,7 +95,18 @@ public final class RequestBasicParamsProcessor {
             return true;
         }
        if (StringUtil.contains(field, new String[]{OPERATOR_SYSTEM})) {
-            ReflectionUtil.setFieldValue(object, OPERATOR_SYSTEM, AgentRequestConfiguration.getOperatorSystem());
+           String operatorSystem = AgentRequestConfiguration.getOperatorSystem();
+
+           // 如果是app 对ios和安卓进行判断
+           if (OperatorSystemEnum.isBusinessApp(operatorSystem)) {
+               String type = request.getHeader(PLATFORM);
+               if (type.contains(IOS)) {
+                   operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_IOS.name();
+               }else if(type.contains(ANDROID)){
+                   operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_ANDROID.name();
+               }
+           }
+            ReflectionUtil.setFieldValue(object, OPERATOR_SYSTEM, operatorSystem);
             return true;
         }
         return false;

@@ -1,6 +1,6 @@
 package kfang.agent.feature.saas.export;
 
-import cn.hyugatool.aop.annotation.AnnotationUtil;
+import cn.hyugatool.aop.AnnotationUtil;
 import cn.hyugatool.aop.aspectj.AspectAroundInject;
 import cn.hyugatool.aop.aspectj.AspectInject;
 import kfang.infra.common.cache.KfangCache;

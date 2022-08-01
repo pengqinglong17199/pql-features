@@ -44,45 +44,4 @@ public class JsonRequestDelegate implements RequestDelegate {
         }
         return null;
     }
-
-    @Override
-    public String get(String url, ThirdpartyForm form) {
-        // 封装请求参数
-        // String param = this.packGetParam(form);
-
-        String param = ObjectUtil.toUrlParams(form);
-
-        // 创建request
-        HttpGet httpGet = (HttpGet) this.buildHttpRequest(url + "?" + param, form);
-
-        try {
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            CloseableHttpResponse response = httpClient.execute(httpGet);
-            byte[] bytes = EntityUtils.toByteArray(response.getEntity());
-            return new String(bytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private String packGetParam(ThirdpartyForm form) {
-        StringBuilder sb = new StringBuilder("?");
-        for (Field field : form.getClass().getDeclaredFields()) {
-            field.setAccessible(true);
-            try {
-                Object o = field.get(form);
-                if (o != null) {
-                    sb.append(field.getName());
-                    sb.append("=");
-                    sb.append(o);
-                    sb.append("&");
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        return StringUtil.removeEnd(sb.toString(), "&");
-    }
-
 }

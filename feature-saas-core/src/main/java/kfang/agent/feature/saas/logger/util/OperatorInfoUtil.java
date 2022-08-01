@@ -29,9 +29,11 @@ public class OperatorInfoUtil {
     public static final String LOG_OPERATOR_IS_MAJOR = "operator-is-major";
     public static final String LOG_OPERATOR_IP = "operator-ip";
     public static final String LOG_OPERATOR_TERMINAL_TYPE = "operator-terminal-type";
+    public static final String LOG_OPERATOR_PLATFORM = "operator-platform";
 
     public static final String LOG_OPERATOR_INFO_TEMPLATE =
             "ip:%s,terminalType:%s," +
+                    "x-platform:%s," +
                     "platformOrgId:%s,id:%s,name:%s," +
                     "orgId:%s,orgName:%s," +
                     "positionId:%s,positionName:%s," +
@@ -55,13 +57,14 @@ public class OperatorInfoUtil {
         String operatorIsMajor = MDC.get(LOG_OPERATOR_IS_MAJOR);
         String operatorIp = MDC.get(LOG_OPERATOR_IP);
         String operatorTerminalType = MDC.get(LOG_OPERATOR_TERMINAL_TYPE);
+        String operatorPlatform = MDC.get(LOG_OPERATOR_PLATFORM);
 
         if (StringUtil.isEmpty(operatorId)) {
             return;
         }
 
         String operatorInfo = String.format(LOG_OPERATOR_INFO_TEMPLATE,
-                operatorIp, operatorTerminalType, platformOrgId, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
+                operatorIp, operatorTerminalType, operatorTerminalType, platformOrgId, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
                 operatorOrgPositionId, operatorOrgPositionName, operatorCompanyOrgId, operatorCompanyOrgName, operatorIsMajor);
 
         switch (logLevel) {

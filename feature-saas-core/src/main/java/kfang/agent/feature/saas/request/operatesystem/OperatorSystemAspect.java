@@ -1,6 +1,6 @@
 package kfang.agent.feature.saas.request.operatesystem;
 
-import cn.hyugatool.aop.annotation.AnnotationUtil;
+import cn.hyugatool.aop.AnnotationUtil;
 import cn.hyugatool.aop.aspectj.AspectInject;
 import cn.hyugatool.core.clazz.ClassUtil;
 import cn.hyugatool.core.collection.ListUtil;

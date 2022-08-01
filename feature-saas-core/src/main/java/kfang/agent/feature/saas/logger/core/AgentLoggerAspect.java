@@ -1,6 +1,6 @@
 package kfang.agent.feature.saas.logger.core;
 
-import cn.hyugatool.aop.annotation.AnnotationUtil;
+import cn.hyugatool.aop.AnnotationUtil;
 import cn.hyugatool.aop.aspectj.AspectAroundInject;
 import cn.hyugatool.core.collection.ListUtil;
 import cn.hyugatool.core.date.DateFormat;

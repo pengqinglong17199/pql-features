@@ -71,7 +71,7 @@ public class DingTalkConfiguration {
         return kfangProperties.getEnv().getDeploy();
     }
 
-    public static final Author[] PRO_AUTHORS = {Author.PENG_QING_LONG, Author.HUANG_ZE_YUAN, Author.FANG_JIN_KUN};
+    public static final Author[] PRO_AUTHORS = {Author.PENG_QING_LONG, Author.HUANG_ZE_YUAN};
 
     /**
      * 当前是否是开发/测试环境

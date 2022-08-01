@@ -75,6 +75,7 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
         if (!isDevEnv) {
             // agentFeign隔离部分仅对测试环境生效
+            System.setProperty(FeignConstants.FEIGN_SUFFIX, StringUtil.EMPTY);
             return;
         }
 
