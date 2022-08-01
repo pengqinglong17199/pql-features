@@ -9,6 +9,20 @@
     <description>盘客组件集</description>
     <packaging>pom</packaging>
 
+    <parent>
+        <groupId>com.kfang</groupId>
+        <artifactId>cloud-dependencies</artifactId>
+        <version>agnet-pql-2.3.2-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <hyuga.all.version>2.1.0-SNAPSHOT</hyuga.all.version>
+        <feature.version>2.5.0-SNAPSHOT</feature.version>
+    </properties>
+
     <modules>
         <module>feature-monitor</module>
         <module>feature-wechat</module>
