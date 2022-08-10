@@ -90,6 +90,7 @@ public class ScheduleSyncLogUtil {
         });
         return true;
     }
+
     /**
      * 打印异步处理任务日志
      * 注意 taskId必须真实有效
@@ -104,11 +105,11 @@ public class ScheduleSyncLogUtil {
         int count = 0;
 
         // 循环一个接口查询是否还有日志
-        while (true){
+        while (true) {
             List<String> logList = ScheduleSyncLogUtil.getLogList(taskId);
 
             // 循环100次 500秒 未有日志 认为taskId无效 or 任务失效 跳出死循环 结束任务
-            if(ListUtil.isEmpty(logList) && ++count > 100){
+            if (ListUtil.isEmpty(logList) && ++count > 100) {
                 logger.info("日志打印 等待超时 异常结束");
                 return;
             }
@@ -118,7 +119,7 @@ public class ScheduleSyncLogUtil {
                 count = 0;
 
                 // 结束 直接return
-                if(ScheduleSyncLogUtil.isEnd(taskId, message)){
+                if (ScheduleSyncLogUtil.isEnd(taskId, message)) {
                     logger.info("任务正常结束");
                     return;
                 }
@@ -128,6 +129,7 @@ public class ScheduleSyncLogUtil {
             TimeUnit.SECONDS.sleep(5L);
         }
     }
+
     /**
      * 获取任务日志
      */
