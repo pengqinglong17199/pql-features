@@ -20,9 +20,13 @@ import javax.management.MalformedObjectNameException;
  * @author hyuga
  * @since 2021/5/28
  */
+@SuppressWarnings("unused")
 public final class QuickEntryUtil {
 
     private static final String SERVER_PORT = "server.port";
+
+    @SuppressWarnings("all")
+    public static final String HTTP = "http://";
 
     public static void print(String operatorSystem) throws MalformedObjectNameException {
         operatorSystem = operatorSystem.replaceAll(HyugaConstants.UNDERLINE, HyugaConstants.HYPHEN).toLowerCase();
@@ -49,11 +53,11 @@ public final class QuickEntryUtil {
         // swagger
         ConsoleAnsi.init()
                 .color(Ansi.Color.YELLOW).append("SWAGGER:").color(Ansi.Color.BLUE).
-                append(StringUtil.format("http://{}:{}/{}/doc.html", localIpAddr, localPort, operatorSystem)).print();
+                append(StringUtil.format(HTTP + "{}:{}/{}/doc.html", localIpAddr, localPort, operatorSystem)).print();
         // 链路追踪
         ConsoleAnsi.init()
                 .color(Ansi.Color.YELLOW).append("KO TIME:").color(Ansi.Color.BLUE)
-                .append(StringUtil.format("http://{}:{}/{}/koTime", localIpAddr, localPort, operatorSystem)).print();
+                .append(StringUtil.format(HTTP + "{}:{}/{}/koTime", localIpAddr, localPort, operatorSystem)).print();
         Console.greenLog(separator);
     }
 
