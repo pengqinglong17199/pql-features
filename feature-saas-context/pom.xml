@@ -20,6 +20,7 @@
             <groupId>cn.hyugatool</groupId>
             <artifactId>hyugatool-all</artifactId>
             <version>${hyuga.all.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
