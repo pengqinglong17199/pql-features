@@ -8,7 +8,7 @@
     <description>SAAS组件上下文</description>
 
     <parent>
-        <groupId>com.kfang</groupId>
+        <groupId>com.kfang.agent</groupId>
         <artifactId>agent-features</artifactId>
         <version>2.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -24,7 +24,7 @@
 
         <!-- kfang -->
         <dependency>
-            <groupId>com.kfang</groupId>
+            <groupId>com.kfang.agent</groupId>
             <artifactId>infra-web-base</artifactId>
         </dependency>
 
@@ -35,7 +35,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.kfang</groupId>
+            <groupId>com.kfang.agent</groupId>
             <artifactId>infra-common-base</artifactId>
             <exclusions>
                 <exclusion>
@@ -45,7 +45,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.kfang</groupId>
+            <groupId>com.kfang.agent</groupId>
             <artifactId>infra-api-base</artifactId>
         </dependency>
         <!-- swagger -->

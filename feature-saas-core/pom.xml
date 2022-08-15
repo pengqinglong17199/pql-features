@@ -8,7 +8,7 @@
     <description>SAAS组件核心</description>
 
     <parent>
-        <groupId>com.kfang</groupId>
+        <groupId>com.kfang.agent</groupId>
         <artifactId>agent-features</artifactId>
         <version>2.5.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
@@ -17,15 +17,15 @@
     <dependencies>
         <!-- kfang -->
         <dependency>
-            <groupId>com.kfang</groupId>
+            <groupId>com.kfang.agent</groupId>
             <artifactId>infra-web-base</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.kfang</groupId>
+            <groupId>com.kfang.agent</groupId>
             <artifactId>infra-service-base</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.kfang</groupId>
+            <groupId>com.kfang.agent</groupId>
             <artifactId>feature-redis</artifactId>
         </dependency>
         <!-- saas -->
