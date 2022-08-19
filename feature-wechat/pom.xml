@@ -17,7 +17,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.kfang.agent</groupId>
+            <groupId>com.kfang</groupId>
             <artifactId>infra-web-base</artifactId>
         </dependency>
         <dependency>
@@ -28,7 +28,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.kfang.agent</groupId>
+            <groupId>com.kfang</groupId>
             <artifactId>cloud-properties-setting</artifactId>
             <type>pom</type>
             <optional>true</optional>
