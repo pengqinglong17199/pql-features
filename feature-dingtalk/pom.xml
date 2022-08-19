@@ -22,11 +22,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.kfang.agent</groupId>
+            <groupId>com.kfang</groupId>
             <artifactId>infra-service-base</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.kfang.agent</groupId>
+            <groupId>com.kfang</groupId>
             <artifactId>infra-common-base</artifactId>
             <exclusions>
                 <exclusion>
