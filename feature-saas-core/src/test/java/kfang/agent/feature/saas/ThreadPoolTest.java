@@ -1,7 +1,7 @@
 package kfang.agent.feature.saas;
 
 import cn.hyugatool.core.collection.ListUtil;
-import cn.hyugatool.core.concurrent.HyugaThreadPoolExecutor;
+import cn.hyugatool.core.concurrent.core.HyugaThreadPoolExecutor;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.List;
