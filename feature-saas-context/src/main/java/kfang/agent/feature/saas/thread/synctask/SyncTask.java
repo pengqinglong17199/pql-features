@@ -1,7 +1,7 @@
 package kfang.agent.feature.saas.thread.synctask;
 
 import cn.hyugatool.core.collection.ListUtil;
-import cn.hyugatool.core.concurrent.HyugaRejectedExecutionHandler;
+import cn.hyugatool.core.concurrent.core.HyugaRejectedExecutionHandler;
 import cn.hyugatool.core.object.ObjectUtil;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.swagger.annotations.ApiModelProperty;
