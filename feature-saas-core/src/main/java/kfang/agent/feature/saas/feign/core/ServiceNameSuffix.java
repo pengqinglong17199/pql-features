@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 /**
  * ServeNameSuffix
@@ -61,7 +60,7 @@ public class ServiceNameSuffix {
             if (StringUtil.isEmpty(defaultEnvIpSuffix)) {
                 return StringUtil.EMPTY;
             }
-            boolean noContains = !Arrays.stream(DefaultEnvEnum.values()).map(DefaultEnvEnum::getIpSuffix).collect(Collectors.toList()).contains(defaultEnvIpSuffix);
+            boolean noContains = !Arrays.stream(DefaultEnvEnum.values()).map(DefaultEnvEnum::getIpSuffix).toList().contains(defaultEnvIpSuffix);
             if (noContains) {
                 throw new RuntimeException(String.format("请确认测试环境是否有该服务器，IP后缀：%s", defaultEnvIpSuffix));
             }

@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static kfang.agent.feature.saas.constants.SaasConstants.LOGIN_EXTEND_DTO;
 
@@ -57,7 +56,7 @@ public class AgentLoggerAspect implements AspectAroundInject {
         Object[] args = joinPoint.getArgs();
         List<Object> canSerializableArgs = ListUtil.optimize(args).stream()
                 .filter(arg -> arg instanceof Serializable)
-                .filter(arg -> !(arg instanceof MultipartFile)).collect(Collectors.toList());
+                .filter(arg -> !(arg instanceof MultipartFile)).toList();
 
         String params;
         if (agentServiceLog.loginDto()) {

@@ -15,7 +15,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -90,8 +89,7 @@ public class RequestParamFormatAspect implements AspectInject {
             if (field.getType() == List.class && fieldClass.getPackageName().contains(KFANG_PACKAGE_NAME)) {
                 List<Field> recursionList = this.getFieldList(fieldClass);
                 Object objList = field.get(arg);
-                if (objList instanceof List) {
-                    List list = (List) objList;
+                if (objList instanceof List<?> list) {
                     for (Object obj : ListUtil.optimize(list)) {
                         this.handleFieldList(obj, recursionList);
                     }
@@ -127,8 +125,7 @@ public class RequestParamFormatAspect implements AspectInject {
             // 获取所有有注解的字段
             fieldList.addAll(Arrays.stream(aClass.getDeclaredFields())
                     .filter(field -> Arrays.stream(field.getDeclaredAnnotations()).
-                            anyMatch(annotation -> this.checkPackageName(annotation.annotationType(), ANNOTATION_PACKAGE_NAME)))
-                    .collect(Collectors.toList()));
+                            anyMatch(annotation -> this.checkPackageName(annotation.annotationType(), ANNOTATION_PACKAGE_NAME))).toList());
 
             // 自下而上找父类
             aClass = aClass.getSuperclass();

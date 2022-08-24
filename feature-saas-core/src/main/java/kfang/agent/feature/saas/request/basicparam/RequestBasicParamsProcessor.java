@@ -20,8 +20,6 @@ import nl.bitwalker.useragentutils.UserAgent;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 
 import static kfang.agent.feature.saas.constants.SaasConstants.*;
 

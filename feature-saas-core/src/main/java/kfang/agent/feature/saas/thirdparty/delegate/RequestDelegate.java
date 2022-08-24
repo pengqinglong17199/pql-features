@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * 请求委托器
@@ -112,7 +111,7 @@ public interface RequestDelegate {
             // 找出鉴权参数
             fieldList = fieldList.stream()
                     .filter(f -> f.isAnnotationPresent(AuthParam.class))
-                    .collect(Collectors.toList());
+                    .toList();
 
             // 没有返回
             if (ListUtil.isEmpty(fieldList)) {

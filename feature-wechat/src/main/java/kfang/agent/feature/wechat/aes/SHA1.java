@@ -54,7 +54,7 @@ public class SHA1 {
             return hexstr.toString();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new AesException(AesException.ComputeSignatureError);
+            throw new AesException(AesException.COMPUTE_SIGNATURE_ERROR);
         }
     }
 
@@ -95,7 +95,7 @@ public class SHA1 {
             return hexstr.toString();
         } catch (Exception e) {
             e.printStackTrace();
-            throw new AesException(AesException.ComputeSignatureError);
+            throw new AesException(AesException.COMPUTE_SIGNATURE_ERROR);
         }
     }
 

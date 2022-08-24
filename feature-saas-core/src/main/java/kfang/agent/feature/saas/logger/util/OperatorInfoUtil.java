@@ -64,22 +64,14 @@ public class OperatorInfoUtil {
         }
 
         String operatorInfo = String.format(LOG_OPERATOR_INFO_TEMPLATE,
-                operatorIp, operatorTerminalType, operatorTerminalType, platformOrgId, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
+                operatorIp, operatorTerminalType, operatorPlatform, platformOrgId, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
                 operatorOrgPositionId, operatorOrgPositionName, operatorCompanyOrgId, operatorCompanyOrgName, operatorIsMajor);
 
         switch (logLevel) {
-            case DEBUG:
-                LogUtil.debug(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
-                break;
-            case WARN:
-                LogUtil.warn(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
-                break;
-            case ERROR:
-                LogUtil.error(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
-                break;
-            default:
-                LogUtil.info(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
-                break;
+            case DEBUG -> LogUtil.debug(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
+            case INFO -> LogUtil.info(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
+            case WARN -> LogUtil.warn(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
+            case ERROR -> LogUtil.error(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
         }
     }
 

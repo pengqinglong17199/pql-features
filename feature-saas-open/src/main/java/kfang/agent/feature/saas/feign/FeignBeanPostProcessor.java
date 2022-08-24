@@ -11,6 +11,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.PriorityOrdered;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
@@ -36,7 +37,7 @@ import java.util.Map;
 public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdered {
 
     @Override
-    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(@NonNull Object bean, String beanName) throws BeansException {
         try {
             InjectionMetadata resourceMetadata = this.buildResourceMetadata(bean.getClass());
             resourceMetadata.inject(bean, beanName, null);
@@ -54,7 +55,7 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
             final List<InjectionMetadata.InjectedElement> currElements = new ArrayList<>();
 
             ReflectionUtils.doWithLocalFields(targetClass, field -> {
-               if (field.isAnnotationPresent(Resource.class)) {
+                if (field.isAnnotationPresent(Resource.class)) {
                     currElements.add(new ResourceElement(field, field, null));
                 }
             });
@@ -88,13 +89,13 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
 
             // 获取注解
             FeignConfig annotation = field.getAnnotation(FeignConfig.class);
-            if(annotation == null){
+            if (annotation == null) {
                 return;
             }
 
             // 获取spring代理类
             Object springObj = field.get(target);
-            if(springObj == null){
+            if (springObj == null) {
                 return;
             }
 
@@ -105,10 +106,10 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
             Object feignTarget = ReflectionUtil.getFieldValue(targetSource, "target");
             Object feignSource = ReflectionUtil.getFieldValue(feignTarget, "h");
             Object hardCodedTarget = ReflectionUtil.getFieldValue(feignSource, "target");
-            if(!(hardCodedTarget instanceof Target.HardCodedTarget)){
+            if (!(hardCodedTarget instanceof Target.HardCodedTarget)) {
                 return;
             }
-            if(hardCodedTarget instanceof FeignProxy){
+            if (hardCodedTarget instanceof FeignProxy) {
                 return;
             }
 
@@ -118,7 +119,7 @@ public class FeignBeanPostProcessor implements BeanPostProcessor, PriorityOrdere
             ReflectionUtil.setFieldValue(feignSource, "target", feignProxy);
 
             // 代理每个方法实现
-            Map<Method, InvocationHandlerFactory.MethodHandler> dispatch = (Map)ReflectionUtil.getFieldValue(feignSource, "dispatch");
+            Map<Method, InvocationHandlerFactory.MethodHandler> dispatch = (Map) ReflectionUtil.getFieldValue(feignSource, "dispatch");
             for (InvocationHandlerFactory.MethodHandler handler : dispatch.values()) {
                 ReflectionUtil.setFieldValue(handler, "target", feignProxy);
             }

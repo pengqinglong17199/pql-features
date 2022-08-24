@@ -4,7 +4,6 @@ import cn.hyugatool.core.collection.ArrayUtil;
 import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.logger.LogLevel;
-import kfang.agent.feature.saas.logger.LogModule;
 import kfang.infra.common.KfangInfraCommonProperties;
 import kfang.infra.common.spring.SpringBeanPicker;
 import org.slf4j.Logger;
@@ -84,30 +83,25 @@ public class LogUtil {
         }
 
         String serverName = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getAppName().toUpperCase();
+
         switch (logType) {
-            case DEBUG:
-                log.debug(logTemplate, serverName, module, operateType, content);
-                break;
-            case INFO:
-                log.info(logTemplate, serverName, module, operateType, content);
-                break;
-            case WARN:
+            case DEBUG -> log.debug(logTemplate, serverName, module, operateType, content);
+            case INFO -> log.info(logTemplate, serverName, module, operateType, content);
+            case WARN -> {
                 if (ObjectUtil.isNull(e)) {
                     log.warn(logTemplate, serverName, module, operateType, content);
                 } else {
                     log.warn(logTemplate, serverName, module, operateType, content, e);
                 }
-                break;
-            case ERROR:
+            }
+            case ERROR -> {
                 if (ObjectUtil.isNull(e)) {
                     log.error(logTemplate, serverName, module, operateType, content);
                 } else {
                     log.error(logTemplate, serverName, module, operateType, content, e);
                     printStackTrace(serverName, log, module, e.getStackTrace());
                 }
-                break;
-            default:
-                break;
+            }
         }
     }
 

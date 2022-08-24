@@ -84,7 +84,7 @@ public class WXBizMsgCrypt {
      */
     public WXBizMsgCrypt(String token, String encodingAesKey, String appId) throws AesException {
         if (encodingAesKey.length() != 43) {
-            throw new AesException(AesException.IllegalAesKey);
+            throw new AesException(AesException.ILLEGAL_AES_KEY);
         }
 
         this.token = token;
@@ -165,7 +165,7 @@ public class WXBizMsgCrypt {
             return base64.encodeToString(encrypted);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new AesException(AesException.EncryptAESError);
+            throw new AesException(AesException.ENCRYPT_AES_ERROR);
         }
     }
 
@@ -192,7 +192,7 @@ public class WXBizMsgCrypt {
             original = cipher.doFinal(encrypted);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new AesException(AesException.DecryptAESError);
+            throw new AesException(AesException.DECRYPT_AES_ERROR);
         }
 
         String xmlContent, fromAppId;
@@ -210,12 +210,12 @@ public class WXBizMsgCrypt {
                     CHARSET);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new AesException(AesException.IllegalBuffer);
+            throw new AesException(AesException.ILLEGAL_BUFFER);
         }
 
         // appid不相同的情况
         if (!fromAppId.equals(appId)) {
-            throw new AesException(AesException.ValidateAppidError);
+            throw new AesException(AesException.VALIDATE_APPID_ERROR);
         }
         return xmlContent;
 
@@ -282,7 +282,7 @@ public class WXBizMsgCrypt {
         // System.out.println("第三方收到URL中的签名：" + msg_sign);
         // System.out.println("第三方校验签名：" + signature);
         if (!signature.equals(msgSignature)) {
-            throw new AesException(AesException.ValidateSignatureError);
+            throw new AesException(AesException.VALIDATE_SIGNATURE_ERROR);
         }
 
         // 解密
@@ -304,7 +304,7 @@ public class WXBizMsgCrypt {
         String signature = SHA1.getSHA1(token, timeStamp, nonce, echoStr);
 
         if (!signature.equals(msgSignature)) {
-            throw new AesException(AesException.ValidateSignatureError);
+            throw new AesException(AesException.VALIDATE_SIGNATURE_ERROR);
         }
 
         return decrypt(echoStr);

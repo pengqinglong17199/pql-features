@@ -14,7 +14,6 @@ import lombok.Getter;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static kfang.agent.feature.saas.sync.BaoBiaoEnum.*;
 
@@ -31,9 +30,9 @@ public class SyncTaskQueryDemo {
         // 单个任务测试 异常处理
         List<ErrorTask<HouseCount>> errorTasks = queryList();
         for (ErrorTask<HouseCount> houseCountErrorTask : ListUtil.optimize(errorTasks)) {
-            System.out.println("事件 -："+houseCountErrorTask.getEvent().getEvent());
-            System.out.println("对象 -："+houseCountErrorTask.getSource().toString());
-            System.out.println("异常 -："+houseCountErrorTask.getException().fillInStackTrace());
+            System.out.println("事件 -：" + houseCountErrorTask.getEvent().getEvent());
+            System.out.println("对象 -：" + houseCountErrorTask.getSource().toString());
+            System.out.println("异常 -：" + houseCountErrorTask.getException().fillInStackTrace());
         }
 
         /*List<ErrorTask<HouseCount>> errorTasks = querySingle();
@@ -82,6 +81,7 @@ public class SyncTaskQueryDemo {
 
     }
 
+    @SuppressWarnings("unused")
     private static void print() {
         SyncTask.ConcurrentTaskInfo concurrentTaskInfo = SyncTask.getTaskInfo();
         System.out.println("已完成" + concurrentTaskInfo.getCompleted());
@@ -104,17 +104,18 @@ public class SyncTaskQueryDemo {
                 // 执行
                 .exec(SyncTaskQueryDemo::consumer);
 
-        //System.out.println(houseCounts);
+        // System.out.println(houseCounts);
     }
 
     private static <T> void handle(Exception e, TaskEvent event, T t) {
-        System.out.println(String.format("----------事件：%s--------对象：%s---------异常:%s", event, t.toString(), e.fillInStackTrace().toString()));
+        System.out.printf("----------事件：%s--------对象：%s---------异常:%s%n", event, t.toString(), e.fillInStackTrace().toString());
     }
 
     private static <T> void handleTask(Exception e, TaskEvent event, T t) {
-        System.out.println(String.format("==========事件：%s===========对象：%s=============异常:%s", event, t.toString(), e.fillInStackTrace().toString()));
+        System.out.printf("==========事件：%s===========对象：%s=============异常:%s%n", event, t.toString(), e.fillInStackTrace().toString());
     }
 
+    @SuppressWarnings("unused")
     private static List<ErrorTask<HouseCount>> querySingle() throws Exception {
         List<HouseCount> houseCounts = selectOrgList();
 
@@ -130,16 +131,15 @@ public class SyncTaskQueryDemo {
                 .exec(SyncTaskQueryDemo::consumer);
 
 
-
-        //System.out.println(houseCounts);
+        // System.out.println(houseCounts);
     }
 
 
-    private static boolean comparable(HouseCount source, Result result){
+    private static boolean comparable(HouseCount source, Result result) {
         return Objects.equals(source.getOrgId(), result.getPrimaryKey());
     }
 
-    public static List<HouseCount> selectOrgList(){
+    public static List<HouseCount> selectOrgList() {
         List<HouseCount> list = ListUtil.newArrayList();
         // 一页20条
         for (int i = 0; i < 20; i++) {
@@ -172,14 +172,14 @@ public class SyncTaskQueryDemo {
     public static List<ReportResult> selectHouseSumList(List<HouseCount> list) {
         // 查询耗时  毫秒
         sleep(5000);
-        throw  new RuntimeException("异常");
+        throw new RuntimeException("异常");
     }
 
     public static List<ReportResult> selectHouseAddList(List<HouseCount> list) {
         // 查询耗时  毫秒
         sleep(1000);
 
-        throw  new RuntimeException("异常");
+        throw new RuntimeException("异常");
     }
 
     public static List<ReportResult> selectHouseDay7List(List<HouseCount> list) {
@@ -192,24 +192,24 @@ public class SyncTaskQueryDemo {
     private static void sleep(int time) {
         try {
             TimeUnit.MILLISECONDS.sleep(time);
-        }catch (Exception e){
+        } catch (Exception ignored) {
 
         }
     }
 
-    public static void consumer(TaskEvent event, HouseCount source, Result result){
+    public static void consumer(TaskEvent event, HouseCount source, Result result) {
         BaoBiaoEnum baoBiaoEnum = valueOf(event.getEvent());
-        switch (baoBiaoEnum){
-            case SUM: source.setSum((Integer) result.getResult()); return;
-            case ADD: source.setAddCount((Integer) result.getResult()); return;
-            case DAY_7_COUNT: source.setDay7Count((Integer) result.getResult()); return;
+        switch (baoBiaoEnum) {
+            case SUM -> source.setSum((Integer) result.getResult());
+            case ADD -> source.setAddCount((Integer) result.getResult());
+            case DAY_7_COUNT -> source.setDay7Count((Integer) result.getResult());
         }
     }
 }
 
 @Getter
 @AllArgsConstructor
-enum BaoBiaoEnum implements TaskEvent{
+enum BaoBiaoEnum implements TaskEvent {
 
     /**
      *
@@ -227,8 +227,9 @@ enum BaoBiaoEnum implements TaskEvent{
         return this.name();
     }
 }
+
 @Data
-class HouseCount{
+class HouseCount {
 
     private String orgId;
 
@@ -238,7 +239,7 @@ class HouseCount{
 
     private int day7Count;
 
-    public HouseCount(String orgId){
+    public HouseCount(String orgId) {
         this.orgId = orgId;
     }
 }

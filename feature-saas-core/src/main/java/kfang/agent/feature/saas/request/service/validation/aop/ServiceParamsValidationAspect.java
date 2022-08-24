@@ -52,8 +52,8 @@ public class ServiceParamsValidationAspect implements AspectAroundInject {
             return joinPoint.proceed();
         }
         for (Object arg : args) {
-            if (arg instanceof ValidationForm) {
-                ValidationResult result = validationPoolBean.validationParam((ValidationForm) arg);
+            if (arg instanceof ValidationForm validationForm) {
+                ValidationResult result = validationPoolBean.validationParam(validationForm);
                 if (result.hasError()) {
                     if (joinPoint.getSignature().toLongString().contains(mircoServiceReturnType)) {
                         return new RequestResult<>(false, null, result.getErrorMessages().get(0).getMessage());

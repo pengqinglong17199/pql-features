@@ -59,14 +59,16 @@ public class EnumDescProcessor extends AgentProcessor {
             public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
                 Set<JCTree.JCMethodDecl> methodDeclSet = new HashSet<>();
 
+                /*
+                 * 1.只处理所有的变量
+                 * 2.强转为变量
+                 * 3.class级只处理枚举字段
+                 * 4.只处理没有注解的变量 注解的变量已经处理过了
+                 */
                 jcClassDecl.defs.stream()
-                        // 只处理所有的变量
                         .filter(it -> it.getKind().equals(Tree.Kind.VARIABLE))
-                        // 强转为变量
                         .map(it -> (JCTree.JCVariableDecl) it)
-                        // class级只处理枚举字段
                         .filter(it -> typeEquals(it, Enum.class))
-                        // 只处理没有注解的变量 注解的变量已经处理过了
                         .filter(it -> {
                             List<JCTree.JCAnnotation> list = it.getModifiers().getAnnotations();
                             return !(list != null && list.stream().anyMatch(jc -> jcEquals(jc, EnumDesc.class)));
@@ -122,11 +124,11 @@ public class EnumDescProcessor extends AgentProcessor {
     private void appendMethod(JCTree.JCClassDecl clazzTree, JCTree.JCMethodDecl jcTree) {
         // 校验方法是否存在 如果存在 则不处理
         boolean isExist = clazzTree.defs
-                                   .stream()
-                                   .filter(def -> Objects.equals(Tree.Kind.METHOD, def.getKind()))
-                                   .map(def -> (JCTree.JCMethodDecl) def)
-                                   .anyMatch(def -> def.name.toString().equals(jcTree.name.toString()));
-        if(isExist){
+                .stream()
+                .filter(def -> Objects.equals(Tree.Kind.METHOD, def.getKind()))
+                .map(def -> (JCTree.JCMethodDecl) def)
+                .anyMatch(def -> def.name.toString().equals(jcTree.name.toString()));
+        if (isExist) {
             return;
         }
         clazzTree.defs = clazzTree.defs.append(jcTree);
@@ -148,15 +150,13 @@ public class EnumDescProcessor extends AgentProcessor {
 
         // EnumDesc注解只有一个字段
         JCTree.JCAssign assign = (JCTree.JCAssign) args.get(0);
-        if(assign.getExpression() instanceof JCTree.JCLiteral){
-            JCTree.JCLiteral literal = (JCTree.JCLiteral)assign.getExpression();
+        if (assign.getExpression() instanceof JCTree.JCLiteral literal) {
             nameSet.add(super.upperCase(literal.getValue().toString()));
             return nameSet;
         }
 
         // EnumDesc注解存在多个字段
-        if(assign.getExpression() instanceof JCTree.JCNewArray) {
-            JCTree.JCNewArray array = (JCTree.JCNewArray) assign.getExpression();
+        if (assign.getExpression() instanceof JCTree.JCNewArray array) {
             for (JCTree.JCExpression elem : array.elems) {
                 JCTree.JCLiteral literal = (JCTree.JCLiteral) elem;
                 nameSet.add(super.upperCase(literal.getValue().toString()));
@@ -207,7 +207,7 @@ public class EnumDescProcessor extends AgentProcessor {
                 string,
                 // 泛型参数列表
                 methodGenericParamList,
-                //参数值列表
+                // 参数值列表
                 parameterList,
                 // 异常抛出列表
                 throwCauseList,

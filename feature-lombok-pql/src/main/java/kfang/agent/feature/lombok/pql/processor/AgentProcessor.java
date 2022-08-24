@@ -27,6 +27,7 @@ import java.util.Set;
  */
 public abstract class AgentProcessor extends AbstractProcessor {
 
+    public static final int JDK_17 = 17;
     protected JavacTrees trees;
     protected TreeMaker treeMaker;
     protected Names names;
@@ -55,7 +56,7 @@ public abstract class AgentProcessor extends AbstractProcessor {
      */
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        if (EnumConstants.version == 17) {
+        if (EnumConstants.VERSION == JDK_17) {
             return SourceVersion.valueOf("RELEASE_17");
         }
         return SourceVersion.valueOf("RELEASE_11");
@@ -124,7 +125,7 @@ public abstract class AgentProcessor extends AbstractProcessor {
         Unsafe unsafe = getUnsafe();
         Object jdkCompilerModule = getJdkCompilerModule();
         Module ownModule = AgentProcessor.class.getModule();
-        String[] allPkgs = {
+        String[] allPackages = {
                 "com.sun.tools.javac.code",
                 "com.sun.tools.javac.comp",
                 "com.sun.tools.javac.file",
@@ -140,9 +141,10 @@ public abstract class AgentProcessor extends AbstractProcessor {
 
         try {
             Method m = cModule.getDeclaredMethod("implAddOpens", String.class, cModule);
+            assert unsafe != null;
             long firstFieldOffset = getFirstFieldOffset(unsafe);
             unsafe.putBooleanVolatile(m, firstFieldOffset, true);
-            for (String p : allPkgs){
+            for (String p : allPackages) {
                 m.invoke(jdkCompilerModule, p, ownModule);
             }
         } catch (Exception ignore) {

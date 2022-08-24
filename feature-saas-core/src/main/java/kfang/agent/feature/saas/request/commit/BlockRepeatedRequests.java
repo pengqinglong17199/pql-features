@@ -63,8 +63,8 @@ public class BlockRepeatedRequests {
 
             paramJson.add(JSONObject.toJSONString(arg));
 
-            if (arg instanceof OperateExtendForm) {
-                form = (OperateExtendForm) arg;
+            if (arg instanceof OperateExtendForm operateExtendForm) {
+                form = operateExtendForm;
             }
         }
         // 无OperateExtendForm参数 直接执行 通过拦截器进行ip阻断

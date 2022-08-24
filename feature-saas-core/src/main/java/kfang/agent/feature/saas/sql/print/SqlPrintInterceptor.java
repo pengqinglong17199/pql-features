@@ -4,7 +4,6 @@ import cn.hyugatool.core.date.DateFormat;
 import cn.hyugatool.core.date.DateUtil;
 import cn.hyugatool.core.date.interval.TimeInterval;
 import cn.hyugatool.core.lang.Console;
-import cn.hyugatool.core.object.ObjectUtil;
 import cn.hyugatool.core.string.StringUtil;
 import kfang.infra.service.datasource.mybatis.interceptor.PaginationInterceptor;
 import org.apache.commons.logging.Log;
@@ -76,8 +75,8 @@ public class SqlPrintInterceptor implements Interceptor {
         Object parameterObject = null;
         if (invocation.getArgs().length > 1) {
             parameterObject = invocation.getArgs()[1];
-            if (parameterObject instanceof PaginationInterceptor.CountParameter) {
-                parameterObject = ((PaginationInterceptor.CountParameter) parameterObject).getParameter();
+            if (parameterObject instanceof PaginationInterceptor.CountParameter countParameter) {
+                parameterObject = countParameter.getParameter();
             }
         }
 
@@ -107,8 +106,8 @@ public class SqlPrintInterceptor implements Interceptor {
 
     @Override
     public Object plugin(Object target) {
-        if (target instanceof Executor) {
-            return Plugin.wrap(target, this);
+        if (target instanceof Executor executor) {
+            return Plugin.wrap(executor, this);
         }
         return target;
     }
@@ -146,10 +145,10 @@ public class SqlPrintInterceptor implements Interceptor {
     private String replacePlaceholder(String sql, Object propertyValue) {
         String result;
         if (propertyValue != null) {
-            if (propertyValue instanceof String) {
-                result = "'" + propertyValue + "'";
-            } else if (propertyValue instanceof Date) {
-                result = "'" + DateUtil.format(DateFormat.yyyy_MM_dd_HH_mm_ss, ObjectUtil.getOrElse(propertyValue, null)) + "'";
+            if (propertyValue instanceof String str) {
+                result = "'" + str + "'";
+            } else if (propertyValue instanceof Date date) {
+                result = "'" + DateUtil.format(DateFormat.yyyy_MM_dd_HH_mm_ss, date) + "'";
             } else {
                 result = propertyValue.toString();
             }

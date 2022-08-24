@@ -10,7 +10,6 @@ import kfang.agent.feature.saas.feign.model.IpIsolation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author hyuga
@@ -30,7 +29,7 @@ public interface FeignConstants {
      * @return boolean
      */
     static boolean ipWhetherNeedIsolation(String localIpAddr) {
-        IpIsolation ipIsolation = IP_ISOLATION_LIST.stream().filter(ipModel -> StringUtil.equals(ipModel.getIp(), localIpAddr)).collect(Collectors.toList()).stream().findFirst().orElse(null);
+        IpIsolation ipIsolation = IP_ISOLATION_LIST.stream().filter(ipModel -> StringUtil.equals(ipModel.getIp(), localIpAddr)).toList().stream().findFirst().orElse(null);
         if (ObjectUtil.isNull(ipIsolation)) {
             throw new RuntimeException("当前服务IP不允许启动该服务，请联系管理员! ip:" + localIpAddr);
         }
@@ -44,7 +43,7 @@ public interface FeignConstants {
      * @return boolean
      */
     static boolean isTestEnvironment(String localIpAddr) {
-        IpIsolation ipIsolation = IP_ISOLATION_LIST.stream().filter(ipModel -> StringUtil.equals(ipModel.getIp(), localIpAddr)).collect(Collectors.toList()).stream().findFirst().orElse(null);
+        IpIsolation ipIsolation = IP_ISOLATION_LIST.stream().filter(ipModel -> StringUtil.equals(ipModel.getIp(), localIpAddr)).toList().stream().findFirst().orElse(null);
         return ObjectUtil.nonNull(ipIsolation) && StringUtil.equals(ipIsolation.getEnv(), EnvEnum.TEST_ENV);
     }
 
@@ -55,7 +54,7 @@ public interface FeignConstants {
      * @return boolean
      */
     static boolean isDeveloperLocalEnvironment(String localIpAddr) {
-        IpIsolation ipIsolation = IP_ISOLATION_LIST.stream().filter(ipModel -> StringUtil.equals(ipModel.getIp(), localIpAddr)).collect(Collectors.toList()).stream().findFirst().orElse(null);
+        IpIsolation ipIsolation = IP_ISOLATION_LIST.stream().filter(ipModel -> StringUtil.equals(ipModel.getIp(), localIpAddr)).toList().stream().findFirst().orElse(null);
         return ObjectUtil.nonNull(ipIsolation) && StringUtil.equals(ipIsolation.getEnv(), EnvEnum.DEV_ENV);
     }
 
@@ -66,7 +65,7 @@ public interface FeignConstants {
      * @return ip后缀
      */
     static String getSuffixOfTest(String localIpAddr) {
-        IpIsolation ipIsolation = IP_ISOLATION_LIST.stream().filter(ipModel -> StringUtil.equals(ipModel.getIp(), localIpAddr)).collect(Collectors.toList()).stream().findFirst().orElse(null);
+        IpIsolation ipIsolation = IP_ISOLATION_LIST.stream().filter(ipModel -> StringUtil.equals(ipModel.getIp(), localIpAddr)).toList().stream().findFirst().orElse(null);
         if (ObjectUtil.isNull(ipIsolation)) {
             throw new RuntimeException(String.format("当前环境未支持:%s", localIpAddr));
         }

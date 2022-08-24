@@ -3,6 +3,7 @@ package kfang.agent.feature.monitor.model;
 import kfang.agent.feature.monitor.enums.ProjectEnum;
 import lombok.Data;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @Data
 public class ServiceMessage implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     /**

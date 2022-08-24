@@ -24,31 +24,25 @@ public class AutomaticHeartbeatMechanism implements ApplicationRunner, Disposabl
      * Callback used to run the bean.
      *
      * @param args incoming application arguments
-     * @throws Exception on error
      */
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         MonitorCoreProcessor.serviceUp();
     }
 
     /**
      * Heartbeat links are sent every minute.
-     *
-     * @throws Exception on error
      */
     @Scheduled(cron = "0 0/1 * * * ?")
-    public void heartbeat() throws Exception {
+    public void heartbeat() {
         MonitorCoreProcessor.heartbeat();
     }
 
     /**
      * Invoked by the containing {@code BeanFactory} on destruction of a bean.
-     *
-     * @throws Exception in case of shutdown errors. Exceptions will get logged
-     *                   but not rethrown to allow other beans to release their resources as well.
      */
     @Override
-    public void destroy() throws Exception {
+    public void destroy() {
         MonitorCoreProcessor.serviceDown();
     }
 

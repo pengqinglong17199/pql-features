@@ -11,5 +11,5 @@ public interface EnumConstants {
     String DESC = "desc";
     String NAME = "name";
 
-    int version = Integer.parseInt(System.getProperty("java.specification.version"));
+    int VERSION = Integer.parseInt(System.getProperty("java.specification.version"));
 }

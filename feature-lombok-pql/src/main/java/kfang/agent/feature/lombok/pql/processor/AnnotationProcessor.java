@@ -8,9 +8,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
-import java.io.FileInputStream;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -21,7 +19,7 @@ import java.util.*;
  */
 public class AnnotationProcessor extends AbstractProcessor {
 
-    private static final List<AgentProcessor> processors = new ArrayList<>();
+    private static final List<AgentProcessor> PROCESSORS = new ArrayList<>();
 
     static {
         try {
@@ -36,7 +34,7 @@ public class AnnotationProcessor extends AbstractProcessor {
             for (Object value : properties.keySet()) {
                 Class<?> loadClass = loader.loadClass(value.toString());
                 Object o = loadClass.getDeclaredConstructor().newInstance();
-                processors.add((AgentProcessor) o);
+                PROCESSORS.add((AgentProcessor) o);
             }
 
         } catch (Exception e) {
@@ -45,7 +43,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     }
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
-        for (AgentProcessor processor : processors) {
+        for (AgentProcessor processor : PROCESSORS) {
             processor.init(processingEnv);
         }
     }
@@ -53,7 +51,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
         boolean flag = false;
-        for (AgentProcessor processor : processors) {
+        for (AgentProcessor processor : PROCESSORS) {
             flag = flag | processor.process(annotations, roundEnv);
         }
         return flag;
@@ -62,7 +60,7 @@ public class AnnotationProcessor extends AbstractProcessor {
     @Override
     public Set<String> getSupportedAnnotationTypes() {
         Set<String> set = new HashSet<>();
-        for (AgentProcessor processor : processors) {
+        for (AgentProcessor processor : PROCESSORS) {
             set.addAll(processor.getSupportedAnnotationTypes());
         }
         return set;
@@ -72,7 +70,7 @@ public class AnnotationProcessor extends AbstractProcessor {
      */
     @Override
     public SourceVersion getSupportedSourceVersion() {
-        if (EnumConstants.version == 17) {
+        if (EnumConstants.VERSION == 17) {
             return SourceVersion.valueOf("RELEASE_17");
         }
         return SourceVersion.valueOf("RELEASE_11");

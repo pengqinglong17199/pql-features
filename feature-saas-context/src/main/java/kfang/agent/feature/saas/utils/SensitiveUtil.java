@@ -101,7 +101,7 @@ public class SensitiveUtil {
      * 明文直接全部加密为秘文 不拼接规则
      *
      * @param plaintext 明文
-     * @return
+     * @return str
      */
     public static String allEncodeText(String plaintext) {
         return encodeText(plaintext, 0, 0);

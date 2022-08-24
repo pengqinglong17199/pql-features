@@ -39,13 +39,13 @@ public class OperatorSystemAspect implements AspectInject {
     public void before(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         for (Object arg : args) {
-            if (arg instanceof OperateExtendForm) {
+            if (arg instanceof OperateExtendForm operateExtendForm) {
                 OperatorSystem operatorSystem = AnnotationUtil.getDeclaredAnnotation(joinPoint, OperatorSystem.class);
                 if (Objects.isNull(operatorSystem)) {
                     return;
                 }
                 boolean penetration = operatorSystem.penetration();
-                setOperateSystemValue(arg, operatorSystem, penetration);
+                setOperateSystemValue(operateExtendForm, operatorSystem, penetration);
             }
         }
     }
@@ -76,9 +76,9 @@ public class OperatorSystemAspect implements AspectInject {
                 .stream().filter(field -> !ClassUtil.isBasicType(field))
                 .forEach(field -> {
                     Object fieldObject = ReflectionUtil.getFieldValue(arg, field);
-                    if (fieldObject instanceof OperateExtendForm) {
+                    if (fieldObject instanceof OperateExtendForm operateExtendForm) {
                         // 仅渗透一层，避免死循环嵌套
-                        setOperateSystemValue(fieldObject, operatorSystem, false);
+                        setOperateSystemValue(operateExtendForm, operatorSystem, false);
                     }
                 });
     }
