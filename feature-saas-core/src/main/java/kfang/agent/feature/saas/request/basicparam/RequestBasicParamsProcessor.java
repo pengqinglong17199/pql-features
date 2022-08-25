@@ -98,9 +98,9 @@ public final class RequestBasicParamsProcessor {
            // 如果是app 对ios和安卓进行判断
            if (OperatorSystemEnum.isBusinessApp(operatorSystem)) {
                String type = request.getHeader(PLATFORM);
-               if (type.contains(IOS)) {
+               if (IOS.contains(type)) {
                    operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_IOS.name();
-               }else if(type.contains(ANDROID)){
+               }else if(ANDROID.contains(type)){
                    operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_ANDROID.name();
                }
            }
