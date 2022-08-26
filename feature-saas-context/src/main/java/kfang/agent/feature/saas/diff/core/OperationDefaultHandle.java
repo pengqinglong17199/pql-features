@@ -131,7 +131,7 @@ public class OperationDefaultHandle extends OperationHandle {
             List<OperationLogDefinition> collect = definitionList.stream()
                     .filter(otherFiled -> Objects.equals(otherFiled.getFieldRealName(), definition.getOtherFiledName()))
                     .limit(1)
-                    .toList();
+                    .collect(Collectors.toList());
 
             for (OperationLogDefinition otherFiled : ListUtil.optimize(collect)) {
                 Object fieldValue = ReflectionUtil.getFieldValue(tempEntity.getNowEntity(), otherFiled.getField());
@@ -232,7 +232,7 @@ public class OperationDefaultHandle extends OperationHandle {
 
 
             // 获取当前listClass中存在有模块名拼接的字段 且保存快照
-            List<OperationLogDefinition> joinModuleNameList = classDefinitionList.stream().filter(OperationLogDefinition::isJoinModuleName).toList();
+            List<OperationLogDefinition> joinModuleNameList = classDefinitionList.stream().filter(OperationLogDefinition::isJoinModuleName).collect(Collectors.toList());
             Map<OperationLogDefinition, Boolean> snapsHoot = ListUtil.optimize(joinModuleNameList).stream().collect(Collectors.toMap(o -> o, OperationLogDefinition::isJoinModuleName));
 
             // 处理数据
@@ -284,7 +284,7 @@ public class OperationDefaultHandle extends OperationHandle {
             int mergeSum = definition.getMergeSum();
             List<OperationLogDefinition> mergeList = wrapper.getMergeList().stream()
                     .filter(merge -> Objects.equals(merge.getMergeName(), definition.getMergeName()))
-                    .sorted(Comparator.comparingInt(OperationLogDefinition::getMergeIndex)).toList();
+                    .sorted(Comparator.comparingInt(OperationLogDefinition::getMergeIndex)).collect(Collectors.toList());
 
             // 字段数量与mergeSum校验
             if (mergeList.size() != mergeSum) {
@@ -366,7 +366,7 @@ public class OperationDefaultHandle extends OperationHandle {
 
             // 处理新值
             List<Object> nowValueList = ObjectUtil.cast(nowValue);
-            List<Object> nowList = ListUtil.optimize(nowValueList).stream().sorted().toList();
+            List<Object> nowList = ListUtil.optimize(nowValueList).stream().sorted().collect(Collectors.toList());
             StringBuilder nowBuilder = new StringBuilder();
             for (Object now : nowList) {
                 now = super.handleEnum(now);
@@ -376,7 +376,7 @@ public class OperationDefaultHandle extends OperationHandle {
 
             // 处理旧值
             List<Object> historyValueList = ObjectUtil.cast(historyValue);
-            List<Object> historyList = ListUtil.optimize(historyValueList).stream().sorted().toList();
+            List<Object> historyList = ListUtil.optimize(historyValueList).stream().sorted().collect(Collectors.toList());
 
             StringBuilder historyBuilder = new StringBuilder();
             for (Object history : historyList) {

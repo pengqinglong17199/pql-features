@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * HousePermissionAspect
@@ -97,7 +98,7 @@ public class HiddenResultAspect implements AspectInject {
         // 获取所有需要隐藏的字段
         List<Field> fields = ReflectionUtil.getDeclaredFields(clazz);
         List<Field> hiddenFieldList = ListUtil.optimize(fields).stream()
-                .filter(field -> field.isAnnotationPresent(HiddenFieldSensitiveInfo.class)).toList();
+                .filter(field -> field.isAnnotationPresent(HiddenFieldSensitiveInfo.class)).collect(Collectors.toList());
 
         for (Field field : hiddenFieldList) {
             field.setAccessible(true);

@@ -23,6 +23,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 操作记录处理器
@@ -127,14 +128,14 @@ public abstract class OperationHandle {
                 .sorted(Comparator.comparing(OperationLogDefinition::getDefinitionOrder)
                         // 第二遍排序将父字段排在最前然后子字段按照自身的order排序
                         .thenComparing(definition -> definition.getParentOrder() == 0 ? definition.getParentOrder() : definition.getOrder()))
-                .toList();
+                .collect(Collectors.toList());;
         wrapper.setDefinitionList(orderList);
 
         // 封装合并字段 先根据合并字段名聚合再根据合并下标排序
         List<OperationLogDefinition> mergeList = definitionList.stream()
                 .filter(OperationLogDefinition::isMerge)
                 .sorted(Comparator.comparing(OperationLogDefinition::getMergeName).thenComparingInt(OperationLogDefinition::getOrder))
-                .toList();
+                .collect(Collectors.toList());;
         wrapper.setMergeList(mergeList);
 
         // 处理对象字段class与对象字段的字段definition映射
@@ -286,7 +287,7 @@ public abstract class OperationHandle {
 
         // 格式化字段名
         String[] stringFormats = operationLog.stringFormats();
-        List<String> formatList = Arrays.stream(stringFormats).toList();
+        List<String> formatList = Arrays.stream(stringFormats).collect(Collectors.toList());
         definition.setStringFormatList(formatList);
 
         // 字段类型
