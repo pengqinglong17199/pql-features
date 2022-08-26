@@ -128,14 +128,14 @@ public abstract class OperationHandle {
                 .sorted(Comparator.comparing(OperationLogDefinition::getDefinitionOrder)
                         // 第二遍排序将父字段排在最前然后子字段按照自身的order排序
                         .thenComparing(definition -> definition.getParentOrder() == 0 ? definition.getParentOrder() : definition.getOrder()))
-                .collect(Collectors.toList());;
+                .collect(Collectors.toList());
         wrapper.setDefinitionList(orderList);
 
         // 封装合并字段 先根据合并字段名聚合再根据合并下标排序
         List<OperationLogDefinition> mergeList = definitionList.stream()
                 .filter(OperationLogDefinition::isMerge)
                 .sorted(Comparator.comparing(OperationLogDefinition::getMergeName).thenComparingInt(OperationLogDefinition::getOrder))
-                .collect(Collectors.toList());;
+                .collect(Collectors.toList());
         wrapper.setMergeList(mergeList);
 
         // 处理对象字段class与对象字段的字段definition映射
