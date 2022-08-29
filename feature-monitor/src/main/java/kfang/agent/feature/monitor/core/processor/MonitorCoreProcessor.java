@@ -47,6 +47,12 @@ public class MonitorCoreProcessor {
      */
     private static final String DEPLOY = KFANG_INFRA_COMMON_PROPERTIES.getEnv().getDeploy().toUpperCase();
     /**
+     * JDK版本
+     */
+    private static final String JDK_VERSION = System.getProperty("java.version");
+
+
+    /**
      * RabbitMQ
      */
     private static final RabbitTemplate RABBIT_TEMPLATE = SpringBeanPicker.getBean(RabbitTemplate.class);
@@ -58,6 +64,7 @@ public class MonitorCoreProcessor {
         message.setPort(PORT);
         message.setName(SERVICE_NAME);
         message.setEnvironment(DEPLOY);
+        message.setJdkVersion(JDK_VERSION);
         up(message);
 
         log.info("monitor client start success~");
