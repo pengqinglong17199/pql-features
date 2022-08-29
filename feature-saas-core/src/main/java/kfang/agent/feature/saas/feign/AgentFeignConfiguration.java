@@ -118,7 +118,7 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
     public static boolean isSpecialIpAddressSegment(String localIpAddr) {
         String substringOfLocalIpAddr = localIpAddr.substring(0, localIpAddr.lastIndexOf(".") + 1);
-        return StringUtil.equals("192.168.3.", substringOfLocalIpAddr);
+        return StringUtil.equals("192.168.0.", substringOfLocalIpAddr);
     }
 
 }
