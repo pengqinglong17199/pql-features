@@ -150,13 +150,15 @@ public class EnumDescProcessor extends AgentProcessor {
 
         // EnumDesc注解只有一个字段
         JCTree.JCAssign assign = (JCTree.JCAssign) args.get(0);
-        if (assign.getExpression() instanceof JCTree.JCLiteral literal) {
+        if (assign.getExpression() instanceof JCTree.JCLiteral) {
+            JCTree.JCLiteral literal = (JCTree.JCLiteral)assign.getExpression();
             nameSet.add(super.upperCase(literal.getValue().toString()));
             return nameSet;
         }
 
         // EnumDesc注解存在多个字段
-        if (assign.getExpression() instanceof JCTree.JCNewArray array) {
+        if (assign.getExpression() instanceof JCTree.JCNewArray) {
+            JCTree.JCNewArray array = (JCTree.JCNewArray) assign.getExpression();
             for (JCTree.JCExpression elem : array.elems) {
                 JCTree.JCLiteral literal = (JCTree.JCLiteral) elem;
                 nameSet.add(super.upperCase(literal.getValue().toString()));
