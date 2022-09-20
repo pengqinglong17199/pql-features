@@ -71,7 +71,7 @@ public class FeignBuilderHelper extends Feign.Builder {
                     return String.format(DYNAMIC_URL, uri, FeignConstants.getSuffixOfTest(localIpAddr), path);
                 }
 
-                if (FeignConstants.isDeveloperLocalEnvironment(localIpAddr)) {
+                if (FeignConstants.isDeveloperLocalEnvironment(localIpAddr) || isSpecialIp) {
                     int isLocalEnvAndEnabled = ServiceNameSuffix.isEnabledOfLocalService(super.name());
                     if (isLocalEnvAndEnabled != 0 && isLocalEnvAndEnabled != 1) {
                         throw new RuntimeException(String.format("[%s]启用标识错误，只允许为0或1.", super.name()));

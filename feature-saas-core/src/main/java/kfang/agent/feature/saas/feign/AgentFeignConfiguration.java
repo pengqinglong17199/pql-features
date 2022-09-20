@@ -94,7 +94,7 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
         // 开启特殊ip段校验，且IP属于特殊IP段
         boolean isSpecialIp = SKIP_SPECIAL_IP_ADDRESS_SEGMENT && isSpecialIpAddressSegment(localIpAddr);
         if (isSpecialIp) {
-            log.info("当前服务IP属于特殊IP网段192.168.3.*，允许启动，且强制服务隔离");
+            log.info("当前服务IP属于特殊IP网段192.168.0.*，允许启动，且强制服务隔离");
         } else {
             // 校验本地IP地址是否允许的开发ip或测试服务器ip
             FeignConstants.ipWhetherNeedIsolation(localIpAddr);
@@ -118,7 +118,7 @@ public class AgentFeignConfiguration implements ImportBeanDefinitionRegistrar {
 
     public static boolean isSpecialIpAddressSegment(String localIpAddr) {
         String substringOfLocalIpAddr = localIpAddr.substring(0, localIpAddr.lastIndexOf(".") + 1);
-        return StringUtil.equals("192.168.3.", substringOfLocalIpAddr);
+        return StringUtil.equals("192.168.0.", substringOfLocalIpAddr);
     }
 
 }

@@ -39,6 +39,10 @@ public class ServiceLogModel implements Serializable {
      */
     private ProjectEnum project;
 
+    /**
+     * JDK版本
+     */
+    private String jdkVersion;
 
     /**
      * 服务名

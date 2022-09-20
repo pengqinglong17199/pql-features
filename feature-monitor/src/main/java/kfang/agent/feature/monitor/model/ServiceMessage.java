@@ -43,4 +43,9 @@ public class ServiceMessage implements Serializable {
      */
     private String environment;
 
+    /**
+     * JDK版本
+     */
+    private String jdkVersion;
+
 }

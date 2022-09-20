@@ -40,6 +40,13 @@ public class ServiceInfo {
     private int port;
 
     /**
+     * JDK版本
+     */
+    @Setter
+    @Getter
+    private String jdkVersion;
+
+    /**
      * 服务对应多服务器集合
      */
     @Getter
@@ -80,6 +87,11 @@ public class ServiceInfo {
          */
         private String offlineDuration;
 
+        /**
+         * JDK版本
+         */
+        private String jdkVersion;
+
         public ServiceIpInfo(ServiceLogModel model) {
             this.ip = model.getIp();
             this.port = model.getPort();
@@ -89,6 +101,7 @@ public class ServiceInfo {
             this.lastOnlineTime = model.getLastOnlineTime();
             this.offlineDuration = model.getOfflineDuration();
             this.onlineDuration = model.getOnlineDuration();
+            this.jdkVersion = model.getJdkVersion();
         }
     }
 
