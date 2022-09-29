@@ -11,6 +11,7 @@ import org.slf4j.MDC;
 import javax.servlet.http.HttpServletRequest;
 
 import static kfang.agent.feature.saas.constants.SaasConstants.PLATFORM;
+import static kfang.agent.feature.saas.constants.SaasConstants.SOURCE_VERSION;
 import static kfang.agent.feature.saas.logger.util.OperatorInfoUtil.*;
 
 /**
@@ -37,6 +38,7 @@ public class WebSleuthLogUtil {
             MDC.put(LOG_OPERATOR_IP, IpAddressUtil.getIpAddr(request)[0]);
             MDC.put(LOG_OPERATOR_TERMINAL_TYPE, loginDto.getTerminalType());
             MDC.put(LOG_OPERATOR_PLATFORM, request.getHeader(PLATFORM));
+            MDC.put(LOG_OPERATOR_APP_VERSION, request.getHeader(SOURCE_VERSION));
         } else {
             MDC.put(LOG_PLATFORM_ORG_ID, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_ID, StringUtil.EMPTY);
@@ -51,6 +53,7 @@ public class WebSleuthLogUtil {
             MDC.put(LOG_OPERATOR_IP, IpAddressUtil.getIpAddr(request)[0]);
             MDC.put(LOG_OPERATOR_TERMINAL_TYPE, StringUtil.EMPTY);
             MDC.put(LOG_OPERATOR_PLATFORM, StringUtil.EMPTY);
+            MDC.put(LOG_OPERATOR_APP_VERSION, StringUtil.EMPTY);
         }
     }
 

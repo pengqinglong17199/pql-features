@@ -35,6 +35,7 @@ public final class RequestBasicParamsProcessor {
     public static final String OPERATOR_IP = "operatorIp";
     public static final String OPERATOR_BROWSER = "operatorBrowser";
     public static final String OPERATOR_SYSTEM = "operatorSystem";
+    public static final String OPERATOR_APP_VERSION = "operatorAppVersion";
     public static final String OPERATOR_TIME = "operatorTime";
     public static final String LOGIN_EXTEND_DTO = "loginExtendDto";
     public static final String OMS_AGENT_SUPER_ADMIN = "OMS_AGENT_SUPER_ADMIN";
@@ -88,24 +89,25 @@ public final class RequestBasicParamsProcessor {
             return true;
         }
         if (StringUtil.contains(field, new String[]{OPERATOR_BROWSER})) {
-            //获取浏览器信息
+            // 获取浏览器信息
             Browser browser = UserAgent.parseUserAgentString(request.getHeader(USER_AGENT)).getBrowser();
             ReflectionUtil.setFieldValue(object, field, browser.toString());
             return true;
         }
-       if (StringUtil.contains(field, new String[]{OPERATOR_SYSTEM})) {
-           String operatorSystem = AgentRequestConfiguration.getOperatorSystem();
+        if (StringUtil.contains(field, new String[]{OPERATOR_SYSTEM})) {
+            String operatorSystem = AgentRequestConfiguration.getOperatorSystem();
 
-           // 如果是app 对ios和安卓进行判断
-           if (OperatorSystemEnum.isBusinessApp(operatorSystem)) {
-               String type = request.getHeader(PLATFORM);
-               if (IOS.contains(type)) {
-                   operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_IOS.name();
-               }else if(ANDROID.contains(type)){
-                   operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_ANDROID.name();
-               }
-           }
+            // 如果是app 对ios和安卓进行判断
+            if (OperatorSystemEnum.isBusinessApp(operatorSystem)) {
+                String type = request.getHeader(PLATFORM);
+                if (IOS.contains(type)) {
+                    operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_IOS.name();
+                } else if (ANDROID.contains(type)) {
+                    operatorSystem = OperatorSystemEnum.WEB_AGENT_BUSINESS_APP_ANDROID.name();
+                }
+            }
             ReflectionUtil.setFieldValue(object, OPERATOR_SYSTEM, operatorSystem);
+            ReflectionUtil.setFieldValue(object, OPERATOR_APP_VERSION, request.getHeader(SOURCE_VERSION));
             return true;
         }
         return false;

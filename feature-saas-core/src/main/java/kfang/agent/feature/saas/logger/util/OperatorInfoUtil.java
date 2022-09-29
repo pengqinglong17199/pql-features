@@ -30,6 +30,7 @@ public class OperatorInfoUtil {
     public static final String LOG_OPERATOR_IP = "operator-ip";
     public static final String LOG_OPERATOR_TERMINAL_TYPE = "operator-terminal-type";
     public static final String LOG_OPERATOR_PLATFORM = "operator-platform";
+    public static final String LOG_OPERATOR_APP_VERSION = "operator-app-version";
 
     public static final String LOG_OPERATOR_INFO_TEMPLATE =
             "ip:%s,terminalType:%s," +
@@ -67,11 +68,13 @@ public class OperatorInfoUtil {
                 operatorIp, operatorTerminalType, operatorPlatform, platformOrgId, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
                 operatorOrgPositionId, operatorOrgPositionName, operatorCompanyOrgId, operatorCompanyOrgName, operatorIsMajor);
 
+        // noinspection AlibabaSwitchStatement
         switch (logLevel) {
             case DEBUG -> LogUtil.debug(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
             case INFO -> LogUtil.info(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
             case WARN -> LogUtil.warn(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
             case ERROR -> LogUtil.error(log, LogModuleEnum.OPERATOR_INFO.getDesc(), operatorInfo);
+            default -> throw new IllegalStateException("Unexpected value: " + logLevel);
         }
     }
 
