@@ -33,7 +33,9 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * TestInterceptor
+ * DataIsolationInterceptor
+ * <p>
+ * 数据隔离拦截器
  *
  * @author pengqinglong
  * @since 2021/12/15
@@ -41,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Slf4j
 @Intercepts({@Signature(type = StatementHandler.class, method = "prepare", args = {Connection.class})})
-public class DataIsolationInterceptor implements Interceptor{
+public class DataIsolationInterceptor implements Interceptor {
 
     private static final String AND = "and";
     private static final String SQL = "sql";
@@ -171,14 +173,14 @@ public class DataIsolationInterceptor implements Interceptor{
                     String javaFieldName = level.getJavaFieldName();
                     String methodName = "get" + javaFieldName.substring(0, 1).toUpperCase() + javaFieldName.substring(1);
                     Object fieldValue = ReflectionUtil.invokeMethod(parameterObject, methodName);
-                    if(StringUtil.isEmpty(fieldValue)){
+                    if (StringUtil.isEmpty(fieldValue)) {
                         throw new DataIsolationException(String.format(" 数据隔离sql 没有 [%s] 参数", level.getSqlFieldName()));
                     }
                 }
             }
 
             // update 需要检查一下 update不允许更新数据隔离的字段
-            if(SqlCommandType.UPDATE == mappedStatement.getSqlCommandType()){
+            if (SqlCommandType.UPDATE == mappedStatement.getSqlCommandType()) {
                 this.checkUpdateSql(sqlUpperCase, sqlList);
             }
 
@@ -198,12 +200,12 @@ public class DataIsolationInterceptor implements Interceptor{
             // 缓存开发环境的sql打印
             this.cacheDevSqlPrint(mappedStatement, boundSql);
 
-        }catch (DataIsolationException e){
+        } catch (DataIsolationException e) {
             // 重新组织错误信息 补充id至错误信息中
-            LogUtil.error(log, "数据隔离", "隔离处理异常",e);
+            LogUtil.error(log, "数据隔离", "隔离处理异常", e);
             throw new DataIsolationException(id + e.getMessage());
-        }catch (Exception e){
-            LogUtil.error(log, "数据隔离", "隔离处理异常",e);
+        } catch (Exception e) {
+            LogUtil.error(log, "数据隔离", "隔离处理异常", e);
             throw e;
         }
         return invocation.proceed();
@@ -248,8 +250,8 @@ public class DataIsolationInterceptor implements Interceptor{
         Iterator<Level> iterator = sqlList.iterator();
         StringBuilder sb = new StringBuilder(sql.substring(0, this.getTailIndex(sql, whereIndex)));
         // 如果sql无where 则补充一个where
-        if(!this.hasWhere(whereIndex)){
-            sb.append(BLANK + WHERE +BLANK);
+        if (!this.hasWhere(whereIndex)) {
+            sb.append(BLANK + WHERE + BLANK);
         }
 
         while (iterator.hasNext()) {
@@ -263,31 +265,31 @@ public class DataIsolationInterceptor implements Interceptor{
             sb.append(String.format(" %s = ? and", next.getSqlFieldName()));
 
             // 本地缓存预编译参数未生成 生成预编译参数 放入paramMappings中
-            if(!paramMappings.containsKey(next)){
+            if (!paramMappings.containsKey(next)) {
                 // 双重检查锁
-                synchronized (paramMappings){
-                    if(!paramMappings.containsKey(next)){
+                synchronized (paramMappings) {
+                    if (!paramMappings.containsKey(next)) {
                         // 构建一个param对象 存入缓存
                         ParameterMapping param = new ParameterMapping.Builder(mappedStatement.getConfiguration(), next.getJavaFieldName(), new StringTypeHandler())
                                 .javaType(String.class)
                                 .build();
                         paramMappings.put(next, param);
-                        synchronized (parameterMappings){
-                            if(!parameterMappings.contains(param)){
+                        synchronized (parameterMappings) {
+                            if (!parameterMappings.contains(param)) {
                                 // 初始化进去
-                                this.addParam(mappedStatement.getSqlCommandType(), boundSql, parameterMappings, whereIndex, next);
+                                this.addParam(boundSql, parameterMappings, whereIndex, next);
                             }
                         }
                     }
                 }
-            }else{
+            } else {
                 ParameterMapping param = paramMappings.get(next);
                 if (!parameterMappings.contains(param)) {
                     // 双重检查锁 这里锁对象使用mybatis的parameterMappings对象
                     // 此对象经过观察 在boundSql对象中有复用的情况 所以加锁 且锁粒度细化
-                    synchronized (parameterMappings){
-                        if(!parameterMappings.contains(param)){
-                            this.addParam(mappedStatement.getSqlCommandType(), boundSql, parameterMappings, whereIndex, next);
+                    synchronized (parameterMappings) {
+                        if (!parameterMappings.contains(param)) {
+                            this.addParam(boundSql, parameterMappings, whereIndex, next);
                         }
                     }
                 }
@@ -311,7 +313,7 @@ public class DataIsolationInterceptor implements Interceptor{
     /**
      * 为sql对象添加隔离参数
      */
-    private void addParam(SqlCommandType sqlCommandType, BoundSql boundSql, List<ParameterMapping> parameterMappings, int whereIndex, Level next) {
+    private void addParam(BoundSql boundSql, List<ParameterMapping> parameterMappings, int whereIndex, Level next) {
 
         // 默认为当前隔离级别 -1
         int paramIndex = next.ordinal() - 1;
@@ -322,18 +324,18 @@ public class DataIsolationInterceptor implements Interceptor{
 
         byte[] bytes = set.getBytes(StandardCharsets.UTF_8);
 
-        for (int i = 0; i < bytes.length; i++) {
-            if (bytes[i] == '?') {
+        for (byte aByte : bytes) {
+            if (aByte == '?') {
                 paramIndex++;
             }
         }
 
-        if(ListUtil.isEmpty(parameterMappings)){
+        if (ListUtil.isEmpty(parameterMappings)) {
             List<ParameterMapping> nowParamList = ListUtil.newArrayList();
             nowParamList.addAll(parameterMappings);
             nowParamList.add(paramIndex, paramMappings.get(next));
             ReflectionUtil.setFieldValue(boundSql, "parameterMappings", nowParamList);
-        }else {
+        } else {
             parameterMappings.add(paramIndex, paramMappings.get(next));
         }
     }
@@ -349,7 +351,7 @@ public class DataIsolationInterceptor implements Interceptor{
     /**
      * 找出sql插入where的位子
      */
-    private int getInsertWhereIndex(String sql){
+    private int getInsertWhereIndex(String sql) {
         int from = sql.indexOf(" FROM ") + 6;
         sql = sql.substring(from);
         byte[] bytes = sql.getBytes(StandardCharsets.UTF_8);
@@ -359,7 +361,7 @@ public class DataIsolationInterceptor implements Interceptor{
             if (bytes[i] == '.') {
                 flag = true;
             }
-            if(flag && bytes[i] == ' '){
+            if (flag && bytes[i] == ' ') {
                 return from + i;
             }
         }
@@ -408,16 +410,16 @@ public class DataIsolationInterceptor implements Interceptor{
         // 隔离级别循环
         for (Level e : Level.values()) {
             // ALL作为最顶层不参与隔离业务逻辑处理
-            if(e == Level.ALL){
+            if (e == Level.ALL) {
                 continue;
             }
 
             Level temp = e;
 
             // 大于等于当前隔离级别的都应该被隔离
-            while (level.getRank() <= temp.getRank()){
+            while (level.getRank() <= temp.getRank()) {
                 // 如果当前级别不是需要隔离的级别或子级 则递归拿到父再找 直到 temp的rank大于当前level 则说明e不归属于当前level的模块
-                if(level != temp && level != temp.getParent()){
+                if (level != temp && level != temp.getParent()) {
                     temp = temp.getParent();
                     continue;
                 }
@@ -446,7 +448,7 @@ public class DataIsolationInterceptor implements Interceptor{
         // 无注解 或者 注解跳过的隔离级别大于当前级别 则需要处理
         if (annotation == null || annotation.level().ordinal() < level.ordinal()) {
             // 提前优化点 如果sql中存在参数 就不用添加了 如果sql所有的隔离点都加好了 那么直接执行sql 不用做sql替换的处理了
-            if(!checkSqlLevelField(sqlUpperCase, level)){
+            if (!checkSqlLevelField(sqlUpperCase, level)) {
                 sqlList.add(level);
             }
         }
@@ -523,7 +525,6 @@ public class DataIsolationInterceptor implements Interceptor{
     public void setProperties(Properties properties) {
 
     }
-
 
 
 }
