@@ -14,7 +14,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * SecurityKeyInjectAspect
+ * RequestBasicParamsInjectAspect
+ * <p>
+ * 请求基础参数拦截器，用于组装操作人&操作系统&系统版本等信息
  *
  * @author hyuga
  * @since 2021-03-11

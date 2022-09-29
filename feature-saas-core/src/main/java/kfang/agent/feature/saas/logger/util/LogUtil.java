@@ -84,6 +84,7 @@ public class LogUtil {
 
         String serverName = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getAppName().toUpperCase();
 
+        // noinspection AlibabaSwitchStatement
         switch (logType) {
             case DEBUG -> log.debug(logTemplate, serverName, module, operateType, content);
             case INFO -> log.info(logTemplate, serverName, module, operateType, content);
@@ -102,6 +103,7 @@ public class LogUtil {
                     printStackTrace(serverName, log, module, e.getStackTrace());
                 }
             }
+            default -> log.debug(logTemplate, serverName, module, operateType, content);
         }
     }
 

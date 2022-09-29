@@ -45,13 +45,22 @@ public interface RequestDelegate {
     String post(String url, ThirdpartyForm form);
 
     /**
+     * 创建CloseableHttpClient
+     *
+     * @return CloseableHttpClient
+     */
+    default CloseableHttpClient createDefault() {
+        return HttpClients.createDefault();
+    }
+
+    /**
      * Get string.
      *
      * @param url  the url
      * @param form the form
      * @return the string
      */
-    default String get(String url, ThirdpartyForm form){
+    default String get(String url, ThirdpartyForm form) {
 
         // 封装请求参数
         String param = ObjectUtil.toUrlParams(form);

@@ -1,21 +1,16 @@
 package kfang.agent.feature.saas.thirdparty.delegate;
 
-import cn.hyugatool.core.object.ObjectUtil;
-import cn.hyugatool.core.string.StringUtil;
 import kfang.agent.feature.saas.thirdparty.entity.ThirdpartyForm;
 import kfang.agent.feature.saas.thirdparty.factory.SerializeHandle;
 import org.apache.http.Consts;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 
 /**
  * json序列化参数进行请求
@@ -34,8 +29,8 @@ public class JsonRequestDelegate implements RequestDelegate {
         // 封装请求参数
         String json = SerializeHandle.serialize(form);
         httpPost.setEntity(new StringEntity(json, Consts.UTF_8));
-        try {
-            CloseableHttpClient httpClient = HttpClients.createDefault();
+
+        try (CloseableHttpClient httpClient = createDefault()) {
             CloseableHttpResponse response = httpClient.execute(httpPost);
             byte[] bytes = EntityUtils.toByteArray(response.getEntity());
             return new String(bytes);
@@ -44,4 +39,5 @@ public class JsonRequestDelegate implements RequestDelegate {
         }
         return null;
     }
+
 }

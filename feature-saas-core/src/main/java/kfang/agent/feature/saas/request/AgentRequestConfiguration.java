@@ -61,4 +61,5 @@ public class AgentRequestConfiguration implements ImportBeanDefinitionRegistrar 
     public static String getOperatorSystem(){
         return operatorSystem;
     }
+
 }

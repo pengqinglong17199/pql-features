@@ -98,7 +98,7 @@ public class WebRequestCostLogFilter extends OncePerRequestFilter {
         String loggerMessage = StringUtil.format(tpl,
                 costTime / 1000 + "s",
                 CommonWebUtil.getIpAddr(request)[0],
-                wrapperResponse.getStatusCode(),
+                wrapperResponse.getStatus(),
                 simpleDateFormat.format(requestTime),
                 simpleDateFormat.format(responseTime),
                 request.getRequestURI(),

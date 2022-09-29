@@ -23,25 +23,20 @@ import java.util.concurrent.TimeUnit;
 @Data
 public class ScheduleSyncLogUtil {
 
-    private static KfangCache agentCache;
-
     private static ThreadLocal<String> context = new InheritableThreadLocal<>();
 
     private static final String KEY_PREFIX = ":SCHEDULE_SYNC_LOG:";
 
     private static final String END_PREFIX = "SCHEDULE_SYNC_LOG_END_";
 
+    private static final class AgentCacheHolder {
+        private static final KfangCache AGENT_CACHE = (KfangCache) SpringBeanPicker.getBean("agentCache");
+    }
+
     /**
      * 单例-双重验证
      */
     private static void initCache() {
-        if (agentCache == null) {
-            synchronized (ScheduleSyncLogUtil.class) {
-                if (agentCache == null) {
-                    agentCache = (KfangCache) SpringBeanPicker.getBean("agentCache");
-                }
-            }
-        }
     }
 
     /**
@@ -83,7 +78,7 @@ public class ScheduleSyncLogUtil {
         initCache();
 
         String key = SERVICE_AGENT_JMS + KEY_PREFIX + taskId;
-        agentCache.<RedisAction>doCustomAction(CacheOpeType.SAVE, redis -> {
+        AgentCacheHolder.AGENT_CACHE.<RedisAction>doCustomAction(CacheOpeType.SAVE, redis -> {
             Long result = redis.opsForList().leftPush(key, logMessage);
             redis.expire(key, 500, TimeUnit.SECONDS);
             return result;
@@ -149,7 +144,7 @@ public class ScheduleSyncLogUtil {
         initCache();
 
         String key = SERVICE_AGENT_JMS + KEY_PREFIX + taskId;
-        Object doCustomAction = agentCache.<RedisAction>doCustomAction(CacheOpeType.SAVE, redisTemplate -> {
+        Object doCustomAction = AgentCacheHolder.AGENT_CACHE.<RedisAction>doCustomAction(CacheOpeType.SAVE, redisTemplate -> {
             List<String> temp = ListUtil.newArrayList();
             while (true) {
                 Object o = redisTemplate.opsForList().rightPop(key);

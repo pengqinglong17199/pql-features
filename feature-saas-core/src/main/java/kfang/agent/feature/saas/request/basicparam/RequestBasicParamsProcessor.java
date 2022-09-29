@@ -38,6 +38,7 @@ public final class RequestBasicParamsProcessor {
     public static final String OPERATOR_TIME = "operatorTime";
     public static final String LOGIN_EXTEND_DTO = "loginExtendDto";
     public static final String OMS_AGENT_SUPER_ADMIN = "OMS_AGENT_SUPER_ADMIN";
+    public static final String USER_AGENT = "User-Agent";
 
     public static void setBasicParams(Object object, HttpServletRequest request, LoginDto loginDto, String ip) {
         if (ObjectUtil.isNull(object)) {
@@ -88,7 +89,7 @@ public final class RequestBasicParamsProcessor {
         }
         if (StringUtil.contains(field, new String[]{OPERATOR_BROWSER})) {
             //获取浏览器信息
-            Browser browser = UserAgent.parseUserAgentString(request.getHeader("User-Agent")).getBrowser();
+            Browser browser = UserAgent.parseUserAgentString(request.getHeader(USER_AGENT)).getBrowser();
             ReflectionUtil.setFieldValue(object, field, browser.toString());
             return true;
         }

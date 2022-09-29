@@ -17,12 +17,24 @@ import java.lang.annotation.*;
 @Import({AgentWebRequestLogConfiguration.class, AgentWebRequestLogCore.class})
 public @interface AgentWebRequestLog {
 
+    /**
+     * d打印请求信息
+     */
     boolean request() default false;
 
+    /**
+     * 打印请求耗时信息
+     */
     boolean cost() default false;
 
+    /**
+     * 生效环境
+     */
     EnvironmentEnum[] env() default EnvironmentEnum.DEV;
 
+    /**
+     * 请求耗时阈值毫秒
+     */
     long costThresholdMs() default 3000;
 
 }

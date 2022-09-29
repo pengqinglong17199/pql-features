@@ -46,6 +46,14 @@ import java.util.stream.Collectors;
 public class WebRequestLogFilter extends OncePerRequestFilter {
 
     private static final String ACTUATOR = "actuator";
+    private static final String USER_AGENT = "user-agent";
+    private static final String HOST = "host";
+    private static final String SERVER_PORT = "server.port";
+    private static final String MS = "ms";
+    private static final String YYYY_MM_DD_HH_MM_SS_SSS = "yyyy-MM-dd hh:mm:ss.SSS";
+    private static final String GET = "GET";
+    private static final String POST = "POST";
+    private static final String DELETE = "DELETE";
 
     @Override
     protected void doFilterInternal(@Nonnull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
@@ -75,7 +83,7 @@ public class WebRequestLogFilter extends OncePerRequestFilter {
 
         ContentCachingRequestWrapper wrapperRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrapperResponse = new ContentCachingResponseWrapper(response);
-        String userAgent = wrapperRequest.getHeader("user-agent");
+        String userAgent = wrapperRequest.getHeader(USER_AGENT);
         filterChain.doFilter(wrapperRequest, wrapperResponse);
 
         long responseTime = System.currentTimeMillis();
@@ -85,7 +93,7 @@ public class WebRequestLogFilter extends OncePerRequestFilter {
     }
 
     private void threadPoolSaveLog(HttpServletRequest request, long requestTime, ContentCachingRequestWrapper wrapperRequest, ContentCachingResponseWrapper wrapperResponse, String userAgent, long responseTime) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(YYYY_MM_DD_HH_MM_SS_SSS);
 
         String responseBody = AccessObjectUtil.getResponseBody(wrapperResponse);
 
@@ -97,14 +105,14 @@ public class WebRequestLogFilter extends OncePerRequestFilter {
         terminalRequestModel.setRequestTime(simpleDateFormat.format(requestTime));
         terminalRequestModel.setRequestMethod(wrapperRequest.getMethod());
         terminalRequestModel.setRequestUrl(wrapperRequest.getRequestURI());
-        terminalRequestModel.setServerDomain(wrapperRequest.getHeader("host"));
+        terminalRequestModel.setServerDomain(wrapperRequest.getHeader(HOST));
         terminalRequestModel.setUserAgent(userAgent);
         terminalRequestModel.setServerIp(NetworkUtil.getLocalIpAddr());
-        terminalRequestModel.setServerPort(SpringBeanPicker.getBean(Environment.class).getProperty("server.port"));
+        terminalRequestModel.setServerPort(SpringBeanPicker.getBean(Environment.class).getProperty(SERVER_PORT));
         terminalRequestModel.setEncodingType(wrapperResponse.getContentType());
-        terminalRequestModel.setStatusCode(String.valueOf(wrapperResponse.getStatusCode()));
+        terminalRequestModel.setStatusCode(String.valueOf(wrapperResponse.getStatus()));
         terminalRequestModel.setResponseTime(simpleDateFormat.format(responseTime));
-        terminalRequestModel.setCostTime(c.get(Calendar.MILLISECOND) + "ms");
+        terminalRequestModel.setCostTime(c.get(Calendar.MILLISECOND) + MS);
         terminalRequestModel.setRequestParams(String.format("[%s]", AccessObjectUtil.getRequestParams(wrapperRequest)));
         terminalRequestModel.setRequestBody(AccessObjectUtil.getRequestBody(wrapperRequest));
         terminalRequestModel.setResponseBody(responseBody);
@@ -117,7 +125,7 @@ public class WebRequestLogFilter extends OncePerRequestFilter {
 
     public static void log(TerminalRequestModel parameter) {
         String requestMethod = parameter.getRequestMethod();
-        if (!StringUtil.contains(requestMethod, new String[]{"GET", "POST", "DELETE"})) {
+        if (!StringUtil.contains(requestMethod, new String[]{GET, POST, DELETE})) {
             return;
         }
         synchronized (WebRequestLogFilter.class) {
