@@ -32,40 +32,49 @@ public class OperatorInfoUtil {
     public static final String LOG_OPERATOR_PLATFORM = "operator-platform";
     public static final String LOG_OPERATOR_APP_VERSION = "operator-app-version";
 
-    public static final String LOG_OPERATOR_INFO_TEMPLATE =
-            "ip:%s,terminalType:%s," +
-                    "x-platform:%s," +
-                    "platformOrgId:%s,id:%s,name:%s," +
-                    "orgId:%s,orgName:%s," +
-                    "positionId:%s,positionName:%s," +
-                    "companyOrgId:%s,companyOrgName:%s" +
-                    ",isMajor:%s";
+    public static final String LOG_OPERATOR_INFO_TEMPLATE = "" +
+            "ip:%s," +
+            "terminalType:%s," +
+            "x-platform:%s," +
+            "x-source-version:%s," +
+            "platformOrgId:%s," +
+            "id:%s," +
+            "name:%s," +
+            "orgId:%s," +
+            "orgName:%s," +
+            "positionId:%s," +
+            "positionName:%s," +
+            "companyOrgId:%s," +
+            "companyOrgName:%s," +
+            "isMajor:%s";
 
+    @SuppressWarnings("unused")
     public static void logOperatorInfo() {
         logOperatorInfo(LogLevel.INFO);
     }
 
     public static void logOperatorInfo(LogLevel logLevel) {
-        String platformOrgId = MDC.get(LOG_PLATFORM_ORG_ID);
-        String operatorId = MDC.get(LOG_OPERATOR_ID);
-        String operatorUsername = MDC.get(LOG_OPERATOR_USERNAME);
-        String operatorOrgId = MDC.get(LOG_OPERATOR_ORG_ID);
-        String operatorOrgName = MDC.get(LOG_OPERATOR_ORG_NAME);
-        String operatorOrgPositionId = MDC.get(LOG_OPERATOR_ORG_POSITION_ID);
-        String operatorOrgPositionName = MDC.get(LOG_OPERATOR_ORG_POSITION_NAME);
-        String operatorCompanyOrgId = MDC.get(LOG_OPERATOR_COMPANY_ORG_ID);
-        String operatorCompanyOrgName = MDC.get(LOG_OPERATOR_COMPANY_ORG_NAME);
-        String operatorIsMajor = MDC.get(LOG_OPERATOR_IS_MAJOR);
-        String operatorIp = MDC.get(LOG_OPERATOR_IP);
-        String operatorTerminalType = MDC.get(LOG_OPERATOR_TERMINAL_TYPE);
-        String operatorPlatform = MDC.get(LOG_OPERATOR_PLATFORM);
+        final String platformOrgId = MDC.get(LOG_PLATFORM_ORG_ID);
+        final String operatorId = MDC.get(LOG_OPERATOR_ID);
+        final String operatorUsername = MDC.get(LOG_OPERATOR_USERNAME);
+        final String operatorOrgId = MDC.get(LOG_OPERATOR_ORG_ID);
+        final String operatorOrgName = MDC.get(LOG_OPERATOR_ORG_NAME);
+        final String operatorOrgPositionId = MDC.get(LOG_OPERATOR_ORG_POSITION_ID);
+        final String operatorOrgPositionName = MDC.get(LOG_OPERATOR_ORG_POSITION_NAME);
+        final String operatorCompanyOrgId = MDC.get(LOG_OPERATOR_COMPANY_ORG_ID);
+        final String operatorCompanyOrgName = MDC.get(LOG_OPERATOR_COMPANY_ORG_NAME);
+        final String operatorIsMajor = MDC.get(LOG_OPERATOR_IS_MAJOR);
+        final String operatorIp = MDC.get(LOG_OPERATOR_IP);
+        final String operatorTerminalType = MDC.get(LOG_OPERATOR_TERMINAL_TYPE);
+        final String operatorPlatform = MDC.get(LOG_OPERATOR_PLATFORM);
+        final String operatorAppVersion = MDC.get(LOG_OPERATOR_APP_VERSION);
 
         if (StringUtil.isEmpty(operatorId)) {
             return;
         }
 
         String operatorInfo = String.format(LOG_OPERATOR_INFO_TEMPLATE,
-                operatorIp, operatorTerminalType, operatorPlatform, platformOrgId, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
+                operatorIp, operatorTerminalType, operatorPlatform, operatorAppVersion, platformOrgId, operatorId, operatorUsername, operatorOrgId, operatorOrgName,
                 operatorOrgPositionId, operatorOrgPositionName, operatorCompanyOrgId, operatorCompanyOrgName, operatorIsMajor);
 
         // noinspection AlibabaSwitchStatement
