@@ -40,7 +40,7 @@ public class DefaultParamSerialize<T extends ThirdpartyForm> implements Thirdpar
             }
         }
 
-        return NameValuePairUtil.ofObject(map);
+        return NameValuePairUtil.toList(map);
     }
 
 }
