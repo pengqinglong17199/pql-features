@@ -28,8 +28,11 @@ public final class QuickEntryUtil {
     @SuppressWarnings("all")
     public static final String HTTP = "http://";
 
+    private static final String BUSINESS = "-business-";
+
     public static void print(String operatorSystem) throws MalformedObjectNameException {
         operatorSystem = operatorSystem.replaceAll(HyugaConstants.UNDERLINE, HyugaConstants.HYPHEN).toLowerCase();
+        operatorSystem = operatorSystem.replaceAll(BUSINESS, HyugaConstants.HYPHEN).toLowerCase();
         String deploy = SpringBeanPicker.getBean(KfangInfraCommonProperties.class).getEnv().getDeploy();
         if (!SaasConstants.DEV.equals(deploy)) {
             return;
