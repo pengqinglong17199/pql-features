@@ -90,8 +90,8 @@ public final class RequestBasicParamsProcessor {
         }
         if (StringUtil.contains(field, new String[]{OPERATOR_BROWSER})) {
             // 获取浏览器信息
-            Browser browser = UserAgent.parseUserAgentString(request.getHeader(USER_AGENT)).getBrowser();
-            ReflectionUtil.setFieldValue(object, field, browser.toString());
+            //Browser browser = UserAgent.parseUserAgentString(request.getHeader(USER_AGENT)).getBrowser();
+            //ReflectionUtil.setFieldValue(object, field, browser.toString());
             return true;
         }
         if (StringUtil.contains(field, new String[]{OPERATOR_SYSTEM})) {

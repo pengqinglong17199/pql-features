@@ -101,7 +101,7 @@ public class HiddenResultAspect implements AspectInject {
 
         for (Field field : hiddenFieldList) {
             field.setAccessible(true);
-            Class<?> fieldClass = ReflectionUtil.getFieldClass(field);
+            Class<?> fieldClass = ReflectionUtil.getFieldClass(field, true);
 
             if (!BASE_TYPES.contains(fieldClass)) {
                 // 非基础数据类型 进行递归获取其字段
