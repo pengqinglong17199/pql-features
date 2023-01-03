@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="feature-dingtalk" />
+        <module name="feature-monitor" />
+        <module name="feature-saas-core" />
+        <module name="feature-wechat" />
+        <module name="feature-saas-open" />
+        <module name="feature-saas-context" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="feature-parent" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="agent-features" options="-parameters -parameters" />
+      <module name="feature-dingtalk" options="-parameters -parameters" />
+      <module name="feature-lombok-pql" options="-parameters -parameters --add-exports jdk.compiler/com.sun.tools.javac.api=commons --add-exports jdk.compiler/com.sun.tools.javac.tree=commons --add-exports jdk.compiler/com.sun.tools.javac.code=commons --add-exports jdk.compiler/com.sun.tools.javac.util=commons" />
+      <module name="feature-monitor" options="-parameters -parameters" />
+      <module name="feature-parent" options="-parameters -parameters" />
+      <module name="feature-saas-context" options="-parameters -parameters" />
+      <module name="feature-saas-core" options="-parameters -parameters" />
+      <module name="feature-saas-open" options="-parameters -parameters" />
+      <module name="feature-wechat" options="-parameters -parameters" />
+    </option>
+  </component>
+</project>

@@ -1,0 +1,14 @@
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/message/MessageMarkdown.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/enums/MessageTypeEnum.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/enums/Author.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/util/DingTalkUtil.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/message/AbstractMessage.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/message/MessageLink.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/message/CoreParameter.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/message/MessageText.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/annotations/AgentDingTalk.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/message/MessageActionCard.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/config/DingTalkConfiguration.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/message/MessageFeedcard.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/annotations/EnableDingTalk.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-dingtalk/src/main/java/kfang/agent/feature/dingtalk/core/AgentDingTalkCore.java

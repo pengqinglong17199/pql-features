@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!DOCTYPE project [<!ELEMENT project (#PCDATA)>
+                <!ENTITY press "        <version>2.5.0-SNAPSHOT</version>">]>
+<project>
+    &press;
+</project>

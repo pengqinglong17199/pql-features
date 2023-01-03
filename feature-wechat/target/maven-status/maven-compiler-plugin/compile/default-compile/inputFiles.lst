@@ -1,0 +1,16 @@
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/enterprise/base/AbstractWechatData.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/WechatConfig.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/enterprise/data/WechatTextData.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/enterprise/data/WechatNewsData.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/enterprise/transmitter/WechatDataTransmitter.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/utils/DateFormatUtil.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/aes/SHA1.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/aes/PKCS7Encoder.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/aes/WXBizMsgCrypt.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/aes/AesException.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/aes/XMLParse.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/enterprise/data/WechatTextcardData.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/core/WechatProperties.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/core/WeChatSend.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/aes/WXBizMsgCryptTest.java
+/Users/pengqinglong/IdeaProject/agent-features/feature-wechat/src/main/java/kfang/agent/feature/wechat/aes/ByteGroup.java

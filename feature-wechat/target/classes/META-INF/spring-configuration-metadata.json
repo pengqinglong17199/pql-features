@@ -1,0 +1,67 @@
+{
+  "groups": [
+    {
+      "name": "hyuga.wechat",
+      "type": "kfang.agent.feature.wechat.core.WechatProperties",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "hyuga.wechat.application-id",
+      "type": "java.lang.Long",
+      "description": "企业微信应用ID",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties",
+      "defaultValue": 0
+    },
+    {
+      "name": "hyuga.wechat.application-secret",
+      "type": "java.lang.String",
+      "description": "企业微信应用密钥",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties"
+    },
+    {
+      "name": "hyuga.wechat.enterprise-id",
+      "type": "java.lang.String",
+      "description": "企业微信ID",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties"
+    },
+    {
+      "name": "hyuga.wechat.service-application-id",
+      "type": "java.lang.String",
+      "description": "服务号应用ID",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties"
+    },
+    {
+      "name": "hyuga.wechat.service-application-secret",
+      "type": "java.lang.String",
+      "description": "服务号应用密钥",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties"
+    },
+    {
+      "name": "hyuga.wechat.service-encoding-aes-key",
+      "type": "java.lang.String",
+      "description": "服务号消息加解密密钥",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties"
+    },
+    {
+      "name": "hyuga.wechat.service-token",
+      "type": "java.lang.String",
+      "description": "服务号令牌",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties"
+    },
+    {
+      "name": "hyuga.wechat.use-enterprise-we-chat-services",
+      "type": "java.lang.Boolean",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties",
+      "defaultValue": true
+    },
+    {
+      "name": "hyuga.wechat.use-we-chat-service-no-services",
+      "type": "java.lang.Boolean",
+      "sourceType": "kfang.agent.feature.wechat.core.WechatProperties",
+      "defaultValue": true
+    }
+  ],
+  "hints": []
+}

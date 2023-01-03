@@ -1,0 +1,17 @@
+kfang/agent/feature/dingtalk/enums/Author.class
+kfang/agent/feature/dingtalk/enums/MessageTypeEnum.class
+kfang/agent/feature/dingtalk/message/CoreParameter$CoreParameterBuilder.class
+kfang/agent/feature/dingtalk/config/DingTalkConfiguration.class
+kfang/agent/feature/dingtalk/message/MessageText.class
+kfang/agent/feature/dingtalk/util/DingTalkUtil.class
+kfang/agent/feature/dingtalk/message/MessageMarkdown.class
+kfang/agent/feature/dingtalk/annotations/AgentDingTalk.class
+kfang/agent/feature/dingtalk/annotations/EnableDingTalk.class
+kfang/agent/feature/dingtalk/message/MessageFeedcard$MessageFeedCardItem.class
+kfang/agent/feature/dingtalk/message/MessageActionCard.class
+kfang/agent/feature/dingtalk/message/MessageLink.class
+kfang/agent/feature/dingtalk/message/CoreParameter.class
+kfang/agent/feature/dingtalk/message/MessageFeedcard.class
+kfang/agent/feature/dingtalk/core/AgentDingTalkCore.class
+kfang/agent/feature/dingtalk/util/DingTalkUtil$Build.class
+kfang/agent/feature/dingtalk/message/AbstractMessage.class

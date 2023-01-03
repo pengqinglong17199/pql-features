@@ -1,0 +1,12 @@
+kfang/agent/feature/monitor/model/ServiceLogModel.class
+kfang/agent/feature/monitor/constants/ServiceHeartbeatKey.class
+kfang/agent/feature/monitor/model/ServiceInfo$ServiceIpInfo.class
+kfang/agent/feature/monitor/core/processor/MonitorCoreProcessor.class
+kfang/agent/feature/monitor/model/ServiceInfo.class
+kfang/agent/feature/monitor/MonitorConfiguration.class
+kfang/agent/feature/monitor/enums/StatusEnum.class
+kfang/agent/feature/monitor/core/AutomaticHeartbeatMechanism.class
+kfang/agent/feature/monitor/model/ServiceMessage.class
+kfang/agent/feature/monitor/constants/MonitorConstant.class
+kfang/agent/feature/monitor/enums/ProjectEnum.class
+kfang/agent/feature/monitor/annotation/EnableMonitor.class
